@@ -1,7 +1,7 @@
 ##########
 # HOME PAGE
 ##########
-featured-image: coll001
+featured-image: coll007
 home-title-y-padding: 7em
 home-banner-image-position: top
 
@@ -52,11 +52,9 @@ metadata-facets-fields: "subject,creator,culture,region,medium,format"
 # ADVANCED OPTIONS
 ##########
 
-# NAVBAR COLORS
 navbar-color: "#FDF6E3"
 navbar-background: bg-primary
 
-# BOOTSWATCH THEME
 bootswatch: sandstone
 
 ##########
@@ -67,10 +65,4 @@ base-font-size: 1.2em
 text-color: "#24130F"
 link-color: "#D97706"
 
-font-cdn: >
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
-
-# icons:
-#   icon-image: image
-#   icon-pdf: file-pdf
-#   icon-default: file-text
+font-cdn: "<link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;family=DM+Serif+Display&amp;display=swap' rel='stylesheet'>"
