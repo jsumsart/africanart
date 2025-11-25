@@ -1,0 +1,96 @@
+##########
+# CollectionBuilder Theme Customization
+# values set here help configure details of individual pages in the website
+##########
+
+##########
+# HOME PAGE
+##########
+# featured image is used in home page banner and in meta markup to represent the collection
+# use either an objectid, a relative path, or a full URL
+featured-image: coll007
+# extra padding around collection title for a larger image feature
+home-title-y-padding: 6em  
+# change position of background image: center, top, bottom
+home-banner-image-position: center  
+
+##########
+# ITEM PAGE
+##########
+browse-buttons: true  # adds previous/next navigation arrows
+
+##########
+# SUBJECTS PAGE
+##########
+subjects-fields: subject;creator  
+subjects-min: 1  
+subjects-stopwords:  
+
+##########
+# LOCATIONS PAGE
+##########
+locations-fields: location  
+locations-min: 1  
+locations-stopwords:  
+
+##########
+# MAP PAGE
+##########
+# center map on Mississippi
+latitude: 32.3547  
+longitude: -89.3985  
+zoom-level: 6  
+map-base: Esri_WorldImagery  
+map-search: true  
+map-search-fuzziness: 0.35  
+map-cluster: true  
+map-cluster-radius: 25  
+
+##########
+# TIMELINE PAGE
+##########
+year-navigation: "1940;1950;1960;1970;1980;1990;2000;2010;2020"  
+year-nav-increment: 10  
+
+##########
+# DATA
+##########
+metadata-export-fields: "title,creator,date,description,subject,location,latitude,longitude,source,identifier,type,format,language,rights,rightsstatement"  
+metadata-facets-fields: "subject,creator,format"  
+
+##########
+# COMPOUND OBJECTS
+##########
+map-child-objects: true  
+timeline-child-objects: true  
+data-child-objects: true  
+carousel-child-objects: true  
+browse-child-objects: true  
+search-child-objects: true  
+
+##########
+# ADVANCED OPTIONS
+##########
+
+# NAVBAR COLORS
+navbar-color: #002147  
+navbar-background: bg-primary  
+
+# BOOTSWATCH THEME
+bootswatch: flatly  
+
+# THEME FONTS & COLORS
+##########
+base-font-family: "'Poppins', sans-serif"
+base-font-size: 1.3em
+text-color: "#333333"
+link-color: "#008ED6"
+
+# load Google’s Poppins face
+font-cdn: "<link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap' rel='stylesheet'>"  
+
+# theme icon overrides (optional)
+# icons:
+#   icon-image: image
+#   icon-pdf: file-pdf
+#   icon-default: file-text
