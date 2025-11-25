@@ -72,18 +72,17 @@ navbar-color: "#002147"
 navbar-background: "bg-primary"
 
 # BOOTSWATCH THEME
-bootswatch: "morph"
+bootswatch: "lux"
 
-##########
-# THEME FONTS & COLORS
-##########
-base-font-family: "'Poppins', sans-serif"
+########## FONTS & COLORS ##########
+
+base-font-family: "'Inter', sans-serif"
 base-font-size: "1.3em"
-text-color: "#333333"
-link-color: "#008ED6"
+text-color: "#1A1A1A"
+link-color: "#C97A0A"
 
 # load Google’s Poppins face
-font-cdn: "<link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap' rel='stylesheet'>"
+font-cdn: "<link href='https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=DM+Serif+Display&amp;display=swap' rel='stylesheet'>"
 
 # theme icon overrides (optional)
 # icons:
