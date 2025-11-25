@@ -1,9 +1,14 @@
 ##########
+# CollectionBuilder Theme Customization
+# values set here help configure details of individual pages in the website
+##########
+
+##########
 # HOME PAGE
 ##########
-featured-image: coll007
-home-title-y-padding: 7em
-home-banner-image-position: top
+featured-image: "coll007"
+home-title-y-padding: "6em"
+home-banner-image-position: "center"
 
 ##########
 # ITEM PAGE
@@ -13,24 +18,24 @@ browse-buttons: true
 ##########
 # SUBJECTS PAGE
 ##########
-subjects-fields: subject;creator;culture;region;medium
+subjects-fields: "subject;creator"
 subjects-min: 1
 subjects-stopwords:
 
 ##########
 # LOCATIONS PAGE
 ##########
-locations-fields: location;region
+locations-fields: "location"
 locations-min: 1
 locations-stopwords:
 
 ##########
 # MAP PAGE
 ##########
-latitude: 9.1021
-longitude: 18.2812
-zoom-level: 3
-map-base: Esri_WorldImagery
+latitude: 32.3547
+longitude: -89.3985
+zoom-level: 6
+map-base: "Esri_WorldImagery"
 map-search: true
 map-search-fuzziness: 0.35
 map-cluster: true
@@ -39,30 +44,49 @@ map-cluster-radius: 25
 ##########
 # TIMELINE PAGE
 ##########
-year-navigation: "1850;1900;1920;1940;1960;1980;2000;2020"
-year-nav-increment: 20
+year-navigation: "1940;1950;1960;1970;1980;1990;2000;2010;2020"
+year-nav-increment: 10
 
 ##########
 # DATA
 ##########
-metadata-export-fields: "title,creator,date,description,subject,location,latitude,longitude,source,identifier,type,format,language,rights,rightsstatement,culture,region,medium"
-metadata-facets-fields: "subject,creator,culture,region,medium,format"
+metadata-export-fields: "title,creator,date,description,subject,location,latitude,longitude,source,identifier,type,format,language,rights,rightsstatement"
+metadata-facets-fields: "subject,creator,format"
+
+##########
+# COMPOUND OBJECTS
+##########
+map-child-objects: true
+timeline-child-objects: true
+data-child-objects: true
+carousel-child-objects: true
+browse-child-objects: true
+search-child-objects: true
 
 ##########
 # ADVANCED OPTIONS
 ##########
 
-navbar-color: "#FDF6E3"
-navbar-background: bg-primary
+# NAVBAR COLORS
+navbar-color: "#002147"
+navbar-background: "bg-primary"
 
-bootswatch: sandstone
+# BOOTSWATCH THEME
+bootswatch: "flatly"
 
 ##########
 # THEME FONTS & COLORS
 ##########
 base-font-family: "'Poppins', sans-serif"
-base-font-size: 1.2em
-text-color: "#24130F"
-link-color: "#D97706"
+base-font-size: "1.3em"
+text-color: "#333333"
+link-color: "#008ED6"
 
-font-cdn: "<link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;family=DM+Serif+Display&amp;display=swap' rel='stylesheet'>"
+# load Google’s Poppins face
+font-cdn: "<link href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap' rel='stylesheet'>"
+
+# theme icon overrides (optional)
+# icons:
+#   icon-image: image
+#   icon-pdf: file-pdf
+#   icon-default: file-text
