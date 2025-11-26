@@ -76,7 +76,7 @@ navbar-color: "#0b2a2b"              # deep teal for a cultural/earthy feel with
 navbar-background: "bg-warning"
 
 # BOOTSWATCH THEME (optional: set to a bootswatch name to change look quickly)
-bootswatch: ""
+bootswatch: "sandstone"
 
 ########## FONTS & COLORS ##########
 
