@@ -72,7 +72,7 @@ search-child-objects: true
 ##########
 
 # NAVBAR COLORS
-navbar-color: "#0b2a2b"              # deep teal for a cultural/earthy feel with good contrast
+navbar-color: "#00000"              # deep teal for a cultural/earthy feel with good contrast
 navbar-background: "bg-light"
 
 # BOOTSWATCH THEME (optional: set to a bootswatch name to change look quickly)
