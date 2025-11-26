@@ -1,34 +1,42 @@
-/* =========================
-   African Art Collection Theme Palette
-   (place this BEFORE the @each $color, $value in $theme-colors loop)
-   ========================= */
+/* ===========================================
+   African Art Collection — Theme Color Set
+   Safe for GitHub Pages (no inline comments)
+   =========================================== */
 
 /* Core brand colors */
-$primary:   #166353 !default;  // Deep palm green
-$secondary: #b45309 !default;  // Warm ochre
-$success:   #1f7a4d !default;  // Verdant green
-$info:      #155e75 !default;  // Deep teal/indigo
-$warning:   #f59e0b !default;  // Amber
-$danger:    #9b1c1c !default;  // Brick red
-$light:     #fdf6ec !default;  // Warm gallery wall
-$dark:      #1f2933 !default;  // Deep charcoal
+$primary:   #166353;
+$secondary: #b45309;
+$success:   #1f7a4d;
+$info:      #155e75;
+$warning:   #f59e0b;
+$danger:    #9b1c1c;
+$light:     #f3f4f6;
+$dark:      #1f2933;
 
-/* Link color to align with accent ochre */
-$link-color: $secondary !default;
+/* Link color should harmonize with the warm ochre accent */
+$link-color: $secondary;
 
-/* Main theme color map used by the mixins below */
+/* Extended palette for accents */
+$terracotta:   #c2410c;
+$indigo-cloth: #312e81;
+$palm:         #166353;
+$sun:          #fbbf24;
+
+/* -------------------------------------------
+   CollectionBuilder Theme Colors Map
+   ------------------------------------------- */
+
 $theme-colors: (
-  "primary":   $primary,
-  "secondary": $secondary,
-  "success":   $success,
-  "info":      $info,
-  "warning":   $warning,
-  "danger":    $danger,
-  "light":     $light,
-  "dark":      $dark,
-
-  // Optional custom variants for more styling hooks
-  "terracotta":   #c2410c,  // Terracotta clay
-  "indigo-cloth": #312e81,  // Indigo dye
-  "palm":         #166353,  // Palm leaf
-  "sun":          #fbbf24   //
+  "primary":      $primary,
+  "secondary":    $secondary,
+  "success":      $success,
+  "info":         $info,
+  "warning":      $warning,
+  "danger":       $danger,
+  "light":        $light,
+  "dark":         $dark,
+  "terracotta":   $terracotta,
+  "indigo-cloth": $indigo-cloth,
+  "palm":         $palm,
+  "sun":          $sun
+);
