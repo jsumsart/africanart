@@ -4,20 +4,20 @@
 body {
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 16px;
-  color: #1f2933;                 /* Deep neutral for legibility */
-  background-color: #f8f9fa;      /* Light gray backdrop */
+  color: #1f2933;                 
+  background-color: #f8f9fa;      
 }
 
 /* Links */
 a {
-  color: #b45309;                  /* Warm ochre accent */
+  color: #002147; /* JSU Navy */
   text-decoration: underline;
   text-underline-offset: 0.12em;
 }
 
 a:hover,
 a:focus {
-  color: #92400e;                  /* Darker hover state */
+  color: #1e3a8a; /* Lighter blue hover */
   text-decoration: none;
 }
 
@@ -25,8 +25,8 @@ a:focus {
    2. Accessibility skip link
    ========================= */
 #skip-to-content a {
-  background: #111827;             /* High contrast for accessibility */
-  color: #fefce8;                  /* Soft warm off-white */
+  background: #111827;
+  color: #fefce8;
   border-right: 1px solid #fefce8;
   border-bottom: 1px solid #fefce8;
 }
@@ -46,8 +46,13 @@ a:focus {
 }
 
 /* =========================
-   4. Footer
+   4. Footer (NOW BLACK)
    ========================= */
+footer,
+#footer {
+  background-color: #000 !important;
+}
+
 #footer-logo,
 #footer-credits img {
   height: 20px;
@@ -61,6 +66,8 @@ a:focus {
   padding: 0.25rem 0.9rem;
   font-size: 0.875rem;
   border: 1px solid transparent;
+  color: #ffffff;
+  background-color: #002147; /* JSU navy */
   transition:
     background-color 150ms ease,
     color 150ms ease,
@@ -70,14 +77,15 @@ a:focus {
 
 #footer-nav .nav-link.active,
 #footer-nav .show > .nav-link {
-  color: #fefce8;                  /* Warm off-white text */
-  background: #002147;             /* Deep green, echoing textiles */
+  color: #ffffff;
+  background-color: #002147; /* JSU navy */
+  border-color: #002147;
 }
 
 #footer-nav .nav-link:hover {
-  color: #fefce8;                  /* Warm off-white text */
-  background: #002147;             /* Deep green, echoing textiles */
-  border-color: #166353;
+  color: #ffffff;
+  background-color: #1e3a8a; /* lighter blue hover */
+  border-color: #1e3a8a;
 }
 
 /* =========================
@@ -90,24 +98,22 @@ a:focus {
   width: 48px;
   height: 48px;
   border-radius: 999px;
-  background-image: linear-gradient(135deg, #166353, #b45309);
-  color: #fefce8;
-  display: flex;          /* used when made visible via JS */
+  background-color: #002147; /* JSU navy */
+  color: #ffffff;
+  display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 12px 24px rgba(22, 99, 83, 0.35);
-  border: 1px solid rgba(248, 250, 252, 0.3);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 #scroll-to-top:hover {
-  background-image: linear-gradient(135deg, #14532d, #92400e);
+  background-color: #1e3a8a; /* lighter hover blue */
 }
 
 /* =========================
    6. Feature utility tweaks (optional)
-   Wrap with a parent ID to avoid global changes
    ========================= */
-/* Example wrapper: <div id="cb-theme-custom"> ... */
 @media (min-width: 768px) {
   #cb-theme-custom .feature-w-50 {
     width: 60% !important;
@@ -122,4 +128,40 @@ a:focus {
   width: 1.25em;
   height: 1.25em;
   vertical-align: middle;
+}
+
+
+/* =========================
+   8. Button colors (GLOBAL OVERRIDE)
+   ========================= */
+
+/* Primary button = JSU navy */
+.btn-primary,
+.btn-outline-primary {
+  background-color: #002147 !important;
+  border-color: #002147 !important;
+  color: #ffffff !important;
+}
+
+.btn-primary:hover,
+.btn-outline-primary:hover,
+.btn-primary:focus,
+.btn-outline-primary:focus {
+  background-color: #1e3a8a !important;
+  border-color: #1e3a8a !important;
+  color: #ffffff !important;
+}
+
+/* Secondary button also navy unless you specify differently */
+.btn-secondary {
+  background-color: #002147 !important;
+  border-color: #002147 !important;
+  color: #ffffff !important;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus {
+  background-color: #1e3a8a !important;
+  border-color: #1e3a8a !important;
+  color: #ffffff !important;
 }
