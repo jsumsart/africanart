@@ -70,15 +70,13 @@ a:focus {
 
 #footer-nav .nav-link.active,
 #footer-nav .show > .nav-link {
-  color: #1f2933;                  /* Dark neutral text */
-  border: 1px solid #b45309;       /* Ochre border */
-  background: #CC7722;             /* Warm highlight */
-  box-shadow: 0 4px 10px rgba(180, 83, 9, 0.25);
+  color: #fefce8;                  /* Warm off-white text */
+  background: #002147;             /* Deep green, echoing textiles */
 }
 
 #footer-nav .nav-link:hover {
   color: #fefce8;                  /* Warm off-white text */
-  background: #166353;             /* Deep green, echoing textiles */
+  background: #002147;             /* Deep green, echoing textiles */
   border-color: #166353;
 }
 
