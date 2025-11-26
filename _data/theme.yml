@@ -72,7 +72,7 @@ search-child-objects: true
 ##########
 
 # NAVBAR COLORS
-navbar-color: "#00000"              # deep teal for a cultural/earthy feel with good contrast
+navbar-link: "#00000"              # deep teal for a cultural/earthy feel with good contrast
 navbar-background: "bg-light"
 
 # BOOTSWATCH THEME (optional: set to a bootswatch name to change look quickly)
@@ -83,19 +83,6 @@ bootswatch: "sandstone"
 # Base typography (use rem or px for consistency and accessibility)
 base-font-family: "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
 base-font-size: "16px"
-text-color: "#111827"               # near-black for high readability
-link-color: "#C97A0A"               # preserved warm accent
-link-hover-color: "#8e5b00"
-accent-color: "#2b8a6f"             # secondary accent (teal/green) for buttons and highlights
-muted-color: "#6b7280"
-
-# Enable optional dark mode (templates/CSS must support it)
-enable-dark-mode: true
-dark:
-  background: "#0b1220"
-  text-color: "#E6EEF3"
-  link-color: "#ffd08a"
-  navbar-color: "#071722"
 
 # Google Fonts loading (preconnect + family list)
 font-cdn: "<link rel='preconnect' href='https://fonts.googleapis.com'><link rel='preconnect' href='https://fonts.gstatic.com' crossorigin><link href='https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap' rel='stylesheet'>"
