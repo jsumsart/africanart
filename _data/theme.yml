@@ -72,7 +72,7 @@ search-child-objects: true
 ##########
 
 # NAVBAR COLORS
-navbar-background: "bg-light"
+navbar-background: "bg-dark"
 
 # BOOTSWATCH THEME (optional: set to a bootswatch name to change look quickly)
 bootswatch: "sandstone"
