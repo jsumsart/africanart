@@ -4,20 +4,26 @@
 body {
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 16px;
-  color: #1f2933;
-  background-color: #f9fafb;
+  color: #1f2933;                 /* Deep neutral for legibility */
+  background-color: #fdf6ec;      /* Warm, gallery-like backdrop */
+
+  /* Optional subtle texture / vignette for depth (still minimal) */
+  background-image:
+    radial-gradient(circle at top left, rgba(248, 180, 80, 0.15), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(34, 97, 72, 0.12), transparent 55%);
+  background-attachment: fixed;
 }
 
 /* Links */
 a {
-  color: #0f766e;
+  color: #b45309;                  /* Warm ochre accent */
   text-decoration: underline;
-  text-underline-offset: 0.1em;
+  text-underline-offset: 0.12em;
 }
 
 a:hover,
 a:focus {
-  color: #115e59;
+  color: #92400e;                  /* Darker hover state */
   text-decoration: none;
 }
 
@@ -25,10 +31,10 @@ a:focus {
    2. Accessibility skip link
    ========================= */
 #skip-to-content a {
-  background: #111827;
-  color: #f9fafb;
-  border-right: 1px solid #f9fafb;
-  border-bottom: 1px solid #f9fafb;
+  background: #111827;             /* High contrast for accessibility */
+  color: #fefce8;                  /* Soft warm off-white */
+  border-right: 1px solid #fefce8;
+  border-bottom: 1px solid #fefce8;
 }
 
 /* =========================
@@ -60,18 +66,26 @@ a:focus {
   border-radius: 999px;
   padding: 0.25rem 0.9rem;
   font-size: 0.875rem;
+  border: 1px solid transparent;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease;
 }
 
 #footer-nav .nav-link.active,
 #footer-nav .show > .nav-link {
-  color: #111827;
-  border: 1px solid #0f766e;
-  background: #a7f3d0;
+  color: #1f2933;                  /* Dark neutral text */
+  border: 1px solid #b45309;       /* Ochre border */
+  background: #fef3c7;             /* Warm sand highlight */
+  box-shadow: 0 4px 10px rgba(180, 83, 9, 0.25);
 }
 
 #footer-nav .nav-link:hover {
-  color: #ecfeff;
-  background: #0f766e;
+  color: #fefce8;                  /* Warm off-white text */
+  background: #166353;             /* Deep green, echoing textiles */
+  border-color: #166353;
 }
 
 /* =========================
@@ -84,16 +98,17 @@ a:focus {
   width: 48px;
   height: 48px;
   border-radius: 999px;
-  background-color: #0f766e;
-  color: #ecfeff;
+  background-image: linear-gradient(135deg, #166353, #b45309);
+  color: #fefce8;
   display: flex;          /* used when made visible via JS */
   align-items: center;
   justify-content: center;
-  box-shadow: 0 10px 20px rgba(15, 118, 110, 0.3);
+  box-shadow: 0 12px 24px rgba(22, 99, 83, 0.35);
+  border: 1px solid rgba(248, 250, 252, 0.3);
 }
 
 #scroll-to-top:hover {
-  background-color: #115e59;
+  background-image: linear-gradient(135deg, #14532d, #92400e);
 }
 
 /* =========================
