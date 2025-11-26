@@ -5,7 +5,8 @@ body {
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 16px;
   color: #1f2933;                 /* Deep neutral for legibility */
-  background-color: #f8f9fa;      /* Warm, gallery-like backdrop */
+  background-color: #f8f9fa;      /* Light gray backdrop */
+}
 
 /* Links */
 a {
@@ -71,7 +72,7 @@ a:focus {
 #footer-nav .show > .nav-link {
   color: #1f2933;                  /* Dark neutral text */
   border: 1px solid #b45309;       /* Ochre border */
-  background: #CC7722;             /* Warm sand highlight */
+  background: #CC7722;             /* Warm highlight */
   box-shadow: 0 4px 10px rgba(180, 83, 9, 0.25);
 }
 
