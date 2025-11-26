@@ -72,7 +72,7 @@ navbar-color: "#002147"
 navbar-background: "bg-primary"
 
 # BOOTSWATCH THEME
-bootswatch: "lux"
+bootswatch: ""
 
 ########## FONTS & COLORS ##########
 
