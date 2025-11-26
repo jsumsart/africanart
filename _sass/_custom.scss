@@ -1,1 +1,118 @@
+/* =========================
+   1. Global typography & colors
+   ========================= */
+body {
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 16px;
+  color: #1f2933;
+  background-color: #f9fafb;
+}
 
+/* Links */
+a {
+  color: #0f766e;
+  text-decoration: underline;
+  text-underline-offset: 0.1em;
+}
+
+a:hover,
+a:focus {
+  color: #115e59;
+  text-decoration: none;
+}
+
+/* =========================
+   2. Accessibility skip link
+   ========================= */
+#skip-to-content a {
+  background: #111827;
+  color: #f9fafb;
+  border-right: 1px solid #f9fafb;
+  border-bottom: 1px solid #f9fafb;
+}
+
+/* =========================
+   3. Banner / header
+   ========================= */
+#home-banner-logo {
+  height: 56px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+/* Mobile nav logo */
+#mobile-nav-image {
+  max-height: 2.25em;
+}
+
+/* =========================
+   4. Footer
+   ========================= */
+#footer-logo,
+#footer-credits img {
+  height: 50px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+/* Footer nav buttons */
+#footer-nav .nav-link {
+  border-radius: 999px;
+  padding: 0.25rem 0.9rem;
+  font-size: 0.875rem;
+}
+
+#footer-nav .nav-link.active,
+#footer-nav .show > .nav-link {
+  color: #111827;
+  border: 1px solid #0f766e;
+  background: #a7f3d0;
+}
+
+#footer-nav .nav-link:hover {
+  color: #ecfeff;
+  background: #0f766e;
+}
+
+/* =========================
+   5. Scroll to top button
+   ========================= */
+#scroll-to-top {
+  bottom: 24px;
+  right: 24px;
+  font-size: 24px;
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  background-color: #0f766e;
+  color: #ecfeff;
+  display: flex;          /* used when made visible via JS */
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 20px rgba(15, 118, 110, 0.3);
+}
+
+#scroll-to-top:hover {
+  background-color: #115e59;
+}
+
+/* =========================
+   6. Feature utility tweaks (optional)
+   Wrap with a parent ID to avoid global changes
+   ========================= */
+/* Example wrapper: <div id="cb-theme-custom"> ... */
+@media (min-width: 768px) {
+  #cb-theme-custom .feature-w-50 {
+    width: 60% !important;
+  }
+}
+
+/* =========================
+   7. Icons
+   ========================= */
+.bi,
+.icon-sprite {
+  width: 1.25em;
+  height: 1.25em;
+  vertical-align: middle;
+}
