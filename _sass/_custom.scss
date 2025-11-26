@@ -1,4 +1,346 @@
-/* 
-    Put your custom SCSS here! 
-    This allows you to override any CollectionBuilder or Bootstrap CSS without modifying the base theme files directly.
-*/
+// _custom.scss
+// Modern, accessible, high-impact styles for an African art site
+// - Design tokens (CSS variables) for runtime theming
+// - SCSS helpers (rem(), respond-to)
+// - Components: hero, nav, cards, gallery, buttons, forms
+// - Dark mode support & reduced-motion handling
+
+// =========== CONFIG =============
+$base-font-size: 16px !default;
+$base-line-height: 1.6 !default;
+
+@function rem($px) {
+  @return ($px / $base-font-size) * 1rem;
+}
+
+$breakpoints: (
+  sm: 480px,
+  md: 768px,
+  lg: 1024px,
+  xl: 1280px
+);
+
+@mixin respond-to($size) {
+  $bp: map-get($breakpoints, $size);
+  @if $bp {
+    @media (min-width: $bp) { @content; }
+  } @else {
+    @warn "Unknown breakpoint `#{$size}`.";
+  }
+}
+
+// =========== THEME TOKENS =============
+// Primary palette inspired by warm earth tones & vibrant accents
+:root {
+  /* Base */
+  --bg: #fff;
+  --surface: #fff7f0;
+  --text: #111111;
+  --muted: #6b6b6b;
+
+  /* Palette */
+  --accent-1: #d95520; /* clay / terracotta */
+  --accent-2: #f2b134; /* saffron */
+  --accent-3: #106b5c; /* rich green */
+  --accent-4: #2b3a67; /* indigo */
+
+  /* UI */
+  --glass: rgba(255,255,255,0.6);
+  --shadow: 0 6px 20px rgba(16,16,16,0.12);
+
+  /* Motion */
+  --ease-1: cubic-bezier(.2,.9,.3,1);
+  --duration: 280ms;
+}
+
+/* Dark theme using prefers-color-scheme but can be toggled by adding .dark-theme on <html> */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #071014;
+    --surface: #0b1b1c;
+    --text: #f3f6f6;
+    --muted: #98a1a1;
+    --glass: rgba(10, 20, 20, 0.6);
+    --shadow: 0 10px 30px rgba(2,6,8,0.6);
+  }
+}
+html.dark-theme {
+  --bg: #071014;
+  --surface: #0b1b1c;
+  --text: #f3f6f6;
+  --muted: #98a1a1;
+  --glass: rgba(10, 20, 20, 0.6);
+  --shadow: 0 10px 30px rgba(2,6,8,0.6);
+}
+
+// =========== RESET & BASE =============
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html {
+  font-size: $base-font-size;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--bg);
+  color: var(--text);
+  line-height: $base-line-height;
+  font-family: system-ui, -apple-system, "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.02), transparent 50%), var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background var(--duration) var(--ease-1), color var(--duration) var(--ease-1);
+}
+
+img { max-width: 100%; display: block; height: auto; }
+
+// Accessibility: visible focus states
+:focus {
+  outline: 3px solid rgba(255, 180, 80, 0.18);
+  outline-offset: 3px;
+  transition: outline-offset 120ms;
+}
+
+// Respect reduced motion preference
+@media (prefers-reduced-motion: reduce) {
+  :root { --duration: 1ms; }
+  * { animation-duration: 1ms !important; transition-duration: 1ms !important; scroll-behavior: auto !important; }
+}
+
+// =========== TYPOGRAPHY =============
+h1,h2,h3,h4 {
+  font-family: "Playfair Display", serif;
+  color: var(--text);
+  margin: 0 0 rem(12);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+
+h1 { font-size: rem(40); }
+h2 { font-size: rem(28); }
+h3 { font-size: rem(20); }
+p { margin: 0 0 rem(18); color: var(--muted); }
+
+// Utility text
+.lead { font-size: rem(18); color: var(--text); margin-bottom: rem(18); }
+
+// =========== LAYOUT UTILITIES ============
+.container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 rem(18);
+  @include respond-to(md) { max-width: 1100px; padding: 0 rem(28); }
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 calc(-1 * rem(12));
+}
+.col {
+  padding: 0 rem(12);
+  flex: 1 1 100%;
+}
+.col-2 { flex: 0 0 50%; max-width: 50%; }
+.col-3 { flex: 0 0 33.333%; max-width: 33.333%; }
+@media (max-width: 767px) {
+  .col-2, .col-3 { flex-basis: 100%; max-width: 100%; }
+}
+
+// =========== NAV =============
+.site-header {
+  background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.0));
+  backdrop-filter: blur(6px);
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  box-shadow: var(--shadow);
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: rem(12) rem(18);
+}
+
+.site-logo { font-weight: 700; color: var(--accent-4); font-family: "Playfair Display", serif; font-size: rem(20); }
+
+.nav-links {
+  display: flex;
+  gap: rem(12);
+}
+.nav-links a {
+  color: var(--text);
+  text-decoration: none;
+  padding: rem(8) rem(12);
+  border-radius: rem(8);
+  transition: background var(--duration) var(--ease-1), transform var(--duration);
+}
+.nav-links a:hover { background: rgba(0,0,0,0.04); transform: translateY(-2px); }
+
+// =========== HERO =============
+.hero {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: rem(18);
+  padding: rem(48) rem(18);
+  align-items: center;
+  min-height: 56vh;
+  background-image: linear-gradient(120deg, rgba(217,85,32,0.06), rgba(16,107,92,0.03));
+}
+.hero .content { max-width: 720px; }
+.hero .eyebrow {
+  display: inline-block;
+  background: var(--accent-1);
+  color: white;
+  padding: rem(6) rem(10);
+  border-radius: rem(6);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: rem(12);
+  box-shadow: 0 6px 20px rgba(217,85,32,0.12);
+}
+.hero h1 { color: var(--accent-4); font-size: rem(44); margin-bottom: rem(12); }
+.hero p { color: var(--muted); font-size: rem(18); }
+
+// CTA group
+.cta {
+  display: inline-flex;
+  gap: rem(12);
+  margin-top: rem(18);
+}
+
+// =========== BUTTONS ============
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: rem(8);
+  padding: rem(10) rem(16);
+  border-radius: rem(10);
+  cursor: pointer;
+  border: none;
+  font-weight: 600;
+  background: var(--accent-2);
+  color: #111;
+  box-shadow: 0 8px 22px rgba(242,177,52,0.18);
+  transition: transform var(--duration) var(--ease-1), box-shadow var(--duration);
+}
+.btn:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.12); }
+.btn.alt {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid rgba(0,0,0,0.06);
+}
+.btn.ghost { background: transparent; box-shadow: none; color: var(--accent-4); }
+
+// =========== CARD COMPONENT ============
+.card {
+  background: linear-gradient(180deg, var(--surface), transparent);
+  border-radius: rem(14);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: transform var(--duration) var(--ease-1), box-shadow var(--duration);
+  display: flex;
+  flex-direction: column;
+}
+.card:hover { transform: translateY(-6px); box-shadow: 0 22px 50px rgba(11,17,22,0.18); }
+
+.card__media {
+  width: 100%;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+}
+.card__media img { width: 100%; height: 100%; object-fit: cover; transition: transform 600ms var(--ease-1); }
+.card:hover .card__media img { transform: scale(1.06) rotate(-0.3deg); }
+
+.card__body { padding: rem(16); }
+.card__title { font-size: rem(18); margin-bottom: rem(8); color: var(--accent-4); }
+.card__meta { font-size: rem(13); color: var(--muted); }
+
+// =========== GALLERY / GRID ============
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: rem(14);
+}
+@include respond-to(md) {
+  .gallery { grid-template-columns: repeat(3, 1fr); gap: rem(18); }
+}
+@include respond-to(lg) {
+  .gallery { grid-template-columns: repeat(4, 1fr); gap: rem(20); }
+}
+
+.gallery-item {
+  position: relative;
+  border-radius: rem(12);
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: 0 8px 30px rgba(2,6,10,0.06);
+  transition: transform var(--duration) var(--ease-1);
+}
+.gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 420ms var(--ease-1); }
+.gallery-item:hover { transform: translateY(-6px); }
+.gallery-item:hover img { transform: scale(1.04); }
+
+.gallery-caption {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.0), rgba(0,0,0,0.36));
+  color: #fff;
+  padding: rem(10);
+  font-size: rem(13);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+// =========== FORMS ============
+.input, textarea {
+  width: 100%;
+  padding: rem(12);
+  border-radius: rem(8);
+  border: 1px solid rgba(0,0,0,0.06);
+  background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4));
+  transition: box-shadow var(--duration);
+}
+.input:focus, textarea:focus { box-shadow: 0 10px 30px rgba(16,107,92,0.08); outline: none; }
+
+// =========== FOOTER ============
+.site-footer {
+  padding: rem(28);
+  background: linear-gradient(180deg, rgba(0,0,0,0.02), transparent);
+  color: var(--muted);
+  font-size: rem(14);
+}
+.site-footer a { color: var(--accent-2); text-decoration: none; }
+
+// =========== MICRO-INTERACTIONS ============
+.icon-spin { transition: transform 600ms var(--ease-1); }
+.btn:active .icon-spin { transform: rotate(12deg); }
+
+/* Subtle tilt effect using transform */
+.tilt {
+  transform: perspective(900px) rotateX(0deg) rotateY(0deg);
+  transition: transform 420ms var(--ease-1);
+}
+.tilt:hover { transform: perspective(900px) rotateX(2deg) rotateY(-2deg) translateY(-3px); }
+
+// =========== UTILITIES ============
+.text-center { text-align: center; }
+.upper { text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; font-size: rem(12); }
+.kicker { color: var(--accent-1); font-weight: 700; font-size: rem(12); }
+
+// =========== SMALL SCREEN NAV HACK ============
+.mobile-nav-toggle { display: none; }
+@include respond-to(sm) {
+  .nav-links { display: none; }
+  .mobile-nav-toggle { display: inline-flex; }
+}
+
+// End of _custom.scss
