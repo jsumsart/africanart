@@ -12,7 +12,7 @@ featured-image: coll032
 # optional: add extra padding around collection title for a larger image feature. 
 home-title-y-padding: 10em # Default is 8em
 # optional: change position of background image, center, top, bottom
-home-banner-image-position: top # was blank (center). Top often works better for portraits/figures.
+home-banner-image-position: center # was blank (center). Top often works better for portraits/figures.
 
 ##########
 # ITEM PAGE
@@ -87,7 +87,7 @@ navbar-color: navbar-dark
 # navbar background color
 # Choose from bg-primary, bg-secondary, bg-success, bg-danger, bg-warning, bg-info, bg-light, bg-dark, bg-white
 # Use bg-primary to pull in the deep green from your SCSS theme-colors.
-navbar-background: bg-primary
+navbar-background: bg-dark
 
 # BOOTSWATCH THEMES
 # You can replace the standard Bootstrap theme with a Bootswatch (https://github.com/thomaspark/bootswatch) option
