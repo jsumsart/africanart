@@ -7,13 +7,6 @@ body {
   color: #1f2933;                 /* Deep neutral for legibility */
   background-color: #f8f9fa;      /* Warm, gallery-like backdrop */
 
-  /* Optional subtle texture / vignette for depth (still minimal) */
-  background-image:
-    radial-gradient(circle at top left, rgba(248, 180, 80, 0.15), transparent 55%),
-    radial-gradient(circle at bottom right, rgba(34, 97, 72, 0.12), transparent 55%);
-  background-attachment: fixed;
-}
-
 /* Links */
 a {
   color: #b45309;                  /* Warm ochre accent */
