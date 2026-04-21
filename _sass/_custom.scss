@@ -201,7 +201,7 @@ a:focus {
   width: min(720px, calc(100% - 3rem));
   margin: 0 0 0 clamp(1rem, 6vw, 4.5rem);
   padding: 1.35rem 1.6rem 1.3rem;
-  top: clamp(18px, 3vw, 34px);
+  top: clamp(6px, 1.5vw, 16px);
   color: #fff;
   background: linear-gradient(135deg, rgba(14, 26, 46, 0.78), rgba(38, 49, 74, 0.58));
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -216,7 +216,7 @@ a:focus {
 }
 
 .site-hero-title h1 {
-  font-size: clamp(2.7rem, 4.5vw, 4.2rem);
+  font-size: clamp(2.35rem, 4vw, 3.65rem);
   line-height: 0.92;
   max-width: none;
 }
