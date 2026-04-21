@@ -24,14 +24,31 @@
     };
 
     /* get query id from URL */
-    var queryString = window.location.search.substring(1).split("=")[1];
+    var params = new URLSearchParams(window.location.search);
+    var queryString = params.get("id");
     var record = items[queryString];
     var compoundObject = children[queryString];
+
+    function escapeHtml(value) {
+        return String(value || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+    }
+
+    function splitTerms(value) {
+        if (!value) return [];
+        return value.split(";").map(function(term) {
+            return term.trim();
+        }).filter(Boolean);
+    }
 
     if (record) {
         /* add item title */
         var objectTitle = record.Title;
-        document.getElementById("bc-title").innerHTML = objectTitle;
+        document.getElementById("bc-title").textContent = objectTitle;
         /* get item format for item title */
         var itemFormat;
         if (compoundObject) {
@@ -43,8 +60,19 @@
         } else {
             itemFormat = record.format.replace("_", " ").toUpperCase();
         }
-        document.getElementById("item-format").innerHTML = itemFormat
-        document.getElementById("item-title").innerHTML = record.format.includes('record') ? objectTitle : objectTitle + '<a href="#item-metadata" class="ms-5 btn btn-sm btn-outline-dark small">Item Info {% include feature/icon.html icon="arrow-down" label="Down arrow" %}</a>';
+        document.getElementById("item-format").textContent = itemFormat;
+        document.getElementById("item-title").textContent = objectTitle;
+        document.getElementById("item-summary").textContent = record.Description || "This record is in progress and does not yet have a full object summary.";
+        var quickFacts = [];
+        if (record.Date) quickFacts.push({ label: "Date", value: record.Date });
+        if (record.Creator) quickFacts.push({ label: "Creator", value: record.Creator });
+        if (record.culture_community) quickFacts.push({ label: "Culture / Community", value: record.culture_community });
+        if (record["Geographic location"]) quickFacts.push({ label: "Place", value: record["Geographic location"] });
+        if (record.materials) quickFacts.push({ label: "Materials", value: record.materials });
+        if (record.object_type) quickFacts.push({ label: "Object Type", value: record.object_type });
+        document.getElementById("item-quickfacts").innerHTML = quickFacts.slice(0, 6).map(function(fact) {
+            return '<div class="record-quickfact"><span class="record-quickfact-label">' + escapeHtml(fact.label) + '</span><span class="record-quickfact-value">' + escapeHtml(fact.value) + '</span></div>';
+        }).join("");
         /* add object */ 
         var format = "" + record.format;
         var objectLink = record.filename;
@@ -88,17 +116,15 @@
             var fields = '<dl>';
             {% for f in fields %}{% if f.browse_link == "true" %}
             if (item[{{ f.field | jsonify }}]) {
-                var topics = item[{{ f.field | jsonify }}].split(';');
+                var topics = splitTerms(item[{{ f.field | jsonify }}]);
                 var browseLinks = "";
                 for (var i = 0, len = topics.length; i < len; i++) {
-                    if (topics[i] != "") {
-                        browseLinks += '<a class="btn btn-link" href="{{ '/browse.html' | relative_url }}?q=' + encodeURIComponent(topics[i].trim()) + '">' + topics[i].trim() + '</a> ';
-                    }
+                    browseLinks += '<a class="record-term-link" href="{{ '/browse.html' | relative_url }}?q=' + encodeURIComponent(topics[i]) + '">' + escapeHtml(topics[i]) + '</a> ';
                 }
                 fields += '<dt class="field">{{ f.display_name }}:</dt> <dd class="field-value">' + browseLinks + '</dd>';
             }
             {%- else -%}
-            if (item[{{ f.field | jsonify }}]) { fields += '<dt class="field">{{ f.display_name }}:</dt> <dd class="field-value">{% if f.external_link == "true" %}<a href="' + item[{{ f.field | jsonify }}] + '" target="_blank" rel="noopener">' + item[{{ f.field | jsonify }}] + '</a>{% else %}' + item[{{ f.field | jsonify }}] + '{% endif %}</dd>'; }
+            if (item[{{ f.field | jsonify }}]) { fields += '<dt class="field">{{ f.display_name }}:</dt> <dd class="field-value">{% if f.external_link == "true" %}<a href="' + item[{{ f.field | jsonify }}] + '" target="_blank" rel="noopener">' + escapeHtml(item[{{ f.field | jsonify }}]) + '</a>{% else %}' + escapeHtml(item[{{ f.field | jsonify }}]) + '{% endif %}</dd>'; }
             {% endif %}{% endfor %}
             fields += '</dl>';
             return fields;
@@ -106,7 +132,7 @@
 
         /* function to add download, timeline, and map links */
         function addButtons(item) {
-            itemLink = '<div class="btn-group" role="group" aria-label="Item options">'
+            itemLink = '';
             {% if stubs contains "timeline" %}
             /* add link to view on timeline */
             if (item.Date) {
@@ -141,7 +167,6 @@
             }
             {%- endif -%}
             itemLink += item.format.includes('compound_object') || item.format.includes('multiple') ? compoundDownload : itemDownload;
-            itemLink += '</div>'
         };
 
         /* create compound object cards */
@@ -328,26 +353,17 @@
             itemContent = `
                 <div class="mb-4">
                     ${itemImage}
-                    <div class="my-2">
-                        ${itemLink}
-                    </div>
                 </div>
             `
         } else if (record.format.includes('record')) {
             itemContent = `
                 <div class="mb-4 text-center">
-                    <div class="my-2">
-                        ${itemLink}
-                    </div>
                 </div>
             `
         } else if (record.format.includes('multiple')) {
             itemContent = `
                 <div class="mb-4 text-center">
                     ${itemImage}
-                    <div class="my-2">
-                        ${itemLink}
-                    </div>
                 </div>
             `
         } else if (record.format.includes('video')|| record.format.includes('audio')) {
@@ -355,9 +371,6 @@
                 <div class="card mb-4 text-center">
                     <div class="card-body">
                         ${itemImage}
-                        <div class="mt-2">
-                            ${itemLink}
-                        </div>
                     </div>
                 </div>
             `
@@ -368,9 +381,6 @@
                         <p>
                             ${itemImage}
                         </p>
-                        <div class="mt-2">
-                            ${itemLink}
-                        </div>
                     </div>
                 </div>
             `
@@ -378,13 +388,11 @@
             itemContent = `
                 <div class="card mb-4 text-center">
                     ${itemImage}
-                    <div class="card-body">
-                        ${itemLink}
-                    </div>
                 </div>
             `
         }
         document.getElementById("item-content").innerHTML = itemContent;
+        document.getElementById("item-links").innerHTML = itemLink;
         
         /* trigger Gallery for images */
         // ?
@@ -492,7 +500,7 @@
         
     } else {
         /* no item with that ID */
-        document.getElementById("bc-title").innerHTML = 'Not found?';
+        document.getElementById("bc-title").textContent = 'Not found?';
         document.getElementById("item-title").innerHTML = 'Sorry, item not found. Please visit <a href="{{ "/browse.html" | relative_url }}">Browse page</a> to find an item.';
     }
 

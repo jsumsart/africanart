@@ -15,6 +15,24 @@ var items = [
     { "title":{{ i["Title"] | strip | jsonify }}, "format":{% if i.format %}{{ i.format | jsonify }}{% else %}""{% endif %}, {% for f in fields %}{% if i[f.field] %}{{ f.field | jsonify }}:{{ i[f.field] | strip | jsonify }},{% endif %}{% endfor %} {% if i.youtubeid %} "youtube": {{ i.youtubeid | jsonify }}, {% endif %}{% if  i["File name"] contains '/' %}"filename": "{{ i["File name"] }}" {% else %}"filename":"{{ '/objects/' | relative_url | append: i["File name"] }}"{% endif %}, "link": "{% if i.parentid %}{{ i.parentid }}#{{ i["Object name"] }}{% else %}{{ i["Object name"] }}{% endif %}", "id":{{ i["Object name"] | jsonify }} }{% unless forloop.last %},{% endunless %}{% endfor %}
 ];
 
+var defaultSortField = "Title";
+
+function escapeHtml(value) {
+    return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
+function splitTerms(value) {
+    if (!value) return [];
+    return value.split(";").map(function(term) {
+        return term.trim();
+    }).filter(Boolean);
+}
+
 /* function to create cards for each item */ 
 function makeCard(obj) {
     // find item link
@@ -41,114 +59,109 @@ function makeCard(obj) {
     } else {
         thumbSrc = '{{ "/assets/lib/icons/" | relative_url }}{{ icons.icon-default }}.svg';
     }  
-    // start card
-    var card = '<div class="item col-lg-4 col-md-6 col-sm-12 mb-2"><div class="card">';
-    // top image for photos
+    var card = '<div class="item col-xl-4 col-md-6 col-sm-12 mb-4"><article class="collection-card">';
     if(imgSrc) {
-        card += '<a href="' + itemHref + '"> <img class="card-img-top lazyload" data-src="' + imgSrc + '" alt="Image of ' + obj.title + '"></a>';
+        card += '<a class="collection-card-media" href="' + itemHref + '"><img class="lazyload" data-src="' + imgSrc + '" alt="Image of ' + escapeHtml(obj.title) + '"></a>';
+    } else if (thumbSrc) {
+        card += '<a class="collection-card-media collection-card-thumb" href="' + itemHref + '"><img class="lazyload w-50" data-src="' + thumbSrc + '" alt="Media icon for ' + escapeHtml(obj.title) + '"></a>';
     }
-    // title
-    card += '<div class="card-body text-center"> <h3 class="card-title h4"><a href="' + itemHref + '" class="text-dark">' + obj.title + '</a></h3>';
-    // thumb for non-photo items
-    if(thumbSrc){
-        card += '<p><a href="' + itemHref + '"><img class="lazyload w-50" data-src="' + thumbSrc + '" alt="Image of ' + obj.title + '"></a></p>';
-    }
-    // other fields
-    card += '<p class="card-text">';
+    card += '<div class="collection-card-body">';
+    card += '<h3 class="collection-card-title"><a href="' + itemHref + '">' + escapeHtml(obj.title) + '</a></h3>';
+    card += '<div class="collection-card-meta">';
     {% for f in fields %}{% unless f.hidden == 'true' %}
     if(obj[{{ f.field | jsonify }}]){
+    card += '<div class="collection-meta-line">';
     {% if f.display_name %}card += '<strong>{{ f.display_name }}:</strong> ';{% endif %}
     {% if f.btn == 'true' %}
-    var btns = obj[{{ f.field | jsonify }}].split(";");
-    for (var i = 0, len = btns.length; i < len; i++) {
-      if(btns[i] != "") {
-        card += '<a class="btn btn-sm btn-secondary m-1 text-wrap" href="{{ '/browse.html' | relative_url }}?q=' + encodeURIComponent(btns[i].trim()) + '">' + btns[i].trim() + '</a>';
-      }
+    var btns = splitTerms(obj[{{ f.field | jsonify }}]);
+    if (btns.length) {
+        card += '<span class="term-cluster">';
+        for (var i = 0, len = btns.length; i < len; i++) {
+            card += '<a class="term-chip" href="{{ '/browse.html' | relative_url }}?q=' + encodeURIComponent(btns[i]) + '">' + escapeHtml(btns[i]) + '</a>';
+        }
+        card += '</span>';
     }
     {% else %}
-    card += obj[{{ f.field | jsonify }}];
+    card += escapeHtml(obj[{{ f.field | jsonify }}]);
     {% endif %}
-    {% unless forloop.last %}card += '<br>';{% endunless %}
+    card += '</div>';
     }
     {% endunless %}{% endfor %}
-    card += '</p>';
-    // media type
+    card += '</div>';
     if(obj.format != "") {
-        card += '<p class="card-text"><small><a class="btn btn-sm btn-outline-secondary" href="{{ '/browse.html' | relative_url }}?q=' + encodeURIComponent(obj.format) + '">' + 
-        obj.format.split("/").pop().replace("_", " ").toUpperCase() + ' <svg class="bi icon-sprite"><use xlink:href="{{ "/assets/lib/cb-icons.svg" | relative_url }}#';
-        if(obj.format.includes('image')){
-            card += 'icon-image';
-        } else if(obj.format.includes('audio')){
-            card += 'icon-audio';
-        } else if(obj.format.includes('video')){
-            card += 'icon-video';
-        } else if(obj.format.includes('multiple')){
-            card += 'icon-multiple';
-        } else if(obj.format.includes('compound')){
-            card += 'icon-compound-object';
-        } else {
-            card += 'icon-default';
-        }
-        card += '"></span></a></small></p>';
+        card += '<div class="collection-card-footer"><span class="collection-format-badge">' + 
+        escapeHtml(obj.format.split("/").pop().replace("_", " ").toUpperCase()) + '</span><a class="btn btn-sm btn-outline-dark" href="' + itemHref + '" title="link to ' + escapeHtml(obj.title) + '">View record</a></div>';
+    } else {
+        card += '<div class="collection-card-footer"><span class="collection-format-badge">Record</span><a class="btn btn-sm btn-outline-dark" href="' + itemHref + '" title="link to ' + escapeHtml(obj.title) + '">View record</a></div>';
     }
-    // view button
-    card += '<hr><a href="' + itemHref + '" class="btn btn-sm btn-light" title="link to ' + obj.title + '">View Full Record</a>';
-    // close divs
-    card += '</div></div></div>';
-    // send back big string
+    card += '</div></article></div>';
     return card;
+}
+
+function matchesQuery(item, q) {
+    if (!q) return true;
+    var query = q.trim().toUpperCase();
+    if (!query) return true;
+    var fieldsToSearch = [
+        item.title,
+        item.Description,
+        item.Subject,
+        item["Geographic location"],
+        item.culture_community,
+        item.materials,
+        item.object_type,
+        item.Creator,
+        item.Date,
+        item.format
+    ];
+    var haystack = fieldsToSearch.filter(Boolean).join(" ").toUpperCase();
+    return haystack.indexOf(query) !== -1;
+}
+
+function renderEmptyState(query) {
+    browseItemsDiv.innerHTML = '<div class="col-12"><div class="browse-empty">No records matched <strong>' + escapeHtml(query) + '</strong>. Try a broader place, subject, or material term.</div></div>';
 }
 
 /* filter items function */
 function filterItems(arr,q) {
-    // show loading icon
     loadingIcon.classList.remove("d-none");
-    // dont filter if no q 
-    if (q=="") { 
-        var filteredItems = arr; 
-    } else {
-        q = q.trim().toUpperCase(); 
-        // js indexOf filter
-        var filteredItems = [];
-        for (var i = 0, len = arr.length; i < len; i++) {
-            var val = "";
-        for (var k in arr[i]) { val += arr[i][k] + " "; }
-            if(val.toUpperCase().indexOf(q) != -1){
-                filteredItems.push(arr[i]);
-            }
-        }
-    }
-    // add number 
+    var filteredItems = arr.filter(function(item) {
+        return matchesQuery(item, q);
+    });
     document.querySelector("#numberOf").innerHTML = filteredItems.length + " of " + items.length + " items";
-    
-    // add stuff, make cards first in giant var, then add all at once to speed things up
+
+    if (!filteredItems.length) {
+        renderEmptyState(q || "this search");
+        loadingIcon.classList.add("d-none");
+        return;
+    }
+
     var cards = "";
     for (var i = 0, len = filteredItems.length; i < len; i++) {
         cards += makeCard(filteredItems[i]);
     }
     browseItemsDiv.innerHTML = cards;
-
-    // finish
-    filterButton.focus();
     loadingIcon.classList.add("d-none");
 };
 
 /* Fisher-Yates shuffle https://bost.ocks.org/mike/shuffle/ */
 function shuffle(array) {
-    var m = array.length, t, i;
+    var copy = array.slice();
+    var m = copy.length, t, i;
     while (m) {
         i = Math.floor(Math.random() * m--);
-        t = array[m];
-        array[m] = array[i];
-        array[i] = t;
+        t = copy[m];
+        copy[m] = copy[i];
+        copy[i] = t;
     }
-    return array;
+    return copy;
 }
 
 /* init browse page */
 
-/* randomize items once at page load */
-shuffle(items);
+var baseItems = items.slice();
+sorting(baseItems, defaultSortField);
+items = baseItems;
 
 /* set some elements */ 
 var loadingIcon = document.querySelector("#loadingIcon");
@@ -202,22 +215,19 @@ var sortFilter = document.querySelector("#sortFilter");
 var sortOptions = document.querySelectorAll(".browse-sort-item");
 sortOptions.forEach((button) => {
   button.addEventListener("click", (event) => {
-    // get the sort field
     var field = button.dataset.filter;
     var display_name = button.textContent;
-    // get current filter
     var query = filterTextBox.value;
-    // switch active sort option
     sortOptions.forEach((option) => { option.classList.remove("active"); } );
     button.classList.add("active");
     sortFilter.innerHTML = display_name;
-    // send to sort and filter
     if (field != 'random') {
+        items = baseItems.slice();
         sorting(items, field);
         filterItems(items, query);
     }
     else {
-        shuffle(items);
+        items = shuffle(baseItems);
         filterItems(items, query);
     }
   });

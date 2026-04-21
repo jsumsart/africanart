@@ -10,52 +10,52 @@ layout: page
 <section class="landing-shell">
   <div class="landing-grid">
     <div class="landing-copy">
-      <p class="landing-kicker">Digital Research Collection</p>
-      <h2 class="landing-title">A stronger front door for the Jackson State University African Art Collection.</h2>
-      <p class="landing-lead">This site is being rebuilt as a fuller research and teaching resource: more intentional interpretation, more culturally responsive metadata, and better pathways for discovery.</p>
+      <p class="landing-kicker">Public Portal</p>
+      <h2 class="landing-title">A more complete digital home for the Jackson State University African Art Collection.</h2>
+      <p class="landing-lead">This collection site is being reshaped as a research-ready, teaching-centered, and visually stronger public resource: grounded in richer cataloging, clearer interpretation, and more thoughtful pathways into the objects.</p>
       <div class="landing-actions">
-        <button class="btn btn-primary btn-lg" type="button" data-auth-trigger>Enter Staff Collection</button>
-        <a class="btn btn-outline-dark btn-lg" href="{{ '/about.html' | relative_url }}">About The Collection</a>
+        <a class="btn btn-outline-dark btn-lg" href="{{ '/about.html' | relative_url }}">About the collection</a>
+        <button class="btn btn-primary btn-lg" type="button" data-auth-trigger>Enter research portal</button>
       </div>
       <div class="landing-stats">
         <article class="landing-stat-card">
           <span class="landing-stat-value">{{ items | size }}</span>
-          <span class="landing-stat-label">Cataloged objects online</span>
+          <span class="landing-stat-label">Objects currently represented in the online catalog</span>
         </article>
         <article class="landing-stat-card">
           <span class="landing-stat-value">{{ communities | size }}</span>
-          <span class="landing-stat-label">Culture and community references</span>
+          <span class="landing-stat-label">Culture and community references surfaced in the metadata</span>
         </article>
         <article class="landing-stat-card">
           <span class="landing-stat-value">{{ places | size }}</span>
-          <span class="landing-stat-label">Geographic locations represented</span>
+          <span class="landing-stat-label">Places connected to the collection records</span>
         </article>
         <article class="landing-stat-card">
           <span class="landing-stat-value">{{ dates | size }}</span>
-          <span class="landing-stat-label">Date expressions in the catalog</span>
+          <span class="landing-stat-label">Chronological expressions preserved in the catalog</span>
         </article>
       </div>
     </div>
     <aside class="access-panel" data-home-locked>
-      <p class="access-eyebrow">Collection Access</p>
-      <h3>Unlock the staff collection workspace</h3>
-      <p class="access-text">Browse, item records, search tools, maps, timelines, and data exports are currently behind a lightweight password layer while the site is being refined.</p>
+      <p class="access-eyebrow">Staff Access</p>
+      <h3>Open the research and collections workspace.</h3>
+      <p class="access-text">The catalog tools currently sit behind a lightweight password layer while metadata, interpretation, and design continue to be refined. Staff and project collaborators can unlock browse, search, maps, timelines, and data views here.</p>
       <div class="access-alert d-none" data-auth-alert></div>
       <form class="access-form" data-auth-form>
         <label class="form-label" for="staff-password">Staff password</label>
         <input class="form-control form-control-lg" id="staff-password" name="password" type="password" autocomplete="current-password" required>
         <input type="hidden" name="next" value="{{ '/browse.html' | relative_url }}">
-        <button class="btn btn-primary btn-lg w-100" type="submit">Unlock Collection</button>
+        <button class="btn btn-primary btn-lg w-100" type="submit">Unlock research portal</button>
       </form>
-      <p class="access-footnote">This is a temporary front-end gate for project development, not a permanent secure login system.</p>
+      <p class="access-footnote">This is a temporary front-end gate for project development rather than a permanent secure login system.</p>
     </aside>
     <aside class="access-panel d-none" data-home-unlocked>
-      <p class="access-eyebrow">Collection Unlocked</p>
+      <p class="access-eyebrow">Research Portal</p>
       <h3>The collection workspace is open.</h3>
-      <p class="access-text">Use the browse, search, map, timeline, and data tools from the navigation, or jump directly back into the records.</p>
+      <p class="access-text">Continue into the catalog tools from the navigation, or jump directly back into the records to browse, search, map, and review metadata.</p>
       <div class="landing-actions landing-actions-stacked">
-        <a class="btn btn-primary btn-lg" href="{{ '/browse.html' | relative_url }}">Open Browse</a>
-        <a class="btn btn-outline-dark btn-lg" href="{{ '/search.html' | relative_url }}">Open Search</a>
+        <a class="btn btn-primary btn-lg" href="{{ '/browse.html' | relative_url }}">Browse the catalog</a>
+        <a class="btn btn-outline-dark btn-lg" href="{{ '/search.html' | relative_url }}">Search the collection</a>
         <button class="btn btn-link" type="button" data-auth-logout>Lock Collection</button>
       </div>
     </aside>
@@ -65,28 +65,29 @@ layout: page
     <section class="landing-feature-panel">
       <div class="landing-panel-header">
         <p class="landing-kicker">Collection Preview</p>
-        <h3>Selected objects from the catalog</h3>
+        <h3>Selected objects currently in the digital catalog</h3>
+        <p class="section-lead">A rotating view into the collection as the public-facing experience and internal research tools continue to develop in tandem.</p>
       </div>
-      {% include index/carousel.html title="Collection Highlights" height="420" btn-color="light" btn-text="View Record" %}
+      {% include index/carousel.html title="Collection Highlights" height="420" btn-color="light" btn-text="Open Record" %}
     </section>
 
     <section class="landing-feature-panel">
       <div class="landing-panel-header">
         <p class="landing-kicker">Catalog Direction</p>
-        <h3>Metadata is being reshaped for specificity, context, and care.</h3>
+        <h3>The catalog is being rebuilt around context, specificity, and care.</h3>
       </div>
       <div class="landing-note-grid">
         <article class="landing-note-card">
           <h4>Culturally responsive description</h4>
-          <p>Records are being revised to move beyond generic labels and to foreground culture, function, context, and provenance where possible.</p>
+          <p>Records are being revised to move beyond generic labels and to foreground culture, function, context, and provenance wherever possible.</p>
         </article>
         <article class="landing-note-card">
           <h4>Research-centered access</h4>
-          <p>The collection supports teaching, student research, curatorial study, and future collections management work through a cleaner metadata model.</p>
+          <p>The collection supports teaching, student research, curatorial study, and future collections management work through a cleaner, more intentional metadata model.</p>
         </article>
         <article class="landing-note-card">
           <h4>Single-source cataloging</h4>
-          <p>The public site now reads from one master MDL-aligned catalog file rather than a separate duplicate website spreadsheet.</p>
+          <p>The site now reads from one MDL-aligned master catalog file, reducing duplicate maintenance and keeping cataloging and web presentation in closer alignment.</p>
         </article>
       </div>
     </section>
@@ -94,10 +95,18 @@ layout: page
 
   <div class="landing-secondary-grid">
     <section class="landing-feature-panel">
+      <div class="landing-panel-header">
+        <p class="landing-kicker">Collection Scope</p>
+        <h3>Time span and media at a glance</h3>
+      </div>
       {% include index/time.html %}
       {% include index/objects.html %}
     </section>
     <section class="landing-feature-panel">
+      <div class="landing-panel-header">
+        <p class="landing-kicker">Discovery Threads</p>
+        <h3>Subjects and places shaping the catalog</h3>
+      </div>
       {% include index/featured-terms.html field="Subject" title="Subject Threads" btn-color="primary" max=8 %}
       {% include index/featured-terms.html field="Geographic location" title="Places in the Collection" btn-color="outline-secondary" max=8 %}
     </section>

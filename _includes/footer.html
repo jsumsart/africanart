@@ -1,51 +1,39 @@
-<footer class="bg-dark pt-4 mt-auto container-fluid">
-
-    <div class="row border-bottom border-white pb-4 mb-2">
-
-        <div class="col-md-7  px-4 mt-2">
-
-            <h2 class="h4"><a href="{{ '/' | relative_url }}" class="text-white font-weight-normal">{{ site.title }}</a></h2>
-            <p class="text-white"><small>{{ site.description }}</small></p>
-            <nav>
-                <ul id="footer-nav" class="nav nav-pills ">
+<footer class="mt-auto container-fluid footer">
+    <div class="footer-shell">
+        <div class="footer-grid">
+            <div>
+                <h2 class="h3 mb-3"><a href="{{ '/' | relative_url }}" class="text-white text-decoration-none">{{ site.title }}</a></h2>
+                <p class="footer-note mb-0">{{ site.description }}</p>
+                <nav class="footer-nav" aria-label="Footer navigation">
                     {%- assign navItems = site.data.config-nav | where_exp: 'item', 'item.dropdown_parent == nil' -%}
                     {% for nav in navItems %}
-                    <li class="nav-item">
-                    {% if nav.stub %}
-                        <a class="nav-link text-light{% if page.url == nav.stub %} active{% endif %}" href="{{ nav.stub | relative_url }}">{{ nav.display_name }}</a>
-                    {%- else -%}
-                    {% assign childStub = site.data.config-nav | where_exp: 'item', 'item.dropdown_parent == nav.display_name' | first %}
-                        <a class="nav-link text-light{% if page.url == childStub.stub %} active{% endif %}" href="{{ childStub.stub | relative_url }}">{{ nav.display_name }}</a>
+                    {% assign is_public_nav = false %}
+                    {% if nav.stub == "/" or nav.stub == "/about.html" %}
+                    {% assign is_public_nav = true %}
                     {% endif %}
-                    </li>
-                    {%- endfor -%}
-                </ul>
-            </nav>
-
-        </div>
-
-        <div class="col-md-5 mt-2 text-end">
-
-           {% if site.organization-logo-nav %} <p class="text-end">
-                <a href="{{ site.organization-link }}" target="_blank" rel="noopener">
-                    <img id="footer-logo" class="img-fluid" src="{{ site.organization-logo-nav | relative_url }}" alt="{{ site.organization-name }} home">
-                </a>
-            </p>
-            {% endif %}
-            <p class="text-white" id="footer-credits">
-                <small><em>built with</em>
-                    <a href="https://collectionbuilder.github.io/" target="_blank" rel="noopener" title="CollectionBuilder">
-                        <img src="{{ '/assets/img/collectionbuilder-logo.png' | relative_url }}" class="img-fluid" alt="CollectionBuilder logo" >
+                    {% if is_public_nav %}
+                    <a class="nav-link p-0{% if page.url == nav.stub %} active{% endif %}" href="{{ nav.stub | relative_url }}">{{ nav.display_name }}</a>
+                    {% else %}
+                    <a class="nav-link p-0 d-none" href="{{ nav.stub | relative_url }}" data-protected-nav="true">{{ nav.display_name }}</a>
+                    {% endif %}
+                    {% endfor %}
+                </nav>
+            </div>
+            <div class="text-md-end">
+                {% if site.organization-logo-nav %}
+                <p class="mb-3">
+                    <a href="{{ site.organization-link }}" target="_blank" rel="noopener">
+                        <img id="footer-logo" class="img-fluid" src="{{ site.organization-logo-nav | relative_url }}" alt="{{ site.organization-name }} home">
                     </a>
-                </small>
-            </p>
-
+                </p>
+                {% endif %}
+                <p class="footer-note mb-2">Research, teaching, and collections stewardship for the Jackson State University African Art Collection.</p>
+                <p class="footer-note mb-0"><em>Built with</em> <a href="https://collectionbuilder.github.io/" target="_blank" rel="noopener" title="CollectionBuilder">CollectionBuilder</a>.</p>
+            </div>
         </div>
-
+        <div class="footer-meta">
+            <span>Last updated {{ site.time | date: '%B %Y' }}</span>
+            <span>Jackson State University Department of Art, Theatre, and Dance</span>
+        </div>
     </div>
-
-    <div class="col-md-12 text-center pt-3 pb-1">
-        <p class="text-white">Last updated {{ site.time | date: '%Y' }}</p>
-    </div>
-
 </footer>

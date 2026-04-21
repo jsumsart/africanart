@@ -6,11 +6,35 @@ custom-foot: js/browse-js.html
 
 {{ content }}
 
+<section class="page-hero">
+    <div class="page-hero-grid">
+        <div>
+            <p class="section-kicker">Research Portal</p>
+            <h1 class="page-title">Browse the collection catalog</h1>
+            <p class="page-intro">Move through the collection by object title, culture or community, place, subject, material, and format. This view is meant for active catalog work and research review, so it emphasizes discoverability over exhibition-style storytelling.</p>
+        </div>
+        <div class="browse-guide-grid">
+            <article class="browse-guide-card">
+                <h3 class="h5">Start broad</h3>
+                <p>Try object types, communities, places, or themes instead of full titles to quickly surface patterns across the catalog.</p>
+            </article>
+            <article class="browse-guide-card">
+                <h3 class="h5">Use chips sparingly</h3>
+                <p>Metadata links below each record jump into shared terms, making it easier to follow subjects or places across related objects.</p>
+            </article>
+            <article class="browse-guide-card">
+                <h3 class="h5">Review record detail</h3>
+                <p>Each record page now serves as a fuller object page, with quick facts up front and the full metadata record below.</p>
+            </article>
+        </div>
+    </div>
+</section>
+
 <section class="browse-toolbar">
     <div class="browse-toolbar-copy">
         <p class="landing-kicker mb-2">Collection Records</p>
-        <h2 class="mb-2">Browse the catalog</h2>
-        <p class="text-muted mb-0">Filter by title, place, subject, material, format, or culture and community terms from the catalog.</p>
+        <h2 class="mb-2">Filter and sort the working catalog</h2>
+        <p class="text-muted mb-0">Search across titles, descriptions, places, materials, and community terms, then sort the results to inspect the catalog from different angles.</p>
     </div>
     <div class="browse-toolbar-controls">
         <form role="search" id="lunrSearch" onsubmit="submitFilter(); return false;">
@@ -21,14 +45,17 @@ custom-foot: js/browse-js.html
             </div>
         </form>
         <div class="browse-toolbar-meta">
-            <div class="h4 mb-0" id="numberOf"></div>
+            <div>
+                <div class="h4 mb-0" id="numberOf"></div>
+                <div class="browse-results-meta">Showing records from the master MDL-aligned catalog.</div>
+            </div>
             <div class="dropdown">
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="browseSortButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Sort by <span class="font-weight-bold" id="sortFilter">Random</span>
+                    Sort by <span class="font-weight-bold" id="sortFilter">Title</span>
                 </button>
                 <div class="dropdown-menu browse-sort-menu" aria-labelledby="browseSortButton">
-                    <button class="dropdown-item browse-sort-item active" data-filter="random">Random</button>
-                    <button class="dropdown-item browse-sort-item" data-filter="Title">Title</button>
+                    <button class="dropdown-item browse-sort-item active" data-filter="Title">Title</button>
+                    <button class="dropdown-item browse-sort-item" data-filter="random">Random</button>
                     {% assign sort_options = site.data.config-browse | where_exp: 'i','i.sort_name != nil' %}
                     {% for o in sort_options %}
                     <button class="dropdown-item browse-sort-item" data-filter="{{ o.field | escape }}">{{ o.sort_name }}</button>

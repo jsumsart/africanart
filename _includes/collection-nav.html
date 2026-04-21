@@ -1,15 +1,15 @@
 <nav class="navbar navbar-expand-lg {{ site.data.theme.navbar-color | default: 'navbar-dark' }} {{ site.data.theme.navbar-background | default: 'bg-dark' }}">
     <div class="container">
-        <a class="navbar-brand d-lg-none fw-semibold" href="{{ '/' | relative_url }}">JSU African Art</a>
+        <a class="navbar-brand" href="{{ '/' | relative_url }}">
+            <span class="brand-mark" aria-hidden="true">JSU</span>
+            <span class="brand-copy">
+                <span class="brand-overline">Jackson State University</span>
+                <span class="brand-title">African Art Collection</span>
+            </span>
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#page-nav" aria-controls="page-nav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-
-        {% if site.organization-logo-nav %}<span class="d-lg-none text-end">
-            <a href="{{ site.organization-link }}" target="_blank" rel="noopener">
-                <img class="img-fluid" id="mobile-nav-image" src="{{ site.organization-logo-nav | relative_url }}" title="{{ site.organization-name }}" alt="{{ site.organization-name }} home" >
-            </a>
-        </span>{% endif %}
         
         <div class="collapse navbar-collapse" id="page-nav">
             <ul class="navbar-nav me-auto">
@@ -42,7 +42,8 @@
                 {% include nav-search-lunr.html %}
             </div>
             <div class="nav-access-controls d-flex align-items-center gap-2 ms-lg-3">
-                <a class="btn btn-sm btn-outline-light d-none" href="{{ '/browse.html' | relative_url }}" data-auth-open>Open Collection</a>
+                <span class="nav-gate-label d-none d-lg-inline">Research Portal</span>
+                <a class="btn btn-sm btn-outline-light d-none" href="{{ '/browse.html' | relative_url }}" data-auth-open>Enter Catalog</a>
                 <button class="btn btn-sm btn-outline-light" type="button" data-auth-trigger>{{ site.data.theme.staff-gate-label | default: "Staff Access" }}</button>
                 <button class="btn btn-sm btn-light d-none" type="button" data-auth-logout>Lock</button>
             </div>
