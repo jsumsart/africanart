@@ -3,7 +3,7 @@
 (function () {
     const homeUrl = {{ '/' | relative_url | jsonify }};
     const browseUrl = {{ '/browse.html' | relative_url | jsonify }};
-    const publicPaths = {{ site.data.theme.staff-gate-public-paths | split: ';' | jsonify }};
+    const publicPaths = [{% assign gate_public_paths = site.data.theme.staff-gate-public-paths | split: ';' %}{% for p in gate_public_paths %}{{ p | relative_url | jsonify }}{% unless forloop.last %}, {% endunless %}{% endfor %}];
     const sessionKey = {{ site.data.theme.staff-gate-session-key | default: 'jsu-african-art-access' | jsonify }};
     const passwordHash = {{ site.data.theme.staff-gate-password-sha256 | jsonify }};
     const label = {{ site.data.theme.staff-gate-label | default: 'Staff Access' | jsonify }};
