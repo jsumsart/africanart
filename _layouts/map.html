@@ -4,4 +4,29 @@ layout: default
 custom-foot: js/map-js.html
 ---
 
-<div id="map"></div>
+<div class="page-shell page-shell-wide">
+    <section class="page-hero page-hero-compact">
+        <div class="page-hero-grid page-hero-grid-tight">
+            <div>
+                <p class="section-kicker">Research Portal</p>
+                <h1 class="page-title">{{ page.title }}</h1>
+                <p class="page-intro">Explore the geographic language of the collection through mapped records with coordinates. This view is useful for identifying regional patterns, catalog gaps, and shared place references.</p>
+            </div>
+            <div class="page-aside-card">
+                <h2 class="h5">How to use this map</h2>
+                <p>Select markers to preview object records, or use the built-in map search to surface specific titles, communities, or places.</p>
+            </div>
+        </div>
+    </section>
+    <section class="research-panel map-panel">
+        <div class="research-panel-header">
+            <div>
+                <p class="section-kicker">Geographic View</p>
+                <h2 class="record-section-title">Spatial references in the catalog</h2>
+            </div>
+        </div>
+        <div class="map-stage">
+            <div id="map"></div>
+        </div>
+    </section>
+</div>

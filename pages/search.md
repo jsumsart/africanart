@@ -6,4 +6,4 @@ permalink: /search/
 # Lunr.js search will be added below the content in this file
 ---
 
-## Full metadata search:
+Search across the object title, description, date, culture or community, place, medium, subject, and other indexed fields in the master catalog.

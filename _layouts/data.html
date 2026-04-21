@@ -6,17 +6,39 @@ custom-foot: js/table-js.html
 {% assign fields = site.data.config-table | map: 'display_name' %}
 {% include data-download-modal.html %}
 
-{{ content }}
+<section class="page-hero page-hero-compact">
+    <div class="page-hero-grid page-hero-grid-tight">
+        <div>
+            <p class="section-kicker">Research Portal</p>
+            <h1 class="page-title">Collection data</h1>
+            <p class="page-intro">Review the working catalog as a sortable table, then export public-facing metadata in reusable formats for analysis, teaching, or downstream systems.</p>
+        </div>
+        <div class="page-aside-card">
+            <h2 class="h5">What this table shows</h2>
+            <p>The table emphasizes key public-facing fields from the master MDL-aligned record set. It is meant for review and export, not full catalog editing.</p>
+            <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#dataModal">Download data</button>
+        </div>
+    </div>
+</section>
 
-<div class="table-responsive-md">
-    <table id="item-table" class="table table-striped">
-        <thead>
-            <tr>
-                {% for f in fields %}
-                <th scope="col">{{ f }}</th>
-                {% endfor %}
-                <th>Link</th>
-            </tr>
-        </thead>
-    </table>
-</div>
+<section class="research-panel data-panel">
+    <div class="research-panel-header">
+        <div>
+            <p class="section-kicker">Catalog Table</p>
+            <h2 class="record-section-title">Sortable metadata view</h2>
+            <p class="section-lead">{{ content | strip_html | strip }}</p>
+        </div>
+    </div>
+    <div class="table-responsive-md data-table-shell">
+        <table id="item-table" class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    {% for f in fields %}
+                    <th scope="col">{{ f }}</th>
+                    {% endfor %}
+                    <th>Link</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</section>

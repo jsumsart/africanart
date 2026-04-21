@@ -5,13 +5,23 @@
 layout: page
 ---
 
-{{ content }}
+<section class="page-hero page-hero-compact">
+    <div class="page-hero-grid page-hero-grid-tight">
+        <div>
+            <p class="section-kicker">Research Portal</p>
+            <h1 class="page-title">{{ page.title }}</h1>
+            <p class="page-intro">{{ content | strip_html | strip }}</p>
+        </div>
+        <div class="page-aside-card">
+            <h2 class="h5">How to read this view</h2>
+            <p>Term size reflects how often a value appears in the current public record set. Select any term to jump into the browse catalog with that value pre-filtered.</p>
+        </div>
+    </div>
+</section>
 
 {%- comment -%}
-
-    Figure out default "Subjects" and "Locations" page cloud values as configured in in "theme.yml", 
+    Figure out default "Subjects" and "Locations" page cloud values as configured in in "theme.yml",
     and set default values for cloud include.
-
 {%- endcomment -%}
 {%- if page.cloud-fields == "site.data.theme.subjects-fields" -%}
     {% assign fields = site.data.theme.subjects-fields %}
@@ -28,5 +38,13 @@ layout: page
 {%- endif -%}
 
 {% assign cloud_id = "cloud-div-" | append: fields | slugify %}
-<div id="{{ cloud_id }}" class="text-center my-4 bg-{{ page.background | default: 'light' }} border rounded p-2"></div>
+<section class="research-panel cloud-panel">
+    <div class="research-panel-header">
+        <div>
+            <p class="section-kicker">Term View</p>
+            <h2 class="record-section-title">{{ page.cloud-heading | default: page.title }}</h2>
+        </div>
+    </div>
+    <div id="{{ cloud_id }}" class="cloud-stage"></div>
+</section>
 {% include js/cloud-js.html fields=fields min=min stopwords=stopwords button=page.button shuffle=page.shuffle id=cloud_id %}

@@ -58,7 +58,7 @@
         {% if include.shuffle == true %}shuffle(array);{% endif %}
         for (i = 0; i < array.length; i++) {
             size = mapSize(array[i][1]);
-            items += '<a class="btn btn-{{ page.button | default: "outline-primary" }} m-2 tagcloud' + size + '" href="{{ "/browse.html" | relative_url }}?q=' + encodeURIComponent(array[i][0]) + '" >' + array[i][0] + '</a>';
+            items += '<a class="cloud-term cloud-term-' + size + '" href="{{ "/browse.html" | relative_url }}?q=' + encodeURIComponent(array[i][0]) + '"><span class="cloud-term-label">' + array[i][0] + '</span><span class="cloud-term-count">' + array[i][1] + '</span></a>';
         }
         cloud.innerHTML = items;
     }
