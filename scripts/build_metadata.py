@@ -154,7 +154,13 @@ def source_index_by_objectid():
 def normalize_subjects(value: str) -> str:
     if not value:
         return ""
-    parts = [part.strip() for part in value.split(",") if part.strip()]
+    raw_parts = re.split(r"[;,]", value)
+    parts = []
+    for part in raw_parts:
+        cleaned = re.sub(r"^(and|or)\s+", "", part.strip(), flags=re.IGNORECASE)
+        cleaned = re.sub(r"\s+", " ", cleaned).strip(" .")
+        if cleaned:
+            parts.append(cleaned)
     return "; ".join(parts)
 
 
