@@ -201,7 +201,7 @@ a:focus {
   width: min(720px, calc(100% - 3rem));
   margin: 0 0 0 clamp(1rem, 6vw, 4.5rem);
   padding: 1.35rem 1.6rem 1.3rem;
-  top: 0;
+  top: -28px;
   color: #fff;
   background: linear-gradient(135deg, rgba(14, 26, 46, 0.78), rgba(38, 49, 74, 0.58));
   border: 1px solid rgba(255, 255, 255, 0.1);
