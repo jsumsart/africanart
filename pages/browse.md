@@ -6,4 +6,4 @@ permalink: /browse.html
 # the Browse visualization will be added below the content in this file
 ---
 
-Browse the working catalog through titles, cultures or communities, places, materials, object types, and recurring subject terms.
+Browse the catalog through titles, cultures or communities, places, materials, object types, and recurring subject terms.

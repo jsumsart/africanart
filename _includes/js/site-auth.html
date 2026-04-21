@@ -97,7 +97,7 @@
             return;
         }
         focusAuthForm();
-        showAlert("Enter the " + label.toLowerCase() + " password to open the research portal.", "info");
+        showAlert("Enter the " + label.toLowerCase() + " password to open research access.", "info");
     }
 
     async function handleSubmit(event) {
@@ -116,7 +116,7 @@
             return;
         }
         passwordInput.value = "";
-        showAlert("That password didn’t work. Please try again.", "error");
+        showAlert("That password was not recognized. Please try again.", "error");
         passwordInput.focus();
     }
 
@@ -157,7 +157,7 @@
     }
 
     if (!unlocked && isPublicPage() && (params.get("auth") === "required" || params.get("auth") === "prompt")) {
-        showAlert("The research portal is behind a temporary staff password layer while the site is still being refined. Enter the password below to continue.", "info");
+        showAlert("Research access is currently protected by a temporary password layer while the site remains in active development. Enter the password below to continue.", "info");
         if (normalizePath(window.location.pathname) === normalizePath(homeUrl)) {
             window.setTimeout(focusAuthForm, 250);
         }

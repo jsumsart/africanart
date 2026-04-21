@@ -21,8 +21,8 @@
                 {% if site.data.theme.metadata-export-fields %}
                 <div class="card my-3 data-export-card">
                     <div class="card-body">
-                        <h2 class="card-title h4">Complete Metadata</h2>
-                        <p class="card-text">All exportable metadata fields for the public collection records, available as CSV or JSON.</p>
+                        <h2 class="card-title h4">Collection Metadata</h2>
+                        <p class="card-text">Exportable public-facing metadata for the collection records, available as CSV or JSON.</p>
                         <a href="{{ '/assets/data/metadata.csv' | relative_url }}" class="btn btn-outline-dark" target="_blank">Metadata CSV</a>
                         <a href="{{ '/assets/data/metadata.json' | relative_url }}" class="btn btn-outline-dark" target="_blank">Metadata JSON</a>
                     </div>
@@ -32,7 +32,7 @@
                 <div class="card my-3 data-export-card">
                     <div class="card-body">
                         <h2 class="card-title h4">Metadata Facets</h2>
-                        <p class="card-text">Unique values and their counts for selected metadata fields, useful for understanding term distribution.</p>
+                        <p class="card-text">Unique values and counts for selected metadata fields, useful for understanding term distribution.</p>
                         <a href="{{ '/assets/data/facets.json' | relative_url }}" class="btn btn-outline-dark" target="_blank">Facets JSON</a>
                     </div>
                 </div>
@@ -40,8 +40,8 @@
                 {% if stubs contains "subject" %}
                 <div class="card my-3 data-export-card">
                     <div class="card-body">
-                        <h2 class="card-title h4">Subject Metadata</h2>
-                        <p class="card-text">Unique subject values and counts for the current collection records.</p>
+                        <h2 class="card-title h4">Subject Terms</h2>
+                        <p class="card-text">Unique subject values and counts drawn from the current collection records.</p>
                         <a href="{{ '/assets/data/subjects.csv' | relative_url }}" class="btn btn-outline-dark" target="_blank">Subjects CSV</a>
                         <a href="{{ '/assets/data/subjects.json' | relative_url }}" class="btn btn-outline-dark" target="_blank">Subjects JSON</a>
                     </div>
@@ -50,8 +50,8 @@
                 {% if stubs contains "location" %}
                 <div class="card my-3 data-export-card">
                     <div class="card-body">
-                        <h2 class="card-title h4">Locations</h2>
-                        <p class="card-text">Unique geographic values and counts drawn from the public catalog.</p>
+                        <h2 class="card-title h4">Geographic Terms</h2>
+                        <p class="card-text">Unique geographic values and counts drawn from the current public catalog.</p>
                         <a href="{{ '/assets/data/locations.csv' | relative_url }}" class="btn btn-outline-dark" target="_blank">Locations CSV</a>
                         <a href="{{ '/assets/data/locations.json' | relative_url }}" class="btn btn-outline-dark" target="_blank">Locations JSON</a>
                     </div>
@@ -69,8 +69,8 @@
                 {% if stubs contains "timeline" %}
                 <div class="card my-3 data-export-card">
                     <div class="card-body">
-                        <h2 class="card-title h4">Timeline</h2>
-                        <p class="card-text">A time-focused JSON data export designed for use with <a href="https://timeline.knightlab.com/" target="_blank" rel="noopener">TimelineJS</a>.</p>
+                        <h2 class="card-title h4">Timeline Data</h2>
+                        <p class="card-text">A chronology-focused JSON export designed for use with <a href="https://timeline.knightlab.com/" target="_blank" rel="noopener">TimelineJS</a>.</p>
                         <a href="{{ '/assets/data/timelinejs.json' | relative_url }}" class="btn btn-outline-dark" target="_blank">TimelineJS JSON</a>
                     </div>
                 </div>

@@ -8,4 +8,4 @@ permalink: /subjects.html
 cloud-fields: site.data.theme.subjects-fields
 ---
 
-Follow the subject language currently surfaced in the catalog, including themes, functions, ritual contexts, and interpretive keywords.
+Browse the subject language reflected in the catalog, including themes, functions, ritual contexts, and interpretive keywords.

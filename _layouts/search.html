@@ -7,14 +7,14 @@ custom-foot: js/lunr-js.html
 <section class="page-hero page-hero-compact">
     <div class="page-hero-grid page-hero-grid-tight">
         <div>
-            <p class="section-kicker">Research Portal</p>
-            <h1 class="page-title">Search the collection</h1>
-            <p class="page-intro">Search across titles, descriptions, communities, places, materials, subjects, and other indexed record fields. This view is designed for close catalog review rather than casual browsing.</p>
+            <p class="section-kicker">Research Access</p>
+            <h1 class="page-title">Search the catalog</h1>
+            <p class="page-intro">Search across titles, descriptions, communities, places, materials, subjects, and other indexed record fields. This view is intended for close research use and catalog review.</p>
         </div>
         <div class="page-aside-card">
-            <h2 class="h5">Search tips</h2>
-            <p>Short queries work best to start. Try a place, medium, cultural community, or recurring subject phrase before narrowing further.</p>
-            <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#operators">Advanced search help</button>
+            <h2 class="h5">Search guidance</h2>
+            <p>Short queries often work best at first. Begin with a place, medium, cultural community, or recurring subject phrase before narrowing further.</p>
+            <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#operators">View advanced search help</button>
         </div>
     </div>
 </section>
@@ -23,11 +23,11 @@ custom-foot: js/lunr-js.html
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalLabel">Search options</h5>
+                <h5 class="modal-title" id="modalLabel">Advanced search options</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>These options can help refine a query in the search box:</p>
+                <p>These options can help refine a query entered in the search box:</p>
                 <ul>
                     <li>Search a specific field with the field name, colon, then your query. In this collection you can use {{ fields | join: ", " }}.</li>
                     <li>Use <code>*</code> as a wildcard to match multiple character endings or beginnings.</li>
@@ -43,7 +43,7 @@ custom-foot: js/lunr-js.html
     <div class="research-panel-header">
         <div>
             <p class="section-kicker">Catalog Search</p>
-            <h2 class="record-section-title">Query the master catalog</h2>
+            <h2 class="record-section-title">Search the master catalog</h2>
             <p class="section-lead">{{ content | strip_html | strip }}</p>
         </div>
     </div>
@@ -55,9 +55,9 @@ custom-foot: js/lunr-js.html
     </form>
     <div id="lunrResultsMeta" class="results-meta-text" aria-live="polite"></div>
     <div id="lunrResults" class="search-results-list"></div>
-    <p class="results-meta-text mb-0">Search is powered by Lunr.js and runs on the site’s indexed metadata. It may take a moment on first load.</p>
+    <p class="results-meta-text mb-0">Search is powered by Lunr.js and runs against the site’s indexed metadata. It may take a moment to initialize on first load.</p>
 </section>
 
 <div class="auxiliary-note">
-    <p class="mb-0">{% if site.google-cse-id %}Need a broader site-wide search? <a href="{{ '/search/google.html' | relative_url }}">Use the Google Custom Search view</a>.{% else %}This interface searches the indexed collection metadata rather than every page on the site.{% endif %}</p>
+    <p class="mb-0">{% if site.google-cse-id %}For a broader site-wide query, <a href="{{ '/search/google.html' | relative_url }}">use the Google Custom Search view</a>.{% else %}This interface searches indexed collection metadata rather than every page on the site.{% endif %}</p>
 </div>

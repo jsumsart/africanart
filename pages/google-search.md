@@ -8,6 +8,8 @@ permalink: /search/google.html
 
 ## Google Site Search
 
+Use this view for a broader site-wide search beyond the indexed collection metadata.
+
 <div class="alert alert-primary" role="alert">
   Please note: CSE is a free service provided by Google. Results depend on third party indexing and may contain ads.
 </div>
