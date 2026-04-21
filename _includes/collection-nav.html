@@ -1,5 +1,6 @@
 <nav class="navbar navbar-expand-lg {{ site.data.theme.navbar-color | default: 'navbar-dark' }} {{ site.data.theme.navbar-background | default: 'bg-dark' }}">
     <div class="container">
+        <a class="navbar-brand d-lg-none fw-semibold" href="{{ '/' | relative_url }}">JSU African Art</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#page-nav" aria-controls="page-nav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -14,12 +15,16 @@
             <ul class="navbar-nav me-auto">
                 {%- assign navItems = site.data.config-nav | where_exp: 'item', 'item.dropdown_parent == nil' -%} 
                 {% for nav in navItems %}
+                {% assign is_public_nav = false %}
+                {% if nav.stub == "/" or nav.stub == "/about.html" %}
+                {% assign is_public_nav = true %}
+                {% endif %}
                 {% if nav.stub %}
-                <li class="nav-item">
+                <li class="nav-item{% unless is_public_nav %} protected-nav-item{% endunless %}"{% unless is_public_nav %} data-protected-nav="true"{% endunless %}>
                     <a class="nav-link{% if page.url == nav.stub %} active{% endif %}" href="{{ nav.stub | relative_url }}">{{ nav.display_name }}</a>
                 </li>
                 {%- else -%}
-                <li class="nav-item dropdown">
+                <li class="nav-item dropdown protected-nav-item" data-protected-nav="true">
                     {% assign navChildren = site.data.config-nav | where_exp: 'item', 'item.dropdown_parent == nav.display_name' %}
                     {%- assign childStubs = navChildren | map: 'stub' -%}
                     <a class="nav-link  dropdown-toggle{% if childStubs contains page.url %} active{% endif %}" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">{{ nav.display_name }}</a>
@@ -32,9 +37,15 @@
                 {% endif %}
                 {%- endfor -%}
             </ul>
-            
-            {% include nav-search-lunr.html %}
-            
+
+            <div class="site-search-shell protected-nav-item" data-protected-nav="true">
+                {% include nav-search-lunr.html %}
+            </div>
+            <div class="nav-access-controls d-flex align-items-center gap-2 ms-lg-3">
+                <a class="btn btn-sm btn-outline-light d-none" href="{{ '/browse.html' | relative_url }}" data-auth-open>Open Collection</a>
+                <button class="btn btn-sm btn-outline-light" type="button" data-auth-trigger>{{ site.data.theme.staff-gate-label | default: "Staff Access" }}</button>
+                <button class="btn btn-sm btn-light d-none" type="button" data-auth-logout>Lock</button>
+            </div>
         </div>
     </div>
 </nav>

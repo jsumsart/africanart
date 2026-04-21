@@ -62,7 +62,7 @@ function makeCard(obj) {
     var btns = obj[{{ f.field | jsonify }}].split(";");
     for (var i = 0, len = btns.length; i < len; i++) {
       if(btns[i] != "") {
-        card += '<a class="btn btn-sm btn-secondary m-1 text-wrap" href="{{ '/browse.html' | relative_url }}#' + encodeURIComponent(btns[i].trim()) + '">' + btns[i].trim() + '</a>';
+        card += '<a class="btn btn-sm btn-secondary m-1 text-wrap" href="{{ '/browse.html' | relative_url }}?q=' + encodeURIComponent(btns[i].trim()) + '">' + btns[i].trim() + '</a>';
       }
     }
     {% else %}
@@ -74,7 +74,7 @@ function makeCard(obj) {
     card += '</p>';
     // media type
     if(obj.format != "") {
-        card += '<p class="card-text"><small><a class="btn btn-sm btn-outline-secondary" href="{{ '/browse.html' | relative_url }}#' + encodeURIComponent(obj.format) + '">' + 
+        card += '<p class="card-text"><small><a class="btn btn-sm btn-outline-secondary" href="{{ '/browse.html' | relative_url }}?q=' + encodeURIComponent(obj.format) + '">' + 
         obj.format.split("/").pop().replace("_", " ").toUpperCase() + ' <svg class="bi icon-sprite"><use xlink:href="{{ "/assets/lib/cb-icons.svg" | relative_url }}#';
         if(obj.format.includes('image')){
             card += 'icon-image';
@@ -156,37 +156,34 @@ var filterTextBox = document.querySelector('#filterTextBox');
 var filterButton = document.querySelector("#filterButton");
 var browseItemsDiv = document.querySelector("#browseItems");
 
-/* filter if hash in initial URL */
+/* filter if q param in initial URL */
 var query = "";
-if(window.location.hash) {
-    query = decodeURIComponent(location.hash.substr(1));
-    filterTextBox.value = query;
-    filterItems(items,query);
-} else {
-    query = "";
-    filterItems(items,query);
-}
+var browseUrl = new URL(window.location.href);
+query = browseUrl.searchParams.get("q") ? decodeURIComponent(browseUrl.searchParams.get("q")) : "";
+filterTextBox.value = query;
+filterItems(items,query);
 
 /* filter form */
 function submitFilter() {
     query = filterTextBox.value;
-    window.location.hash = encodeURIComponent(query);
+    var nextUrl = new URL(window.location.href);
+    if (query && query.trim() !== "") {
+        nextUrl.searchParams.set("q", query.trim());
+    } else {
+        nextUrl.searchParams.delete("q");
+    }
+    window.history.replaceState({}, "", nextUrl.toString());
+    filterItems(items, query);
 }
 /* reset filters */ 
 function resetFilter() {
     query = "";
     filterTextBox.value = query;
-    window.location.hash = encodeURIComponent(query);
+    var nextUrl = new URL(window.location.href);
+    nextUrl.searchParams.delete("q");
+    window.history.replaceState({}, "", nextUrl.toString());
+    filterItems(items, query);
 }
-
-/* filter if hash changes */ 
-window.addEventListener("hashchange", function() {
-    // read hash
-    query = decodeURIComponent(location.hash.substr(1));
-    filterTextBox.value = query;
-    // filter
-    filterItems(items,query);
-});
 
 /* item array sorting function */
 function sorting(json_object, key_to_sort_by) {

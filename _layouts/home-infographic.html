@@ -3,27 +3,103 @@
 layout: page
 ---
 {%- assign items = site.data[site.metadata] | where_exp: 'item', 'item["Object name"] != nil' -%}
-<div class="row">
-  <div class="col-md-8">
+{%- assign communities = items | map: 'culture_community' | compact | uniq -%}
+{%- assign places = items | map: 'Geographic location' | compact | uniq -%}
+{%- assign dates = items | map: 'Date' | compact | uniq -%}
 
-    {% include index/description.html %}
-    {% include index/carousel.html title="Sample Items" height="300" %}
-  
+<section class="landing-shell">
+  <div class="landing-grid">
+    <div class="landing-copy">
+      <p class="landing-kicker">Digital Research Collection</p>
+      <h2 class="landing-title">A stronger front door for the Jackson State University African Art Collection.</h2>
+      <p class="landing-lead">This site is being rebuilt as a fuller research and teaching resource: more intentional interpretation, more culturally responsive metadata, and better pathways for discovery.</p>
+      <div class="landing-actions">
+        <button class="btn btn-primary btn-lg" type="button" data-auth-trigger>Enter Staff Collection</button>
+        <a class="btn btn-outline-dark btn-lg" href="{{ '/about.html' | relative_url }}">About The Collection</a>
+      </div>
+      <div class="landing-stats">
+        <article class="landing-stat-card">
+          <span class="landing-stat-value">{{ items | size }}</span>
+          <span class="landing-stat-label">Cataloged objects online</span>
+        </article>
+        <article class="landing-stat-card">
+          <span class="landing-stat-value">{{ communities | size }}</span>
+          <span class="landing-stat-label">Culture and community references</span>
+        </article>
+        <article class="landing-stat-card">
+          <span class="landing-stat-value">{{ places | size }}</span>
+          <span class="landing-stat-label">Geographic locations represented</span>
+        </article>
+        <article class="landing-stat-card">
+          <span class="landing-stat-value">{{ dates | size }}</span>
+          <span class="landing-stat-label">Date expressions in the catalog</span>
+        </article>
+      </div>
+    </div>
+    <aside class="access-panel" data-home-locked>
+      <p class="access-eyebrow">Collection Access</p>
+      <h3>Unlock the staff collection workspace</h3>
+      <p class="access-text">Browse, item records, search tools, maps, timelines, and data exports are currently behind a lightweight password layer while the site is being refined.</p>
+      <div class="access-alert d-none" data-auth-alert></div>
+      <form class="access-form" data-auth-form>
+        <label class="form-label" for="staff-password">Staff password</label>
+        <input class="form-control form-control-lg" id="staff-password" name="password" type="password" autocomplete="current-password" required>
+        <input type="hidden" name="next" value="{{ '/browse.html' | relative_url }}">
+        <button class="btn btn-primary btn-lg w-100" type="submit">Unlock Collection</button>
+      </form>
+      <p class="access-footnote">This is a temporary front-end gate for project development, not a permanent secure login system.</p>
+    </aside>
+    <aside class="access-panel d-none" data-home-unlocked>
+      <p class="access-eyebrow">Collection Unlocked</p>
+      <h3>The collection workspace is open.</h3>
+      <p class="access-text">Use the browse, search, map, timeline, and data tools from the navigation, or jump directly back into the records.</p>
+      <div class="landing-actions landing-actions-stacked">
+        <a class="btn btn-primary btn-lg" href="{{ '/browse.html' | relative_url }}">Open Browse</a>
+        <a class="btn btn-outline-dark btn-lg" href="{{ '/search.html' | relative_url }}">Open Search</a>
+        <button class="btn btn-link" type="button" data-auth-logout>Lock Collection</button>
+      </div>
+    </aside>
   </div>
-  <div class="col-md-4">  
 
-    {% include index/time.html %}
+  <div class="landing-content-grid">
+    <section class="landing-feature-panel">
+      <div class="landing-panel-header">
+        <p class="landing-kicker">Collection Preview</p>
+        <h3>Selected objects from the catalog</h3>
+      </div>
+      {% include index/carousel.html title="Collection Highlights" height="420" btn-color="light" btn-text="View Record" %}
+    </section>
 
-    {% include index/featured-terms.html field="Subject" title="Top Subjects" btn-color="primary" %}
-
-    {% include index/featured-terms.html field="Geographic location" title="Locations" btn-color="outline-secondary" %}
-
-    {% include index/objects.html %}
-
+    <section class="landing-feature-panel">
+      <div class="landing-panel-header">
+        <p class="landing-kicker">Catalog Direction</p>
+        <h3>Metadata is being reshaped for specificity, context, and care.</h3>
+      </div>
+      <div class="landing-note-grid">
+        <article class="landing-note-card">
+          <h4>Culturally responsive description</h4>
+          <p>Records are being revised to move beyond generic labels and to foreground culture, function, context, and provenance where possible.</p>
+        </article>
+        <article class="landing-note-card">
+          <h4>Research-centered access</h4>
+          <p>The collection supports teaching, student research, curatorial study, and future collections management work through a cleaner metadata model.</p>
+        </article>
+        <article class="landing-note-card">
+          <h4>Single-source cataloging</h4>
+          <p>The public site now reads from one master MDL-aligned catalog file rather than a separate duplicate website spreadsheet.</p>
+        </article>
+      </div>
+    </section>
   </div>
-  <div class="col-md-12">
 
-    {% include index/data-download.html %}
-
+  <div class="landing-secondary-grid">
+    <section class="landing-feature-panel">
+      {% include index/time.html %}
+      {% include index/objects.html %}
+    </section>
+    <section class="landing-feature-panel">
+      {% include index/featured-terms.html field="Subject" title="Subject Threads" btn-color="primary" max=8 %}
+      {% include index/featured-terms.html field="Geographic location" title="Places in the Collection" btn-color="outline-secondary" max=8 %}
+    </section>
   </div>
-</div>
+</section>
