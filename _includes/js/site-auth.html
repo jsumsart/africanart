@@ -131,7 +131,9 @@
 
     function isPublicPage() {
         const current = normalizePath(window.location.pathname);
-        return publicPaths.map(normalizePath).includes(current);
+        const allowed = publicPaths.map(normalizePath);
+        allowed.push(normalizePath(homeUrl));
+        return allowed.includes(current);
     }
 
     const unlocked = isUnlocked();
@@ -148,7 +150,7 @@
     });
 
     const params = new URLSearchParams(window.location.search);
-    if (!unlocked && !isPublicPage()) {
+    if (!unlocked && normalizePath(window.location.pathname) !== normalizePath(homeUrl) && !isPublicPage()) {
         const next = encodeURIComponent(currentPathWithQuery());
         window.location.replace(homeUrl + "?auth=required&next=" + next);
         return;
