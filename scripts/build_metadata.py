@@ -209,6 +209,8 @@ def enrich_from_source(row, source_row):
 def sync_helper_fields(row):
     row["Object name"] = row.get("Object name", "") or row.get("Identifier", "")
     row["format"] = row.get("format", "") or mime_type(row.get("File name", ""))
+    if row.get("Creator", "").strip().lower() == "unknown":
+        row["Creator"] = ""
     return row
 
 
@@ -240,7 +242,7 @@ def default_master_row(filename: str, index: int, legacy_row):
             "From the Jackson State University African Art Collection. "
             "Detailed description pending cataloging review."
         ),
-        "Creator": "Unknown",
+        "Creator": "",
         "Searchable date": "",
         "Date": "",
         "Coverage (time period)": "",
