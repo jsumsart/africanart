@@ -16,28 +16,32 @@
     }
 }
 </style>
-<div id="home-banner" class="container-fluid mb-0 p-0">
-    <div id="home-title-box" class="position-relative" >
-        <div class="p-2 text-center text-white bg-dark bg-opacity-75">
+<div id="home-banner" class="container-fluid mb-0 p-0 site-hero-banner">
+    <div id="home-title-box" class="position-relative site-hero-banner-inner" >
+        <div class="site-hero-title">
             {% if site.organization-logo-nav %}
-            <a class="d-none d-md-block" href="{{ site.organization-link }}" target="_blank" rel="noopener">
+            <a class="d-none d-md-inline-block mb-3" href="{{ site.organization-link }}" target="_blank" rel="noopener">
                 <img id="home-banner-logo" src="{{ site.organization-logo-nav | relative_url }}" alt="{{ site.organization-name }} home" >
             </a>{% endif %}
+            <p class="site-banner-kicker">Jackson State University</p>
             <h1 class="display-4">{{ site.title }}</h1>
-            {% if site.tagline %}<p class="mb-0">{{ site.tagline }}</p>{% endif %}
+            {% if site.tagline %}<p class="mb-0 site-banner-tagline">{{ site.tagline }}</p>{% endif %}
         </div>
         {% unless site.data.theme.featured-image contains '/' %}
-        <div class="position-absolute bottom-0 end-0 px-2 bg-dark bg-opacity-75">
-            <a class="text-white fs-6" href="{% if featuredItem.parentid %}{{ site.data.theme.featured-image | prepend: '#' | prepend: featuredItem.parentid | prepend: '/item.html?id=' | relative_url }}{% else %}{{ site.data.theme.featured-image | prepend: '/item.html?id=' | relative_url }}{% endif %}" title="{{ featuredItem['Title'] | escape }}">Featured Image</a>
+        <div class="site-banner-credit">
+            <a class="text-white fs-6" href="{% if featuredItem.parentid %}{{ site.data.theme.featured-image | prepend: '#' | prepend: featuredItem.parentid | prepend: '/item.html?id=' | relative_url }}{% else %}{{ site.data.theme.featured-image | prepend: '/item.html?id=' | relative_url }}{% endif %}" title="{{ featuredItem['Title'] | escape }}">Featured image</a>
         </div>{% endunless %}
     </div>
 </div>
 {%- else -%}
-<div class="container">
+<div class="container site-masthead-shell">
     <div class="row align-items-center">
         <div id="title" class="{% if site.organization-logo-banner %}col-md-9{% else %}col-12{% endif %}">
-            <h1><a class="text-dark font-weight-normal" href="{{ site.baseurl }}/" >{{ site.title }}</a></h1>	 
-            {% if site.tagline %}<p>{{ site.tagline }}</p>{% endif %}
+            <div class="site-masthead">
+                <p class="site-banner-kicker mb-2">Jackson State University</p>
+                <h1><a class="text-dark text-decoration-none" href="{{ site.baseurl }}/" >{{ site.title }}</a></h1>	 
+                {% if site.tagline %}<p class="site-banner-tagline mb-0">{{ site.tagline }}</p>{% endif %}
+            </div>
         </div>
         {% if site.organization-logo-banner %}
         <div class="col-md-3 d-none d-lg-block text-end">
