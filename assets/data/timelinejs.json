@@ -1,15 +1,15 @@
 ---
 # generate time-focused json data suitable for TimelineJS.
-# includes all items in metadata that have a "date" field filled.
+# includes all items in metadata that have a "Date" field filled.
 # Curate the timeline by adding a "where" expression to the assign on the first line.
 # For details, see https://collectionbuilder.github.io/cb-docs/docs/advanced/timelinejs/  
 ---
-{%- assign items = site.data[site.metadata] | where_exp: 'item', 'item.date' -%}
+{%- assign items = site.data[site.metadata] | where_exp: 'item', 'item["Date"]' -%}
 {
     "title": {
         "media": {
           "url": "{% include image/featured-image.html %}",
-          "caption": {{ featuredItem.title | jsonify }},
+          "caption": {{ featuredItem["Title"] | jsonify }},
           "credit": {{ site.title | jsonify }}
         },
         "text": {
@@ -18,22 +18,22 @@
         }
     },
     "events": [
-      {% for item in items %}{% if item.date %}{
+      {% for item in items %}{% if item["Date"] %}{
         "media": {
-          "url": "{% if item.youtubeid %}{{ 'https://www.youtube.com/watch?v=' | append: item.youtubeid }}{% elsif item.vimeoid %}{{ 'https://vimeo.com/' | append: item.vimeoid }}{% elsif item.filename contains 'http' %}{{ item.filename }}{% else %}{{ item.filename | prepend: '/objects/' | absolute_url }}{% endif %}",
-          "caption": {{ item.title | jsonify }},
-          "link": "{{ '/item.html' | absolute_url | append: '?id=' | append: item.objectid }}",
+          "url": "{% if item.youtubeid %}{{ 'https://www.youtube.com/watch?v=' | append: item.youtubeid }}{% elsif item.vimeoid %}{{ 'https://vimeo.com/' | append: item.vimeoid }}{% elsif item["File name"] contains 'http' %}{{ item["File name"] }}{% else %}{{ item["File name"] | prepend: '/objects/' | absolute_url }}{% endif %}",
+          "caption": {{ item["Title"] | jsonify }},
+          "link": "{{ '/item.html' | absolute_url | append: '?id=' | append: item["Object name"] }}",
           "credit": "{{ site.title }}"
         },
-        "start_date": { {% if item.date contains '-' %}{% assign dates = item.date | split: '-' %}
+        "start_date": { {% if item["Date"] contains '-' %}{% assign dates = item["Date"] | split: '-' %}
           "month": "{{ dates[1] }}",
           "day": "{{ dates[2] }}",
-          "year": "{{ dates[0] }}"{% elsif item.date contains '/' %}"year": "{{ item.date | strip | split: '/' | last }}"{% else %}
-          "year": "{{ item.date }}"{% endif %}
+          "year": "{{ dates[0] }}"{% elsif item["Date"] contains '/' %}"year": "{{ item["Date"] | strip | split: '/' | last }}"{% else %}
+          "year": "{{ item["Date"] }}"{% endif %}
         },
         "text": {
-          "headline": {{ item.title | jsonify }}{% if item.description %},
-          "text": {{ item.description | jsonify }}{% endif %}
+          "headline": {{ item["Title"] | jsonify }}{% if item["Description"] %},
+          "text": {{ item["Description"] | jsonify }}{% endif %}
         }
       }{% unless forloop.last %},{% endunless %}{% endif %}{% endfor %}
     ]

@@ -17,12 +17,12 @@
     
 {%- endcomment -%}
 
-{%- assign image-items = site.data[site.metadata ] | where_exp: 'item', 'item.objectid' | where_exp: "item","item.format contains 'image'" -%}
-{%- assign youtube-items = site.data[site.metadata ] | where_exp: 'item', 'item.objectid' | where_exp: "item","item.youtubeid" -%}
+{%- assign image-items = site.data[site.metadata ] | where_exp: 'item', 'item["Object name"]' | where_exp: "item","item.format contains 'image'" -%}
+{%- assign youtube-items = site.data[site.metadata ] | where_exp: 'item', 'item["Object name"]' | where_exp: "item","item.youtubeid" -%}
 {%- if youtube-items -%}{%- assign carousel-items = image-items | concat: youtube-items -%}{%- else -%}{%- assign carousel-items = image-items -%}{% endif %}
 
 {% if site.data.theme.carousel-child-objects == true %}
-{%- assign carousel-items = carousel-items | where_exp: 'item','item.title != nil' -%}
+{%- assign carousel-items = carousel-items | where_exp: 'item','item["Title"] != nil' -%}
 {% else %}
 {%- assign carousel-items = carousel-items | where_exp: 'item','item.parentid == nil' -%}
 {% endif %}
@@ -67,7 +67,7 @@
 <script>
 (function(){
     /* add item data */
-    var carouselItems = [ {% for c in carousel-items %}[ {{ c.title | jsonify }}, {% if c.youtubeid %}"https://img.youtube.com/vi/{{ c.youtubeid }}/hqdefault.jpg"{% elsif c.filename contains '/' %}{{ c.filename | jsonify }}{% else %}{{ '/objects/' | relative_url | append: c.filename | jsonify }}{% endif %}, {% if c.parentid %}"{{ c.parentid }}#{{ c.objectid }}"{% else %}"{{ c.objectid }}"{% endif %} ]{% unless forloop.last %}, {% endunless %}{% endfor %}];
+    var carouselItems = [ {% for c in carousel-items %}[ {{ c["Title"] | jsonify }}, {% if c.youtubeid %}"https://img.youtube.com/vi/{{ c.youtubeid }}/hqdefault.jpg"{% elsif c["File name"] contains '/' %}{{ c["File name"] | jsonify }}{% else %}{{ '/objects/' | relative_url | append: c["File name"] | jsonify }}{% endif %}, {% if c.parentid %}"{{ c.parentid }}#{{ c["Object name"] }}"{% else %}"{{ c["Object name"] }}"{% endif %} ]{% unless forloop.last %}, {% endunless %}{% endfor %}];
     /* shuffle items */
     carouselItems.sort(function() { return 0.5 - Math.random() });
  

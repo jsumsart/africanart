@@ -1,7 +1,7 @@
 ---
 # create collection description and stats 
 ---
-{%- assign raw-dates = site.data[site.metadata] | map: 'date' | compact | uniq -%}
+{%- assign raw-dates = site.data[site.metadata] | map: 'Date' | compact | uniq -%}
 {%- capture clean-years -%}{% for date in raw-dates %}{% if date contains "-" %}{{ date | strip | split: "-" | first }}{% elsif date contains "/" %}{{ date | strip | split: "/" | last }}{% else %}{{ date | strip }}{% endif %}{% unless forloop.last %};{% endunless %}{%- endfor -%}{%- endcapture -%}
 {%- assign date-range = clean-years | remove: " " | split: ";" | uniq | sort  -%}
 {%- assign formats = site.data[site.metadata] | map: 'format' -%}
@@ -23,4 +23,3 @@
     "data": "{{ '/assets/data/datapackage.json' | absolute_url }}",
     "last_build_date": "{{ site.time | date: '%Y-%m-%d' }}"
 }
-

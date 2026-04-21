@@ -23,14 +23,14 @@ browse-buttons: true # true/false, adds previous/next arrows to item pages
 ##########
 # SUBJECTS PAGE
 #
-subjects-fields: subject;creator # set the field to be featured in the cloud (if left blank, none will be generated)
+subjects-fields: Subject;Creator;culture_community;object_type # set the field to be featured in the cloud (if left blank, none will be generated)
 subjects-min: 1 # min size for subject cloud, too many terms = slow load time!
 subjects-stopwords: # boxers;boxing;boxer # set of subjects separated by ;, e.g. boxers;boxing
 
 ##########
 # LOCATIONS PAGE
 #
-locations-fields: location # set the field to be featured in the cloud
+locations-fields: Geographic location;place_of_creation;place_of_use # set the field to be featured in the cloud
 locations-min: 1 # min size for subject cloud, too many terms = slow load time!
 locations-stopwords: # set of subjects separated by ; that will be removed from display, e.g. boxers;boxing
 
@@ -59,9 +59,9 @@ year-nav-increment: 5 # set increments when auto gen nav years
 #
 # add metadata fields for export in data downloads (tip: paste in first row of csv)
 # comma delimited list, reference url is automatic
-metadata-export-fields: "title,creator,date,description,subject,location,latitude,longitude,source,identifier,type,format,language,rights,rightsstatement"
+metadata-export-fields: "Title,Creator,Alternate title(s),preferred_term,legacy_title,Date,Coverage (time period),period_dynasty,Description,Subject,Geographic location,Source,Identifier,Resource type,Format,Language,Publisher,Contributors,Notes,Collection,Transcript,culture_community,people_ethnolinguistic_group,place_of_creation,place_of_use,materials,technique,object_type,function_use,provenance,acquisition_context,attribution_confidence,cultural_sensitivity_note,Rights,Disclaimer"
 # generate a facets list for given fields, comma delimited
-metadata-facets-fields: "subject,creator,format"
+metadata-facets-fields: "Subject,Creator,culture_community,object_type,materials,technique,Format"
 
 ##########
 # COMPOUND OBJECTS

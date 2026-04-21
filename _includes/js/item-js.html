@@ -3,13 +3,13 @@
 {% assign icons = cb_icons.icons %}{%- endif -%}
 {%- assign fields = site.data.config-metadata -%}
 {%- assign stubs = site.data.config-nav | map: 'stub' | join: ';' -%}
-{%- assign items = site.data[site.metadata] | where_exp: 'item','item.objectid' -%}
+{%- assign items = site.data[site.metadata] | where_exp: 'item','item["Object name"]' -%}
 <script>
 (function(){
     /* add item data */
     var items = { 
         {%- for item in items -%}{%- unless item.parentid %}
-        {{ item.objectid | jsonify }} : { {% unless fields contains 'title' %}"title": {{ item.title | jsonify }}, {% endunless %}{% for f in fields %}{% if item[f.field] %}{{ f.field | jsonify }}: {{ item[f.field] | jsonify }}, {% endif %}{% endfor %}{% if item.youtubeid %} "youtube": {{ item.youtubeid | jsonify }}, {% endif %}{% if item.vimeoid %} "vimeo": {{ item.vimeoid | jsonify }}, {% endif %}"format": {{ item.format | jsonify }}, "filename": {% if item.filename %}{% if item.filename contains '/' %}"{{ item.filename }}"{% else %}"{{ '/objects/' | relative_url }}{{ item.filename }}"{% endif %}{% else %}""{% endif %} }{% unless forloop.last %}, {% endunless %}
+        {{ item["Object name"] | jsonify }} : { {% unless fields contains 'Title' %}"Title": {{ item["Title"] | jsonify }}, {% endunless %}{% for f in fields %}{% if item[f.field] %}{{ f.field | jsonify }}: {{ item[f.field] | jsonify }}, {% endif %}{% endfor %}{% if item.youtubeid %} "youtube": {{ item.youtubeid | jsonify }}, {% endif %}{% if item.vimeoid %} "vimeo": {{ item.vimeoid | jsonify }}, {% endif %}"format": {{ item.format | jsonify }}, "filename": {% if item["File name"] %}{% if item["File name"] contains '/' %}"{{ item["File name"] }}"{% else %}"{{ '/objects/' | relative_url }}{{ item["File name"] }}"{% endif %}{% else %}""{% endif %}, "id": {{ item["Object name"] | jsonify }} }{% unless forloop.last %}, {% endunless %}
         {% endunless %}{% endfor %}
     };
     var children = { {%- assign parents = site.data[site.metadata] | map: 'parentid' | compact | uniq -%}
@@ -17,7 +17,7 @@
         {{ p | jsonify }}: [
             {%- assign children = site.data[site.metadata] | where: 'parentid', p -%}
             {%- for c in children -%}
-            { "id": {{ c.objectid | jsonify }}, {% if c.title %}{% unless fields contains 'title' %}"title": {{ c.title | jsonify }}, {% endunless %}{% endif %}{% for f in fields %}{% if c[f.field] %}{{ f.field | jsonify }}: {{ c[f.field] | jsonify }}, {% endif %}{% endfor %}  {% if c.youtubeid %}"youtube": {{ c.youtubeid | jsonify }}, {% endif %}{% if c.vimeoid %} "vimeo": {{ c.vimeoid }}, {% endif %}"format": {{ c.format | jsonify }}, "filename": {% if c.filename %}{% if c.filename contains '/' %}"{{ c.filename }}"{% else %}"{{ '/objects/' | relative_url }}{{ c.filename }}"{% endif %}{% else %}""{% endif %} }{% unless forloop.last %}, {% endunless %}
+            { "id": {{ c["Object name"] | jsonify }}, {% if c["Title"] %}{% unless fields contains 'Title' %}"Title": {{ c["Title"] | jsonify }}, {% endunless %}{% endif %}{% for f in fields %}{% if c[f.field] %}{{ f.field | jsonify }}: {{ c[f.field] | jsonify }}, {% endif %}{% endfor %}  {% if c.youtubeid %}"youtube": {{ c.youtubeid | jsonify }}, {% endif %}{% if c.vimeoid %} "vimeo": {{ c.vimeoid }}, {% endif %}"format": {{ c.format | jsonify }}, "filename": {% if c["File name"] %}{% if c["File name"] contains '/' %}"{{ c["File name"] }}"{% else %}"{{ '/objects/' | relative_url }}{{ c["File name"] }}"{% endif %}{% else %}""{% endif %} }{% unless forloop.last %}, {% endunless %}
             {% endfor %}
         ]{% unless forloop.last %}, {% endunless %}
         {% endfor %}
@@ -30,7 +30,7 @@
 
     if (record) {
         /* add item title */
-        var objectTitle = record.title;
+        var objectTitle = record.Title;
         document.getElementById("bc-title").innerHTML = objectTitle;
         /* get item format for item title */
         var itemFormat;
@@ -54,20 +54,20 @@
         var itemDisplay, itemDownload;
         function addItem(item) {
             if (item.format.includes('image')) {
-                itemDisplay = '<a class="spotlight gallery-img" data-download="true" href="' + item.filename + '"><img class="img-fluid" src="' + item.filename + '" alt="' + item.title + '">';
+                itemDisplay = '<a class="spotlight gallery-img" data-download="true" href="' + item.filename + '"><img class="img-fluid" src="' + item.filename + '" alt="' + item.Title + '">';
                 itemDisplay += record.format.includes('multiple') ? '</a>' : '<div><small class="text-dark">Click to view full screen</small></div></a>';
                 itemDownload = '<a href="' + item.filename + '" target="_blank" rel="noopener" class="btn btn-outline-primary" title="Object download">Download ' + item.format.split("/").pop().toUpperCase() + '</a>';
             } else if (item.format.includes('pdf')) {
-                itemDisplay = '<div class="ratio ratio-4x3"><object title="PDF file of ' + item.title + '" data="' + item.filename + '" type="application/pdf" width="100%"><p>The PDF is not rendering in your browser. Please use the button below to download the PDF.</p></object></div>';
+                itemDisplay = '<div class="ratio ratio-4x3"><object title="PDF file of ' + item.Title + '" data="' + item.filename + '" type="application/pdf" width="100%"><p>The PDF is not rendering in your browser. Please use the button below to download the PDF.</p></object></div>';
                 itemDownload = '<a href="' + item.filename + '" target="_blank" rel="noopener" class="btn btn-outline-primary" title="Object download">Download PDF</a>';
             } else if (item.format.includes('audio')) {
                 itemDisplay = '<audio controls class="w-100"><source src="' + item.filename + '">Your browser does not support the audio element. Please <a href="' + item.filename + '">download the audio file</a>.</audio>';
                 itemDownload = '<a href="' + item.filename + '" target="_blank" rel="noopener" class="btn btn-outline-primary" title="Object download">Download ' + item.format.split("/").pop().toUpperCase() + '</a>';
             } else if (item.youtube) {
-                itemDisplay = '<div class="ratio ratio-16x9"><iframe title="video embed ' + item.title + '" src="https://www.youtube-nocookie.com/embed/' + item.youtube + '?rel=0&modestbranding=1" allowfullscreen></iframe></div>';
+                itemDisplay = '<div class="ratio ratio-16x9"><iframe title="video embed ' + item.Title + '" src="https://www.youtube-nocookie.com/embed/' + item.youtube + '?rel=0&modestbranding=1" allowfullscreen></iframe></div>';
                 itemDownload = '<a href="https://youtu.be/' + item.youtube + '" target="_blank" rel="noopener" class="btn btn-outline-primary" title="Object download">View on YouTube</a>';
             } else if (item.vimeo) {
-                itemDisplay = '<div class="ratio ratio-16x9"><iframe title="video embed ' + item.title + '"src="https://player.vimeo.com/video/' + item.vimeo + '" allowfullscreen></iframe></div>';
+                itemDisplay = '<div class="ratio ratio-16x9"><iframe title="video embed ' + item.Title + '"src="https://player.vimeo.com/video/' + item.vimeo + '" allowfullscreen></iframe></div>';
                 itemDownload = '<a href="https://vimeo.com/' + item.vimeo + '" target="_blank" rel="noopener" class="btn btn-outline-primary" title="Object download">View on Vimeo</a>';
             } else if (item.format.includes('video')) {
                 itemDisplay = '<video controls class="w-100"><source src="' + item.filename + '">Your browser does not support the video tag. Please <a href="' + item.filename + '">download the video file</a>.</video>';
@@ -109,14 +109,14 @@
             itemLink = '<div class="btn-group" role="group" aria-label="Item options">'
             {% if stubs contains "timeline" %}
             /* add link to view on timeline */
-            if (item.date) {
+            if (item.Date) {
                 var itemYear;
-                if (item.date.includes('-')) {
-                    itemYear = item.date.split('-')[0];
-                } else if (item.date.includes('/')) {
-                    itemYear = item.date.split('/').pop();
+                if (item.Date.includes('-')) {
+                    itemYear = item.Date.split('-')[0];
+                } else if (item.Date.includes('/')) {
+                    itemYear = item.Date.split('/').pop();
                 } else {
-                    itemYear = item.date;
+                    itemYear = item.Date;
                 }
                 var timelineButton = '<a href="{{ "/timeline.html" | relative_url }}#y' + itemYear + '" class="btn btn-outline-primary">View on Timeline</a>';
                 /* add timeline link to children only if specified in theme.yml */
@@ -156,7 +156,7 @@
             for (let i = 0; i < compoundObject.length; i++) {
                 var compoundLink = compoundObject[i].filename;
                 var compoundFormat = compoundObject[i].format;
-                var compoundTitle = compoundObject[i].title;
+                var compoundTitle = compoundObject[i].Title;
                 var partOrder = i + 1;
 
                 /* account for items without title */

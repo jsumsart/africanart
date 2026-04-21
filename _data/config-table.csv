@@ -1,5 +1,10 @@
 field,display_name
-title,Title
-date,Date
-description,Description
-subject,Subjects
+Title,Title
+Creator,Creator
+object_type,Object Type
+culture_community,Culture / Community
+materials,Materials
+technique,Technique
+Date,Date
+Description,Description
+Subject,Subjects

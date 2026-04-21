@@ -1,7 +1,23 @@
 field,index,display
-title,true,true
-date,true,true
-creator,true,false
-description,true,true
-subject,true,true
-location,true,false
+Title,true,true
+Date,true,true
+Creator,true,true
+Alternate title(s),true,false
+preferred_term,true,false
+legacy_title,true,false
+Coverage (time period),true,false
+Description,true,true
+Subject,true,true
+culture_community,true,true
+people_ethnolinguistic_group,true,false
+object_type,true,true
+function_use,true,false
+materials,true,true
+technique,true,true
+place_of_creation,true,false
+place_of_use,true,false
+Geographic location,true,false
+provenance,true,false
+Collection,true,false
+Notes,true,false
+Transcript,true,false

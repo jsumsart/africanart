@@ -20,13 +20,13 @@
 {% if jumboId contains '/' %}
 {% assign jumboSrc = jumboId | relative_url %}
 {% else %}
-{% assign jumboItem = site.data[site.metadata] | where: "objectid", jumboId | first %}
+{% assign jumboItem = site.data[site.metadata] | where: "Object name", jumboId | first %}
 {% if jumboItem.youtubeid %}
 {% assign jumboSrc = 'https://img.youtube.com/vi/' | append: jumboItem.youtubeid | append: '/maxresdefault.jpg' %}
-{% elsif jumboItem.filename contains '/' %}
-{% assign jumboSrc = jumboItem.filename | relative_url %}
+{% elsif jumboItem["File name"] contains '/' %}
+{% assign jumboSrc = jumboItem["File name"] | relative_url %}
 {% else %}
-{% assign jumboSrc = jumboItem.filename | prepend: '/objects/' | relative_url %}
+{% assign jumboSrc = jumboItem["File name"] | prepend: '/objects/' | relative_url %}
 {%- endif -%}
 {%- endif -%}
 
