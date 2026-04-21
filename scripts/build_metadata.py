@@ -164,6 +164,57 @@ def normalize_subjects(value: str) -> str:
     return "; ".join(parts)
 
 
+COUNTRY_COORDS = {
+    "mali": (17.5707, -3.9962),
+    "democratic republic of the congo": (-2.8797, 23.6560),
+    "democratic republic of the congo (uele region)": (3.0, 25.0),
+    "democratic republic of the congo (kasai region)": (-6.0, 22.0),
+    "democratic republic of the congo / angola": (-8.5, 18.5),
+    "côte d’ivoire": (7.5400, -5.5471),
+    "cote d’ivoire": (7.5400, -5.5471),
+    "guinea": (9.9456, -9.6966),
+    "gabon": (-0.8037, 11.6094),
+    "liberia / côte d’ivoire": (6.5, -7.5),
+    "liberia / cote d’ivoire": (6.5, -7.5),
+    "nigeria": (9.0820, 8.6753),
+}
+
+
+def infer_searchable_date(value: str) -> str:
+    text = (value or "").strip().lower()
+    if not text or text == "?":
+        return ""
+    explicit_years = re.findall(r"(1[0-9]{3}|20[0-9]{2})", text)
+    if explicit_years:
+        return explicit_years[0]
+    if "late 19th" in text and "early 20th" in text:
+        return "1900"
+    if "late 19th" in text:
+        return "1890"
+    if "early 20th" in text:
+        return "1910"
+    if "mid 20th" in text:
+        return "1950"
+    if "early–mid 20th" in text or "early-mid 20th" in text:
+        return "1940"
+    if "19th–20th" in text or "19th-20th" in text:
+        return "1900"
+    if "20th century" in text:
+        return "1950"
+    if "19th century" in text:
+        return "1850"
+    return ""
+
+
+def infer_coordinates(*values: str):
+    for value in values:
+        normalized = (value or "").strip().lower()
+        if normalized in COUNTRY_COORDS:
+            lat, lon = COUNTRY_COORDS[normalized]
+            return f"{lat:.4f}", f"{lon:.4f}"
+    return "", ""
+
+
 def clean_source_title(value: str) -> str:
     text = (value or "").strip()
     if not text or text == "?":
@@ -191,6 +242,8 @@ def enrich_from_source(row, source_row):
         row["Date"] = date_text
         row["Coverage (time period)"] = date_text
         row["period_dynasty"] = date_text
+        if not row.get("Searchable date"):
+            row["Searchable date"] = infer_searchable_date(date_text)
     if description and description != "placeholder":
         row["Description"] = description
     if tribal:
@@ -203,6 +256,11 @@ def enrich_from_source(row, source_row):
     if subjects and subjects != "n/a":
         row["Subject"] = subjects
 
+    if not row.get("latitude") or not row.get("longitude"):
+        lat, lon = infer_coordinates(country, row.get("Geographic location"), row.get("place_of_creation"))
+        row["latitude"] = row.get("latitude") or lat
+        row["longitude"] = row.get("longitude") or lon
+
     return row
 
 
@@ -211,6 +269,16 @@ def sync_helper_fields(row):
     row["format"] = row.get("format", "") or mime_type(row.get("File name", ""))
     if row.get("Creator", "").strip().lower() == "unknown":
         row["Creator"] = ""
+    if not row.get("Searchable date"):
+        row["Searchable date"] = infer_searchable_date(row.get("Date", ""))
+    if not row.get("latitude") or not row.get("longitude"):
+        lat, lon = infer_coordinates(
+            row.get("Geographic location", ""),
+            row.get("place_of_creation", ""),
+            row.get("place_of_use", ""),
+        )
+        row["latitude"] = row.get("latitude") or lat
+        row["longitude"] = row.get("longitude") or lon
     return row
 
 
