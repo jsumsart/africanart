@@ -143,6 +143,7 @@ a:focus {
   align-items: center;
   gap: 0.9rem;
   font-weight: 700;
+  margin-right: 1.5rem;
 }
 
 .site-masthead-shell {
@@ -180,7 +181,7 @@ a:focus {
 
 .site-hero-banner {
   position: relative;
-  min-height: clamp(240px, 34vw, 420px);
+  min-height: clamp(260px, 32vw, 410px);
 }
 
 .site-hero-banner::after {
@@ -191,26 +192,44 @@ a:focus {
 }
 
 .site-hero-banner-inner {
-  min-height: clamp(240px, 34vw, 420px);
+  min-height: clamp(260px, 32vw, 410px);
 }
 
 .site-hero-title {
   position: relative;
   z-index: 1;
-  width: min(560px, calc(100% - 2rem));
-  margin: 0 0 0 5vw;
-  padding: 2rem 2rem 2.15rem;
-  top: clamp(48px, 10vw, 110px);
+  width: min(660px, calc(100% - 3rem));
+  margin: 0 0 0 clamp(1rem, 6vw, 4.5rem);
+  padding: 1.6rem 1.8rem 1.55rem;
+  top: clamp(28px, 5vw, 56px);
   color: #fff;
-  background: linear-gradient(135deg, rgba(14, 26, 46, 0.86), rgba(38, 49, 74, 0.7));
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 24px;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+  background: linear-gradient(135deg, rgba(14, 26, 46, 0.78), rgba(38, 49, 74, 0.58));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.16);
+  backdrop-filter: blur(6px);
 }
 
 .site-hero-title .site-banner-kicker,
 .site-banner-credit a {
   color: rgba(255, 255, 255, 0.88) !important;
+}
+
+.site-hero-title h1 {
+  font-size: clamp(3rem, 5vw, 4.75rem);
+  line-height: 0.92;
+  max-width: 8ch;
+}
+
+.site-title-line {
+  display: block;
+}
+
+.site-banner-subtitle {
+  margin: 0.55rem 0 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.98rem;
+  letter-spacing: 0.02em;
 }
 
 .site-banner-credit {
@@ -251,13 +270,22 @@ a:focus {
 }
 
 .brand-title {
-  font-size: 0.98rem;
+  font-size: 0.92rem;
   font-weight: 700;
 }
 
 .navbar .navbar-nav .nav-link {
   font-weight: 600;
+  font-size: 0.92rem;
   letter-spacing: 0.01em;
+}
+
+.navbar .container {
+  max-width: 1360px;
+}
+
+.navbar .navbar-collapse {
+  gap: 1rem;
 }
 
 .navbar .navbar-nav .nav-link:hover,
@@ -305,7 +333,11 @@ a:focus {
 }
 
 .nav-search-form {
-  min-width: 240px;
+  min-width: 250px;
+}
+
+.site-search-shell {
+  margin-left: auto;
 }
 
 .site-page {
@@ -344,7 +376,7 @@ a:focus {
 
 .landing-grid {
   grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.9fr);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
 }
 
 .landing-content-grid {
@@ -363,7 +395,7 @@ a:focus {
 .landing-copy {
   position: relative;
   overflow: hidden;
-  padding: 3rem;
+  padding: 2.6rem 2.7rem;
   background: linear-gradient(135deg, rgba(255, 252, 247, 0.98), rgba(248, 240, 225, 0.93)), var(--panel);
 }
 
@@ -379,17 +411,17 @@ a:focus {
 }
 
 .landing-title {
-  font-size: clamp(3rem, 5.2vw, 5.2rem);
+  font-size: clamp(2.9rem, 4.4vw, 4.7rem);
   line-height: 0.96;
-  max-width: 12ch;
-  margin-bottom: 1.2rem;
+  max-width: 10ch;
+  margin-bottom: 1rem;
 }
 
 .landing-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.85rem;
-  margin: 1.75rem 0 2rem;
+  margin: 1.5rem 0 1.75rem;
 }
 
 .landing-actions-stacked {
@@ -409,14 +441,14 @@ a:focus {
   background: rgba(255, 255, 255, 0.84);
   border: 1px solid rgba(22, 35, 61, 0.1);
   border-radius: 20px;
-  padding: 1.2rem 1.1rem;
+  padding: 1rem 1rem;
 }
 
 .landing-stat-value,
 .collection-stat-value {
   display: block;
   font-family: "Source Serif 4", Georgia, serif;
-  font-size: 2rem;
+  font-size: 1.7rem;
   color: var(--indigo);
 }
 
@@ -435,7 +467,7 @@ a:focus {
 .record-summary-panel,
 .record-meta-panel,
 .record-media-panel {
-  padding: 1.9rem;
+  padding: 1.7rem;
 }
 
 .landing-panel-header {
@@ -452,6 +484,12 @@ a:focus {
 
 .access-panel {
   background: linear-gradient(180deg, rgba(255, 252, 248, 0.98), rgba(247, 238, 222, 0.95)), var(--panel);
+}
+
+.access-panel h3 {
+  font-size: 2.1rem;
+  line-height: 1.02;
+  margin-bottom: 0.9rem;
 }
 
 .access-form .form-control {
@@ -486,7 +524,7 @@ a:focus {
 }
 
 .landing-feature-panel {
-  padding: 2rem;
+  padding: 1.8rem;
   background: var(--panel-strong);
 }
 
@@ -1118,6 +1156,16 @@ footer {
   border-radius: 999px;
 }
 
+.btn-lg {
+  padding: 0.85rem 1.45rem;
+  font-size: 0.98rem;
+}
+
+.btn-sm {
+  font-size: 0.82rem;
+  padding: 0.42rem 0.85rem;
+}
+
 .btn-outline-dark {
   border-color: rgba(22, 35, 61, 0.28);
   color: var(--indigo);
@@ -1144,6 +1192,12 @@ footer {
 #search button,
 #lunrSearch .btn {
   border-radius: 0 16px 16px 0;
+}
+
+[data-auth-logout].btn-light {
+  color: var(--indigo);
+  background: rgba(255, 255, 255, 0.92);
+  border-color: transparent;
 }
 
 #loadingIcon,
@@ -1234,6 +1288,15 @@ body.collection-unlocked [data-auth-trigger] {
     top: auto;
     bottom: 1rem;
     padding: 1.4rem;
+  }
+
+  .site-hero-title h1 {
+    max-width: none;
+    font-size: clamp(2.4rem, 10vw, 3.3rem);
+  }
+
+  .site-banner-subtitle {
+    font-size: 0.92rem;
   }
 
   .landing-stats,
