@@ -1,10 +1,10 @@
 ---
 # generate time-focused json data suitable for TimelineJS.
-# includes all items in metadata that have a "Date" field filled.
+# includes all items in metadata that have a normalized "Searchable date" field filled.
 # Curate the timeline by adding a "where" expression to the assign on the first line.
 # For details, see https://collectionbuilder.github.io/cb-docs/docs/advanced/timelinejs/  
 ---
-{%- assign items = site.data[site.metadata] | where_exp: 'item', 'item["Date"]' -%}
+{%- assign items = site.data[site.metadata] | where_exp: 'item', 'item["Searchable date"]' -%}
 {
     "title": {
         "media": {
@@ -18,18 +18,15 @@
         }
     },
     "events": [
-      {% for item in items %}{% if item["Date"] %}{
+      {% for item in items %}{% if item["Searchable date"] %}{
         "media": {
           "url": "{% if item.youtubeid %}{{ 'https://www.youtube.com/watch?v=' | append: item.youtubeid }}{% elsif item.vimeoid %}{{ 'https://vimeo.com/' | append: item.vimeoid }}{% elsif item["File name"] contains 'http' %}{{ item["File name"] }}{% else %}{{ item["File name"] | prepend: '/objects/' | absolute_url }}{% endif %}",
           "caption": {{ item["Title"] | jsonify }},
           "link": "{{ '/item.html' | absolute_url | append: '?id=' | append: item["Object name"] }}",
           "credit": "{{ site.title }}"
         },
-        "start_date": { {% if item["Date"] contains '-' %}{% assign dates = item["Date"] | split: '-' %}
-          "month": "{{ dates[1] }}",
-          "day": "{{ dates[2] }}",
-          "year": "{{ dates[0] }}"{% elsif item["Date"] contains '/' %}"year": "{{ item["Date"] | strip | split: '/' | last }}"{% else %}
-          "year": "{{ item["Date"] }}"{% endif %}
+        "start_date": {
+          "year": "{{ item["Searchable date"] }}"
         },
         "text": {
           "headline": {{ item["Title"] | jsonify }}{% if item["Description"] %},

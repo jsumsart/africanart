@@ -134,16 +134,8 @@
             itemLink = '';
             {% if stubs contains "timeline" %}
             /* add link to view on timeline */
-            if (item.Date) {
-                var itemYear;
-                if (item.Date.includes('-')) {
-                    itemYear = item.Date.split('-')[0];
-                } else if (item.Date.includes('/')) {
-                    itemYear = item.Date.split('/').pop();
-                } else {
-                    itemYear = item.Date;
-                }
-                var timelineButton = '<a href="{{ "/timeline.html" | relative_url }}#y' + itemYear + '" class="btn btn-outline-primary">View on Timeline</a>';
+            if (item["Searchable date"]) {
+                var timelineButton = '<a href="{{ "/timeline.html" | relative_url }}#y' + item["Searchable date"] + '" class="btn btn-outline-primary">View on Timeline</a>';
                 /* add timeline link to children only if specified in theme.yml */
                 {% if site.data.theme.timeline-child-objects == true %}
                     itemLink += timelineButton;
