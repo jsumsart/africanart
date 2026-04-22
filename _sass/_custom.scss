@@ -195,6 +195,13 @@ a:focus {
   min-height: clamp(260px, 32vw, 410px);
 }
 
+.site-banner-tools {
+  position: absolute;
+  top: 0.9rem;
+  right: clamp(1rem, 4vw, 2.25rem);
+  z-index: 2;
+}
+
 .site-hero-title {
   position: relative;
   z-index: 1;
@@ -323,6 +330,21 @@ a:focus {
 
 .nav-access-controls {
   align-items: center;
+}
+
+.banner-access-controls {
+  position: relative;
+  z-index: 2;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.site-banner-tools .banner-access-controls {
+  background: rgba(14, 26, 46, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  padding: 0.45rem 0.55rem;
+  backdrop-filter: blur(6px);
 }
 
 .nav-gate-label {
@@ -1596,6 +1618,17 @@ body.collection-unlocked [data-auth-trigger] {
     padding: 1.4rem;
   }
 
+  .site-banner-tools {
+    left: 1rem;
+    right: 1rem;
+    top: 0.9rem;
+  }
+
+  .site-banner-tools .banner-access-controls {
+    justify-content: stretch;
+    border-radius: 18px;
+  }
+
   .site-hero-title h1 {
     max-width: none;
     font-size: clamp(2.4rem, 10vw, 3.3rem);
@@ -1617,11 +1650,6 @@ body.collection-unlocked [data-auth-trigger] {
   .research-panel-header {
     flex-direction: column;
     align-items: stretch;
-  }
-
-  .nav-access-controls {
-    margin-top: 1rem;
-    align-items: stretch !important;
   }
 
   .nav-gate-label {

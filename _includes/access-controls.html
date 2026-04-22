@@ -1,0 +1,20 @@
+<div class="banner-access-controls d-flex align-items-center gap-2">
+    <span class="nav-gate-label d-none d-lg-inline">Research Access</span>
+    <form class="nav-auth-form" data-auth-form>
+        <label class="visually-hidden" for="banner-staff-password">Staff password</label>
+        <input class="form-control form-control-sm nav-auth-input" id="banner-staff-password" name="password" type="password" autocomplete="current-password" placeholder="Password" required>
+        <button class="btn btn-sm btn-outline-light nav-auth-submit" type="submit" aria-label="Open research access">Enter</button>
+    </form>
+    <a class="btn btn-sm btn-outline-light d-none" href="{{ '/browse.html' | relative_url }}" data-auth-open>Catalog</a>
+    <form class="nav-editor-form d-none" data-editor-auth-form>
+        <label class="visually-hidden" for="banner-editor-password">Editor password</label>
+        <input class="form-control form-control-sm nav-auth-input nav-editor-input" id="banner-editor-password" name="password" type="password" autocomplete="current-password" placeholder="Editor pass" required>
+        <button class="btn btn-sm btn-outline-light nav-auth-submit" type="submit" aria-label="Unlock catalog room">Edit</button>
+    </form>
+    <a class="btn btn-sm btn-outline-light d-none nav-editor-button" href="{{ '/catalog-room.html' | relative_url }}" data-auth-editor-link aria-label="Open catalog room" title="Open catalog room">
+        <span aria-hidden="true">✎</span>
+    </a>
+    <button class="btn btn-sm btn-outline-light nav-access-prompt" type="button" data-auth-trigger>{{ site.data.theme.staff-gate-label | default: "Staff Access" }}</button>
+    <button class="btn btn-sm btn-outline-light d-none" type="button" data-editor-logout aria-label="Lock catalog room" title="Lock catalog room">Editor Lock</button>
+    <button class="btn btn-sm btn-light d-none" type="button" data-auth-logout>Lock</button>
+</div>
