@@ -67,6 +67,19 @@ search_exclude: true
           <div id="editor-last-saved" class="editor-last-saved"></div>
         </div>
 
+        <div class="editor-github-panel">
+          <div>
+            <span class="editor-field-label">GitHub write-back</span>
+            <p class="small-note mb-0">Enter a GitHub token with repository contents write access. It stays in this browser only and is used to update the master CSV directly in the repo.</p>
+          </div>
+          <div class="editor-github-row">
+            <input id="editor-github-token" class="form-control" type="password" autocomplete="off" placeholder="GitHub token">
+            <input id="editor-commit-message" class="form-control" type="text" value="">
+            <button type="button" class="btn btn-outline-dark" id="editor-save-token">Store token</button>
+            <button type="button" class="btn btn-primary" id="editor-commit-csv">Commit to CSV</button>
+          </div>
+        </div>
+
         <div class="editor-preview-row">
           <div class="editor-preview-card">
             <div class="record-image-shell">

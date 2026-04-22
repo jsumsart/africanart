@@ -4,6 +4,9 @@
   const editorPath = {{ '/catalog-room.html' | relative_url | jsonify }};
   const sessionKey = {{ site.data.theme.staff-gate-session-key | default: 'jsu-african-art-access' | jsonify }};
   const editorSessionKey = {{ site.data.theme.editor-gate-session-key | default: 'jsu-african-art-editor' | jsonify }};
+  const repoFullName = {{ site.github.repository_nwo | default: 'jsumsart/africanart' | jsonify }};
+  const csvPath = "_data/africanart_mdl_medata.csv";
+  const tokenStorageKey = "jsu-african-art-github-token";
   const records = [
     {% for item in editor_items %}
     {
@@ -73,6 +76,7 @@
     { key: "attribution_confidence", label: "Attribution Confidence", type: "text" },
     { key: "cultural_sensitivity_note", label: "Cultural Sensitivity Note", type: "textarea" }
   ];
+  const editableKeys = fieldConfig.filter((field) => !field.readonly).map((field) => field.key);
 
   const draftPrefix = "jsu-african-art-draft:";
   const path = window.location.pathname;
@@ -98,7 +102,11 @@
     reset: document.getElementById("editor-reset"),
     copyJson: document.getElementById("editor-copy-json"),
     downloadJson: document.getElementById("editor-download-json"),
-    preview: document.getElementById("editor-preview-image")
+    preview: document.getElementById("editor-preview-image"),
+    githubToken: document.getElementById("editor-github-token"),
+    saveToken: document.getElementById("editor-save-token"),
+    commitCsv: document.getElementById("editor-commit-csv"),
+    commitMessage: document.getElementById("editor-commit-message")
   };
 
   let activeId = null;
@@ -125,6 +133,18 @@
     els.alert.textContent = message;
     els.alert.className = "access-alert";
     if (tone) els.alert.classList.add("access-alert-" + tone);
+  }
+
+  function setBusy(button, busy, text) {
+    if (!button) return;
+    if (busy) {
+      button.dataset.originalText = button.textContent;
+      button.textContent = text || "Working...";
+      button.disabled = true;
+      return;
+    }
+    button.textContent = button.dataset.originalText || button.textContent;
+    button.disabled = false;
   }
 
   function currentRecord() {
@@ -216,6 +236,7 @@
     updatePreview(record);
     const draft = getDraft(id);
     els.lastSaved.textContent = draft && draft.__savedAt ? "Draft saved " + new Date(draft.__savedAt).toLocaleString() : "No local draft saved yet.";
+    els.commitMessage.value = "Update " + id + " metadata";
     setAlert("", "");
     renderList();
   }
@@ -271,6 +292,157 @@
     setAlert("Draft JSON downloaded.", "info");
   }
 
+  function getStoredToken() {
+    return window.localStorage.getItem(tokenStorageKey) || "";
+  }
+
+  function storeToken() {
+    const token = (els.githubToken.value || "").trim();
+    if (!token) {
+      window.localStorage.removeItem(tokenStorageKey);
+      els.githubToken.placeholder = "GitHub token";
+      setAlert("Stored GitHub token cleared from this browser.", "info");
+      return;
+    }
+    window.localStorage.setItem(tokenStorageKey, token);
+    els.githubToken.value = "";
+    els.githubToken.placeholder = "GitHub token stored";
+    setAlert("GitHub token stored in this browser.", "info");
+  }
+
+  function parseCsv(text) {
+    const rows = [];
+    let row = [];
+    let value = "";
+    let inQuotes = false;
+    for (let i = 0; i < text.length; i += 1) {
+      const char = text[i];
+      if (inQuotes) {
+        if (char === '"') {
+          if (text[i + 1] === '"') {
+            value += '"';
+            i += 1;
+          } else {
+            inQuotes = false;
+          }
+        } else {
+          value += char;
+        }
+      } else if (char === '"') {
+        inQuotes = true;
+      } else if (char === ",") {
+        row.push(value);
+        value = "";
+      } else if (char === "\n") {
+        row.push(value);
+        rows.push(row);
+        row = [];
+        value = "";
+      } else if (char !== "\r") {
+        value += char;
+      }
+    }
+    if (value !== "" || row.length) {
+      row.push(value);
+      rows.push(row);
+    }
+    return rows;
+  }
+
+  function csvEscape(value) {
+    const text = String(value == null ? "" : value);
+    if (/[",\n]/.test(text)) {
+      return '"' + text.replace(/"/g, '""') + '"';
+    }
+    return text;
+  }
+
+  async function fetchRepoFile(token) {
+    const response = await fetch("https://api.github.com/repos/" + repoFullName + "/contents/" + encodeURIComponent(csvPath), {
+      headers: {
+        "Accept": "application/vnd.github+json",
+        "Authorization": "Bearer " + token
+      }
+    });
+    if (!response.ok) {
+      throw new Error("GitHub file fetch failed (" + response.status + ").");
+    }
+    return response.json();
+  }
+
+  async function commitCsvUpdate() {
+    if (!activeId) return;
+    const token = getStoredToken();
+    if (!token) {
+      setAlert("Store a GitHub token before committing catalog changes.", "error");
+      els.githubToken.focus();
+      return;
+    }
+    setBusy(els.commitCsv, true, "Committing...");
+    try {
+      const file = await fetchRepoFile(token);
+      const csvText = decodeURIComponent(escape(atob(file.content.replace(/\n/g, ""))));
+      const rows = parseCsv(csvText);
+      const headers = rows[0];
+      const objectNameIndex = headers.indexOf("Object name");
+      if (objectNameIndex === -1) {
+        throw new Error("Object name column not found in the master CSV.");
+      }
+      const rowIndex = rows.findIndex((row, index) => index > 0 && row[objectNameIndex] === activeId);
+      if (rowIndex === -1) {
+        throw new Error("Could not find " + activeId + " in the master CSV.");
+      }
+
+      const currentDraft = collectFormData();
+      editableKeys.forEach((key) => {
+        const headerIndex = headers.indexOf(key);
+        if (headerIndex > -1) {
+          rows[rowIndex][headerIndex] = currentDraft[key] || "";
+        }
+      });
+
+      const newCsv = rows.map((row) => headers.map(function (_, index) {
+        return csvEscape(row[index] || "");
+      }).join(",")).join("\n") + "\n";
+
+      const response = await fetch("https://api.github.com/repos/" + repoFullName + "/contents/" + encodeURIComponent(csvPath), {
+        method: "PUT",
+        headers: {
+          "Accept": "application/vnd.github+json",
+          "Authorization": "Bearer " + token,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message: (els.commitMessage.value || ("Update " + activeId + " metadata")).trim(),
+          content: btoa(unescape(encodeURIComponent(newCsv))),
+          sha: file.sha,
+          branch: "main"
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error("GitHub commit failed (" + response.status + ").");
+      }
+
+      const merged = mergedRecord(activeId);
+      editableKeys.forEach((key) => {
+        merged[key] = currentDraft[key] || "";
+      });
+      const recordIndex = records.findIndex((record) => record["Object name"] === activeId);
+      if (recordIndex > -1) {
+        records[recordIndex] = merged;
+      }
+      window.localStorage.removeItem(draftKey(activeId));
+      els.lastSaved.textContent = "Committed to GitHub at " + new Date().toLocaleString();
+      setAlert("Record committed to the master CSV on GitHub.", "info");
+      openRecord(activeId);
+    } catch (error) {
+      setAlert(error.message, "error");
+    } finally {
+      setBusy(els.commitCsv, false);
+    }
+  }
+
   function filterRecords() {
     const query = (els.search.value || "").trim().toLowerCase();
     filteredRecords = records.filter((record) => {
@@ -292,9 +464,14 @@
   els.reset.addEventListener("click", handleReset);
   els.copyJson.addEventListener("click", handleCopyJson);
   els.downloadJson.addEventListener("click", handleDownloadJson);
+  els.saveToken.addEventListener("click", storeToken);
+  els.commitCsv.addEventListener("click", commitCsvUpdate);
 
   const params = new URLSearchParams(window.location.search);
   const requested = params.get("id");
+  if (getStoredToken()) {
+    els.githubToken.placeholder = "GitHub token stored";
+  }
   renderList();
   if (requested && records.some((record) => record["Object name"] === requested)) {
     openRecord(requested);

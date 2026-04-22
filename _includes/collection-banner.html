@@ -29,24 +29,26 @@
 </div>
 {%- else -%}
 <div class="container site-masthead-shell">
-    <div class="row align-items-center">
-        <div id="title" class="{% if site.organization-logo-banner %}col-md-9{% else %}col-12{% endif %}">
-            <div class="site-masthead">
-                <p class="site-banner-kicker mb-2">Jackson State University</p>
-                <h1><a class="text-dark text-decoration-none" href="{{ site.baseurl }}/" >{{ site.title }}</a></h1>	 
-                {% if site.tagline %}<p class="site-banner-tagline mb-0">{{ site.tagline }}</p>{% endif %}
-            </div>
-        </div>
-        <div class="col-12 mt-3 d-flex justify-content-end">
+    <div class="site-masthead-frame">
+        <div class="site-banner-tools">
             {% include access-controls.html %}
         </div>
-        {% if site.organization-logo-banner %}
-        <div class="col-md-3 d-none d-lg-block text-end">
-            <a class="btn btn-outline-light" href="{{ site.organization-link }}" target="_blank" rel="noopener">
-                <img class="img-fluid" src="{{ site.organization-logo-banner | relative_url }}" title="{{ site.organization-name }}" alt="{{ site.organization-name }} home" >
-            </a>
+        <div class="row align-items-center">
+            <div id="title" class="{% if site.organization-logo-banner %}col-md-9{% else %}col-12{% endif %}">
+                <div class="site-masthead">
+                    <p class="site-banner-kicker mb-2">Jackson State University</p>
+                    <h1><a class="text-dark text-decoration-none" href="{{ site.baseurl }}/" >{{ site.title }}</a></h1>	 
+                    {% if site.tagline %}<p class="site-banner-tagline mb-0">{{ site.tagline }}</p>{% endif %}
+                </div>
+            </div>
+            {% if site.organization-logo-banner %}
+            <div class="col-md-3 d-none d-lg-block text-end">
+                <a class="btn btn-outline-light" href="{{ site.organization-link }}" target="_blank" rel="noopener">
+                    <img class="img-fluid" src="{{ site.organization-logo-banner | relative_url }}" title="{{ site.organization-name }}" alt="{{ site.organization-name }} home" >
+                </a>
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
     </div>
 </div>
 {%- endif -%}
