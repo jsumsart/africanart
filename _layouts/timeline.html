@@ -6,13 +6,18 @@ custom-foot: js/timeline-js.html
 {%- if site.data.theme.icons -%}{% assign icons = site.data.theme.icons %}{% else %}
 {% assign cb_icons = site.pages | where: "name","cb-icons.svg" | first %}
 {% assign icons = cb_icons.icons %}{%- endif -%}
-{% if site.data.theme.timeline-child-objects == true %}
-{%- assign items = site.data[site.metadata] | where_exp: 'item','item["Object name"]' -%}
-{% else %}
-{%- assign items = site.data[site.metadata] | where_exp: 'item','item["Object name"]' | where_exp: 'item','item.parentid == nil' -%}
-{% endif %}
-{%- assign raw-dates = items | where_exp: 'item', 'item["Searchable date"] != nil and item["Searchable date"] != ""' | map: 'Searchable date' | compact | uniq | sort -%}
-{%- assign uniqueYears = raw-dates -%}
+{% assign items = site.data[site.metadata] %}
+{% unless site.data.theme.timeline-child-objects == true %}
+{%- assign items = items | where_exp: 'item', 'item.parentid == nil' -%}
+{% endunless %}
+{%- capture raw_dates -%}
+{%- for item in items -%}
+{%- if item["Searchable date"] and item["Searchable date"] != "" -%}
+{{ item["Searchable date"] }};
+{%- endif -%}
+{%- endfor -%}
+{%- endcapture -%}
+{%- assign uniqueYears = raw_dates | split: ";" | compact | uniq | sort -%}
 {%- if site.data.theme.year-navigation -%}
 {%- assign navYears = site.data.theme.year-navigation | split: ";" -%}
 {%- else -%}
@@ -63,8 +68,8 @@ custom-foot: js/timeline-js.html
             </th>
             <td>
                 <div class="row">
-                    {%- assign inYear = items | where: 'Searchable date', year -%}
-                    {% for item in inYear %}
+                    {% for item in items %}
+                    {% if item["Searchable date"] == year %}
                     <div class="col-lg-4 col-md-6">
                         <a href="{% if item.parentid == nil %}{{ '/item.html' | relative_url | append: '?id=' | append: item["Object name"] }}{% elsif item.parentid %}{{ '/item.html' | relative_url | append: '?id=' | append: item.parentid | relative_url }}#{{ item["Object name"] }}{% endif %}">
                             {% if item.format contains 'image' or item.youtubeid %}
@@ -87,6 +92,7 @@ custom-foot: js/timeline-js.html
                             {% endif %}
                         </a>
                     </div>
+                    {% endif %}
                     {% endfor %}
                 </div>
             </td>
