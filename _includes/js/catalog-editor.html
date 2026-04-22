@@ -406,18 +406,25 @@
     setBusy(els.commitCsv, true, "Committing...");
     try {
       const currentDraft = collectFormData();
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(function () {
+        controller.abort();
+      }, 20000);
       const response = await fetch(writebackEndpoint, {
         method: "POST",
         headers: {
+          "apikey": config.supabaseAnonKey,
           "Authorization": "Bearer " + session.access_token,
           "Content-Type": "application/json"
         },
+        signal: controller.signal,
         body: JSON.stringify({
           objectName: activeId,
           updates: currentDraft,
           commitMessage: (els.commitMessage.value || ("Update " + activeId + " metadata")).trim()
         })
       });
+      window.clearTimeout(timeoutId);
 
       const result = await response.json().catch(function () {
         return {};
@@ -439,7 +446,11 @@
       setAlert("Record committed to the master CSV. GitHub Pages will refresh the public site after the deploy completes.", "info");
       openRecord(activeId);
     } catch (error) {
-      setAlert(error.message, "error");
+      if (error && error.name === "AbortError") {
+        setAlert("The write-back request timed out. Check the Supabase function logs to see whether the request reached the function.", "error");
+      } else {
+        setAlert(error.message, "error");
+      }
     } finally {
       setBusy(els.commitCsv, false);
     }
