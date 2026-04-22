@@ -3,6 +3,7 @@
 (function () {
     const homeUrl = {{ '/' | relative_url | jsonify }};
     const browseUrl = {{ '/browse.html' | relative_url | jsonify }};
+    const editorUrl = {{ '/catalog-room.html' | relative_url | jsonify }};
     const publicPaths = [{% assign gate_public_paths = site.data.theme.staff-gate-public-paths | split: ';' %}{% for p in gate_public_paths %}{{ p | relative_url | jsonify }}{% unless forloop.last %}, {% endunless %}{% endfor %}];
     const sessionKey = {{ site.data.theme.staff-gate-session-key | default: 'jsu-african-art-access' | jsonify }};
     const passwordHash = {{ site.data.theme.staff-gate-password-sha256 | jsonify }};
@@ -147,6 +148,25 @@
     });
     document.querySelectorAll("[data-auth-logout]").forEach((el) => {
         el.addEventListener("click", handleLogout);
+    });
+    document.querySelectorAll("[data-auth-editor]").forEach((el) => {
+        el.addEventListener("click", function (event) {
+            event.preventDefault();
+            if (!isUnlocked()) {
+                onTriggerClick(event);
+                return;
+            }
+            window.location.assign(editorUrl);
+        });
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (!isUnlocked()) return;
+        if (!(event.shiftKey && event.key.toLowerCase() === "e")) return;
+        const tag = (event.target && event.target.tagName) ? event.target.tagName.toLowerCase() : "";
+        if (tag === "input" || tag === "textarea" || event.target.isContentEditable) return;
+        event.preventDefault();
+        window.location.assign(editorUrl);
     });
 
     const params = new URLSearchParams(window.location.search);
