@@ -21,8 +21,8 @@ staff-gate-label: "Staff Access"
 editor-gate-password-sha256: "ec59104e4ce20b30f2f55f50752c42953a3837556c146462fabfdb429d7ea9cf"
 editor-gate-session-key: "jsu-african-art-editor"
 editor-gate-label: "Catalog Room"
-editor-supabase-url:
-editor-supabase-anon-key:
+editor-supabase-url: "https://wdlbruqjozfwgejvoqje.supabase.co"
+editor-supabase-anon-key: "sb_publishable_YhhaTLt6L1sQc6SdD2Tx9A_yy3hR_tw"
 editor-writeback-endpoint:
 
 ##########
