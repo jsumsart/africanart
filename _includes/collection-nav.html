@@ -40,6 +40,17 @@
             <div class="site-search-shell protected-nav-item" data-protected-nav="true">
                 {% include nav-search-lunr.html %}
             </div>
+            <div class="nav-access-controls d-flex align-items-center gap-2 ms-lg-3">
+                <span class="nav-gate-label d-none d-lg-inline">Research Access</span>
+                <form class="nav-auth-form" data-auth-form>
+                    <label class="visually-hidden" for="nav-staff-password">Staff password</label>
+                    <input class="form-control form-control-sm nav-auth-input" id="nav-staff-password" name="password" type="password" autocomplete="current-password" placeholder="Password" required>
+                    <button class="btn btn-sm btn-outline-light nav-auth-submit" type="submit" aria-label="Open research access">Enter</button>
+                </form>
+                <a class="btn btn-sm btn-outline-light d-none" href="{{ '/browse.html' | relative_url }}" data-auth-open>Catalog</a>
+                <button class="btn btn-sm btn-outline-light nav-access-prompt" type="button" data-auth-trigger>{{ site.data.theme.staff-gate-label | default: "Staff Access" }}</button>
+                <button class="btn btn-sm btn-light d-none" type="button" data-auth-logout>Lock</button>
+            </div>
         </div>
     </div>
 </nav>

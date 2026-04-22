@@ -347,6 +347,11 @@ a:focus {
   backdrop-filter: blur(6px);
 }
 
+.site-banner-tools .nav-auth-input {
+  min-width: 116px;
+  max-width: 132px;
+}
+
 .nav-gate-label {
   color: rgba(255, 255, 255, 0.72);
   font-size: 0.78rem;
@@ -1627,6 +1632,10 @@ body.collection-unlocked [data-auth-trigger] {
   .site-banner-tools .banner-access-controls {
     justify-content: stretch;
     border-radius: 18px;
+  }
+
+  .site-banner-tools .nav-editor-form {
+    width: 100%;
   }
 
   .site-hero-title h1 {
