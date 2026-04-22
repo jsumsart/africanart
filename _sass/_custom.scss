@@ -197,10 +197,14 @@ a:focus {
 
 .site-masthead-frame {
   position: relative;
+  min-height: 3.2rem;
   padding-top: 0.9rem;
 }
 
 .site-banner-tools {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
   position: absolute;
   top: 0.9rem;
   right: clamp(1rem, 4vw, 2.25rem);
@@ -340,7 +344,7 @@ a:focus {
 .banner-access-controls {
   position: relative;
   z-index: 2;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: flex-end;
 }
 
@@ -1654,6 +1658,10 @@ body.collection-unlocked [data-auth-trigger] {
   .site-banner-tools .banner-access-controls {
     justify-content: stretch;
     border-radius: 18px;
+  }
+
+  .banner-access-controls {
+    flex-wrap: wrap;
   }
 
   .site-banner-tools .nav-editor-form {

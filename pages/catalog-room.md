@@ -11,11 +11,11 @@ search_exclude: true
     <div>
       <p class="section-kicker">Staff Workspace</p>
       <h1 class="page-title">Catalog Room</h1>
-      <p class="page-intro">Review, refine, and stage record changes from a protected workspace that stays outside the public site navigation.</p>
+      <p class="page-intro">Review, refine, and directly update catalog records from a protected workspace that stays outside the public site navigation.</p>
     </div>
     <div class="page-aside-card">
       <h2 class="h5">Current behavior</h2>
-      <p>This editor saves drafts in this browser only. Use the export tools to hand off or preserve changes before they are written back to the master catalog.</p>
+      <p>This editor can save local drafts in the browser and, with a GitHub token, commit approved changes directly back to the master catalog CSV in the repository.</p>
       <p class="mb-0"><strong>Hidden access:</strong> this page is not linked in the public navigation and can also be opened with <kbd>Shift</kbd> + <kbd>E</kbd> after unlocking research access.</p>
     </div>
   </div>
@@ -26,7 +26,7 @@ search_exclude: true
     <div>
       <p class="section-kicker">Record Editing</p>
       <h2 class="record-section-title">Protected draft editor</h2>
-      <p class="section-lead">Use the left panel to locate a record, then revise the catalog fields on the right. Drafts are stored locally in your browser until you export them.</p>
+      <p class="section-lead">Use the left panel to locate a record, revise the catalog fields on the right, then save a local draft or commit the approved revision back to the master CSV.</p>
     </div>
   </div>
 
@@ -87,8 +87,8 @@ search_exclude: true
             </div>
           </div>
           <div class="editor-preview-note">
-            <h4>Draft handling</h4>
-            <p>Drafts remain in this browser under the current access session. They do not publish to the website until we intentionally write them back to the master CSV.</p>
+            <h4>Draft and commit workflow</h4>
+            <p>Drafts remain in this browser until you are ready. When a revision is approved, use the GitHub write-back controls above to commit it to the master CSV on <code>main</code>.</p>
           </div>
         </div>
 
