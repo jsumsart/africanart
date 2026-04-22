@@ -72,12 +72,6 @@
         document.querySelectorAll("[data-auth-logout]").forEach((el) => {
             el.classList.toggle("d-none", !unlocked);
         });
-        document.querySelectorAll("[data-home-locked]").forEach((el) => {
-            el.classList.toggle("d-none", unlocked);
-        });
-        document.querySelectorAll("[data-home-unlocked]").forEach((el) => {
-            el.classList.toggle("d-none", !unlocked);
-        });
     }
 
     function showAlert(message, tone) {
@@ -99,18 +93,10 @@
     }
 
     function focusAuthForm() {
-        const panel = document.querySelector("[data-home-locked]");
         const navInput = document.querySelector(".nav-auth-form input[type='password']");
-        const input = document.querySelector("[data-auth-form] input[type='password']");
         if (navInput && !navInput.closest(".d-none")) {
             window.setTimeout(() => navInput.focus(), 120);
             return;
-        }
-        if (panel) {
-            panel.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-        if (input) {
-            window.setTimeout(() => input.focus(), 180);
         }
     }
 

@@ -408,6 +408,10 @@ a:focus {
   align-items: start;
 }
 
+.landing-grid-single {
+  grid-template-columns: 1fr;
+}
+
 .landing-content-grid {
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
   margin-bottom: 1.5rem;
@@ -1288,20 +1292,16 @@ footer {
 
 body:not(.auth-ready) [data-protected-nav],
 body:not(.auth-ready) [data-auth-open],
-body:not(.auth-ready) [data-auth-logout],
-body:not(.auth-ready) [data-home-unlocked],
-body:not(.auth-ready) [data-home-locked] {
+body:not(.auth-ready) [data-auth-logout] {
   visibility: hidden;
 }
 
 body.collection-locked [data-protected-nav],
 body.collection-locked [data-auth-open],
-body.collection-locked [data-auth-logout],
-body.collection-locked [data-home-unlocked] {
+body.collection-locked [data-auth-logout] {
   display: none !important;
 }
 
-body.collection-unlocked [data-home-locked],
 body.collection-unlocked [data-auth-trigger] {
   display: none !important;
 }

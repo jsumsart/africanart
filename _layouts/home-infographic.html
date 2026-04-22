@@ -8,14 +8,13 @@ layout: page
 {%- assign dates = items | map: 'Date' | compact | uniq -%}
 
 <section class="landing-shell">
-  <div class="landing-grid">
+  <div class="landing-grid landing-grid-single">
     <div class="landing-copy">
       <p class="landing-kicker">Collection Overview</p>
       <h2 class="landing-title">The Jackson State University African Art Collection</h2>
       <p class="landing-lead">The Jackson State University African Art Collection supports teaching, research, and stewardship through an evolving digital catalog grounded in fuller description, stronger historical context, and more responsible interpretation.</p>
       <div class="landing-actions">
         <a class="btn btn-outline-dark btn-lg" href="{{ '/about.html' | relative_url }}">About the collection</a>
-        <button class="btn btn-primary btn-lg" type="button" data-auth-trigger>Open research access</button>
       </div>
       <div class="landing-stats">
         <article class="landing-stat-card">
@@ -36,30 +35,6 @@ layout: page
         </article>
       </div>
     </div>
-    <aside class="access-panel" data-home-locked>
-      <p class="access-eyebrow">Research Access</p>
-      <h3>Open the catalog workspace.</h3>
-      <p class="access-text">Research tools are currently available through a lightweight password layer while cataloging, interpretation, and interface development continue. Authorized users can open browse, search, map, timeline, and data views here.</p>
-      <div class="access-alert d-none" data-auth-alert></div>
-      <form class="access-form" data-auth-form>
-        <label class="form-label" for="staff-password">Access password</label>
-        <input class="form-control form-control-lg" id="staff-password" name="password" type="password" autocomplete="current-password" required>
-        <input type="hidden" name="next" value="{{ '/browse.html' | relative_url }}">
-        <button class="btn btn-primary btn-lg w-100" type="submit">Open research access</button>
-      </form>
-      <p class="access-footnote">This access layer supports ongoing project work and is not intended as a permanent collections-management login.</p>
-    </aside>
-    <aside class="access-panel d-none" data-home-unlocked>
-      <p class="access-eyebrow">Research Access</p>
-      <h3>The catalog workspace is open.</h3>
-      <p class="access-text">Continue into the catalog tools from the navigation, or return directly to the records to browse, search, map, and review metadata.</p>
-      <div class="landing-actions landing-actions-stacked">
-        <a class="btn btn-primary btn-lg" href="{{ '/browse.html' | relative_url }}">Browse the catalog</a>
-        <a class="btn btn-outline-dark btn-lg" href="{{ '/search.html' | relative_url }}">Search the collection</a>
-        <a class="access-hidden-link" href="{{ '/catalog-room.html' | relative_url }}" data-auth-editor>Open catalog room</a>
-        <button class="btn btn-link" type="button" data-auth-logout>Close research access</button>
-      </div>
-    </aside>
   </div>
 
   <div class="landing-content-grid">
