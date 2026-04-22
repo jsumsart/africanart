@@ -46,6 +46,12 @@
         document.querySelectorAll("[data-auth-open]").forEach((el) => {
             el.classList.toggle("d-none", !unlocked);
         });
+        document.querySelectorAll(".nav-auth-form").forEach((el) => {
+            el.classList.toggle("d-none", unlocked);
+        });
+        document.querySelectorAll(".nav-access-prompt").forEach((el) => {
+            el.classList.toggle("d-none", !unlocked);
+        });
         document.querySelectorAll("[data-auth-logout]").forEach((el) => {
             el.classList.toggle("d-none", !unlocked);
         });
@@ -77,7 +83,12 @@
 
     function focusAuthForm() {
         const panel = document.querySelector("[data-home-locked]");
+        const navInput = document.querySelector(".nav-auth-form input[type='password']");
         const input = document.querySelector("[data-auth-form] input[type='password']");
+        if (navInput && !navInput.closest(".d-none")) {
+            window.setTimeout(() => navInput.focus(), 120);
+            return;
+        }
         if (panel) {
             panel.scrollIntoView({ behavior: "smooth", block: "center" });
         }

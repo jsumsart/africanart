@@ -1294,6 +1294,38 @@ body.collection-unlocked [data-auth-trigger] {
   border-color: rgba(22, 35, 61, 0.38);
 }
 
+.nav-auth-form {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.nav-auth-input {
+  min-width: 132px;
+  max-width: 160px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: var(--ink);
+}
+
+.nav-auth-input::placeholder {
+  color: rgba(36, 53, 83, 0.62);
+}
+
+.nav-auth-submit,
+.nav-editor-button,
+.nav-access-prompt {
+  min-width: auto;
+}
+
+.nav-editor-button {
+  font-size: 1rem;
+  line-height: 1;
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+}
+
 .editor-shell {
   padding: 1.8rem;
 }
@@ -1466,6 +1498,17 @@ body.collection-unlocked [data-auth-trigger] {
 }
 
 @media (max-width: 991px) {
+  .nav-auth-form {
+    width: 100%;
+    margin-top: 0.4rem;
+  }
+
+  .nav-auth-input {
+    min-width: 0;
+    max-width: none;
+    flex: 1 1 auto;
+  }
+
   .editor-grid,
   .editor-preview-row,
   .editor-fields,
