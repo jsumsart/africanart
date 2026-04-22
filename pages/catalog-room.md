@@ -11,11 +11,11 @@ search_exclude: true
     <div>
       <p class="section-kicker">Staff Workspace</p>
       <h1 class="page-title">Catalog Room</h1>
-      <p class="page-intro">Review, refine, and directly update catalog records from a protected workspace that stays outside the public site navigation.</p>
+      <p class="page-intro">Review, refine, and save catalog records from a protected workspace that stays outside the public site navigation.</p>
     </div>
     <div class="page-aside-card">
       <h2 class="h5">Current behavior</h2>
-      <p>This editor can save local drafts in the browser and, with a GitHub token, commit approved changes directly back to the master catalog CSV in the repository.</p>
+      <p>This editor can save local drafts in the browser and, once the live save service is stable, save approved changes back to the master catalog for the public site.</p>
       <p class="mb-0"><strong>Hidden access:</strong> this page is not linked in the public navigation and can also be opened with <kbd>Shift</kbd> + <kbd>E</kbd> after unlocking research access.</p>
     </div>
   </div>
@@ -26,7 +26,7 @@ search_exclude: true
     <div>
       <p class="section-kicker">Record Editing</p>
       <h2 class="record-section-title">Protected draft editor</h2>
-      <p class="section-lead">Use the left panel to locate a record, revise the catalog fields on the right, then save a local draft or commit the approved revision back to the master CSV.</p>
+      <p class="section-lead">Use the left panel to locate a record, revise the catalog fields on the right, then save a local draft or save the approved revision back to the catalog.</p>
     </div>
   </div>
 
@@ -70,7 +70,7 @@ search_exclude: true
         <div class="editor-github-panel">
           <div>
             <span class="editor-field-label">Staff sign-in</span>
-            <p class="small-note mb-0">Sign in with an authorized staff account to commit changes from this device. Local draft saving will still work without sign-in.</p>
+            <p class="small-note mb-0">Sign in with an authorized staff account to save changes from this device. Local draft saving will still work without sign-in.</p>
           </div>
           <div class="editor-github-row">
             <input id="editor-staff-email" class="form-control" type="email" autocomplete="username" placeholder="Staff email">
@@ -78,17 +78,17 @@ search_exclude: true
             <button type="button" class="btn btn-outline-dark" id="editor-staff-login">Sign in</button>
             <button type="button" class="btn btn-outline-dark d-none" id="editor-staff-logout">Sign out</button>
           </div>
-          <p id="editor-staff-status" class="small-note editor-staff-status mb-0">Staff sign-in is required before changes can be written back to the master CSV.</p>
+          <p id="editor-staff-status" class="small-note editor-staff-status mb-0">Staff sign-in is required before changes can be saved back to the catalog.</p>
         </div>
 
         <div class="editor-github-panel">
           <div>
-            <span class="editor-field-label">Catalog write-back</span>
-            <p class="small-note mb-0">When you commit a record update here, the change is written to the master CSV in GitHub and the public site will refresh after the next Pages deploy completes.</p>
+            <span class="editor-field-label">Catalog save</span>
+            <p class="small-note mb-0">When you save a record update here, the change is sent to the catalog service and the public site will refresh after the next Pages deploy completes.</p>
           </div>
           <div class="editor-github-row">
             <input id="editor-commit-message" class="form-control" type="text" value="">
-            <button type="button" class="btn btn-primary" id="editor-commit-csv">Commit to CSV</button>
+            <button type="button" class="btn btn-primary" id="editor-commit-csv">Save to Catalog</button>
           </div>
         </div>
 
@@ -99,8 +99,8 @@ search_exclude: true
             </div>
           </div>
           <div class="editor-preview-note">
-            <h4>Draft and commit workflow</h4>
-            <p>Drafts remain in this browser until you are ready. When a revision is approved, sign in above and commit it to the master CSV on <code>main</code>; the public site will reflect the update automatically after GitHub Pages rebuilds.</p>
+            <h4>Draft and save workflow</h4>
+            <p>Drafts remain in this browser until you are ready. When a revision is approved, sign in above and save it back to the catalog; the public site will reflect the update automatically after GitHub Pages rebuilds.</p>
           </div>
         </div>
 

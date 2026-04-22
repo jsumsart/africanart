@@ -174,7 +174,7 @@
       els.staffStatus.textContent = "Signed in as " + (staffUser.email || "authorized staff user") + ".";
       els.staffPassword.value = "";
     } else {
-      els.staffStatus.textContent = "Staff sign-in is required before changes can be written back to the master CSV.";
+      els.staffStatus.textContent = "Staff sign-in is required before changes can be saved back to the catalog.";
     }
     setCommitEnabled(signedIn && Boolean(activeId));
   }
@@ -219,7 +219,7 @@
       staffSession = response.data.session || null;
       staffUser = staffSession ? staffSession.user : null;
       updateStaffUi();
-      setAlert("Staff sign-in confirmed. You can now commit approved catalog changes.", "info");
+      setAlert("Staff sign-in confirmed. You can now save approved catalog changes.", "info");
     } catch (error) {
       setAlert(error.message || "Staff sign-in could not be completed.", "error");
     } finally {
@@ -333,7 +333,7 @@
     updatePreview(record);
     const draft = getDraft(id);
     els.lastSaved.textContent = draft && draft.__savedAt ? "Draft saved " + new Date(draft.__savedAt).toLocaleString() : "No local draft saved yet.";
-    els.commitMessage.value = "Update " + id + " metadata";
+    els.commitMessage.value = "Save " + id + " metadata";
     setCommitEnabled(Boolean(staffUser));
     setAlert("", "");
     renderList();
@@ -393,17 +393,17 @@
   async function commitCsvUpdate() {
     if (!activeId) return;
     if (!hasStaffAuthConfig || !supabaseClient) {
-      setAlert("Staff write-back has not been configured yet.", "error");
+      setAlert("Catalog saving has not been configured yet.", "error");
       return;
     }
     const sessionResponse = await supabaseClient.auth.getSession();
     const session = sessionResponse.data.session || null;
     if (!session) {
-      setAlert("Sign in with a staff account before committing catalog changes.", "error");
+      setAlert("Sign in with a staff account before saving catalog changes.", "error");
       els.staffEmail.focus();
       return;
     }
-    setBusy(els.commitCsv, true, "Committing...");
+    setBusy(els.commitCsv, true, "Saving...");
     try {
       const currentDraft = collectFormData();
       const controller = new AbortController();
@@ -421,7 +421,7 @@
         body: JSON.stringify({
           objectName: activeId,
           updates: currentDraft,
-          commitMessage: (els.commitMessage.value || ("Update " + activeId + " metadata")).trim()
+          commitMessage: (els.commitMessage.value || ("Save " + activeId + " metadata")).trim()
         })
       });
       window.clearTimeout(timeoutId);
@@ -442,12 +442,12 @@
         records[recordIndex] = merged;
       }
       window.localStorage.removeItem(draftKey(activeId));
-      els.lastSaved.textContent = "Committed to GitHub at " + new Date().toLocaleString();
-      setAlert("Record committed to the master CSV. GitHub Pages will refresh the public site after the deploy completes.", "info");
+      els.lastSaved.textContent = "Saved to catalog at " + new Date().toLocaleString();
+      setAlert("Record saved to the catalog. The public site will refresh after the next Pages deploy completes.", "info");
       openRecord(activeId);
     } catch (error) {
       if (error && error.name === "AbortError") {
-        setAlert("The write-back request timed out. Check the Supabase function logs to see whether the request reached the function.", "error");
+        setAlert("The save request timed out. Check the Supabase function logs to see whether the request reached the function.", "error");
       } else {
         setAlert(error.message, "error");
       }
