@@ -2,7 +2,7 @@
 title: Catalog Room
 layout: page
 permalink: /catalog-room.html
-custom-foot: js/catalog-editor.html
+custom-foot: js/catalog-editor-auth.html;js/catalog-editor.html
 search_exclude: true
 ---
 
@@ -69,13 +69,25 @@ search_exclude: true
 
         <div class="editor-github-panel">
           <div>
-            <span class="editor-field-label">GitHub write-back</span>
-            <p class="small-note mb-0">Enter a GitHub token with repository contents write access. It stays in this browser only and is used to update the master CSV directly in the repo.</p>
+            <span class="editor-field-label">Staff sign-in</span>
+            <p class="small-note mb-0">Sign in with an authorized staff account to commit changes from this device. Local draft saving will still work without sign-in.</p>
           </div>
           <div class="editor-github-row">
-            <input id="editor-github-token" class="form-control" type="password" autocomplete="off" placeholder="GitHub token">
+            <input id="editor-staff-email" class="form-control" type="email" autocomplete="username" placeholder="Staff email">
+            <input id="editor-staff-password" class="form-control" type="password" autocomplete="current-password" placeholder="Staff password">
+            <button type="button" class="btn btn-outline-dark" id="editor-staff-login">Sign in</button>
+            <button type="button" class="btn btn-outline-dark d-none" id="editor-staff-logout">Sign out</button>
+          </div>
+          <p id="editor-staff-status" class="small-note editor-staff-status mb-0">Staff sign-in is required before changes can be written back to the master CSV.</p>
+        </div>
+
+        <div class="editor-github-panel">
+          <div>
+            <span class="editor-field-label">Catalog write-back</span>
+            <p class="small-note mb-0">When you commit a record update here, the change is written to the master CSV in GitHub and the public site will refresh after the next Pages deploy completes.</p>
+          </div>
+          <div class="editor-github-row">
             <input id="editor-commit-message" class="form-control" type="text" value="">
-            <button type="button" class="btn btn-outline-dark" id="editor-save-token">Store token</button>
             <button type="button" class="btn btn-primary" id="editor-commit-csv">Commit to CSV</button>
           </div>
         </div>
@@ -88,7 +100,7 @@ search_exclude: true
           </div>
           <div class="editor-preview-note">
             <h4>Draft and commit workflow</h4>
-            <p>Drafts remain in this browser until you are ready. When a revision is approved, use the GitHub write-back controls above to commit it to the master CSV on <code>main</code>.</p>
+            <p>Drafts remain in this browser until you are ready. When a revision is approved, sign in above and commit it to the master CSV on <code>main</code>; the public site will reflect the update automatically after GitHub Pages rebuilds.</p>
           </div>
         </div>
 

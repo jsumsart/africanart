@@ -1388,6 +1388,14 @@ body.collection-unlocked [data-auth-trigger] {
   gap: 0.75rem;
 }
 
+.editor-github-row:has(#editor-commit-csv) {
+  grid-template-columns: minmax(260px, 1fr) auto;
+}
+
+.editor-staff-status {
+  color: var(--muted);
+}
+
 .editor-grid {
   display: grid;
   grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);

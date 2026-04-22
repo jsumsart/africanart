@@ -4,9 +4,9 @@
   const editorPath = {{ '/catalog-room.html' | relative_url | jsonify }};
   const sessionKey = {{ site.data.theme.staff-gate-session-key | default: 'jsu-african-art-access' | jsonify }};
   const editorSessionKey = {{ site.data.theme.editor-gate-session-key | default: 'jsu-african-art-editor' | jsonify }};
-  const repoFullName = {{ site.github.repository_nwo | default: 'jsumsart/africanart' | jsonify }};
-  const csvPath = "_data/africanart_mdl_medata.csv";
-  const tokenStorageKey = "jsu-african-art-github-token";
+  const config = window.JSUCatalogEditorConfig || {};
+  const writebackEndpoint = config.writebackEndpoint || "";
+  const hasStaffAuthConfig = Boolean(config.supabaseUrl && config.supabaseAnonKey && writebackEndpoint && window.supabase);
   const records = [
     {% for item in editor_items %}
     {
@@ -103,14 +103,20 @@
     copyJson: document.getElementById("editor-copy-json"),
     downloadJson: document.getElementById("editor-download-json"),
     preview: document.getElementById("editor-preview-image"),
-    githubToken: document.getElementById("editor-github-token"),
-    saveToken: document.getElementById("editor-save-token"),
+    staffEmail: document.getElementById("editor-staff-email"),
+    staffPassword: document.getElementById("editor-staff-password"),
+    staffLogin: document.getElementById("editor-staff-login"),
+    staffLogout: document.getElementById("editor-staff-logout"),
+    staffStatus: document.getElementById("editor-staff-status"),
     commitCsv: document.getElementById("editor-commit-csv"),
     commitMessage: document.getElementById("editor-commit-message")
   };
 
   let activeId = null;
   let filteredRecords = records.slice();
+  let supabaseClient = null;
+  let staffSession = null;
+  let staffUser = null;
 
   function draftKey(id) {
     return draftPrefix + id;
@@ -145,6 +151,97 @@
     }
     button.textContent = button.dataset.originalText || button.textContent;
     button.disabled = false;
+  }
+
+  function setCommitEnabled(enabled) {
+    if (!els.commitCsv) return;
+    els.commitCsv.disabled = !enabled;
+  }
+
+  function updateStaffUi() {
+    const signedIn = Boolean(staffUser);
+    if (!hasStaffAuthConfig) {
+      els.staffStatus.textContent = "Configure Supabase and the write-back endpoint in theme settings before staff sign-in can be enabled.";
+      setCommitEnabled(false);
+      return;
+    }
+
+    els.staffLogin.classList.toggle("d-none", signedIn);
+    els.staffLogout.classList.toggle("d-none", !signedIn);
+    els.staffEmail.disabled = signedIn;
+    els.staffPassword.disabled = signedIn;
+    if (signedIn) {
+      els.staffStatus.textContent = "Signed in as " + (staffUser.email || "authorized staff user") + ".";
+      els.staffPassword.value = "";
+    } else {
+      els.staffStatus.textContent = "Staff sign-in is required before changes can be written back to the master CSV.";
+    }
+    setCommitEnabled(signedIn && Boolean(activeId));
+  }
+
+  async function initializeStaffAuth() {
+    if (!hasStaffAuthConfig) {
+      updateStaffUi();
+      return;
+    }
+    supabaseClient = window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey);
+    const sessionResponse = await supabaseClient.auth.getSession();
+    staffSession = sessionResponse.data.session || null;
+    staffUser = staffSession ? staffSession.user : null;
+    supabaseClient.auth.onAuthStateChange(function (_event, session) {
+      staffSession = session || null;
+      staffUser = staffSession ? staffSession.user : null;
+      updateStaffUi();
+    });
+    updateStaffUi();
+  }
+
+  async function handleStaffLogin() {
+    if (!hasStaffAuthConfig) {
+      setAlert("Supabase staff authentication has not been configured yet.", "error");
+      return;
+    }
+    const email = (els.staffEmail.value || "").trim();
+    const password = els.staffPassword.value || "";
+    if (!email || !password) {
+      setAlert("Enter a staff email and password to continue.", "error");
+      return;
+    }
+    setBusy(els.staffLogin, true, "Signing in...");
+    try {
+      const response = await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+      if (response.error) {
+        throw response.error;
+      }
+      staffSession = response.data.session || null;
+      staffUser = staffSession ? staffSession.user : null;
+      updateStaffUi();
+      setAlert("Staff sign-in confirmed. You can now commit approved catalog changes.", "info");
+    } catch (error) {
+      setAlert(error.message || "Staff sign-in could not be completed.", "error");
+    } finally {
+      setBusy(els.staffLogin, false);
+    }
+  }
+
+  async function handleStaffLogout() {
+    if (!supabaseClient) return;
+    setBusy(els.staffLogout, true, "Signing out...");
+    try {
+      const response = await supabaseClient.auth.signOut();
+      if (response.error) throw response.error;
+      staffSession = null;
+      staffUser = null;
+      updateStaffUi();
+      setAlert("Staff sign-in cleared on this device.", "info");
+    } catch (error) {
+      setAlert(error.message || "Staff sign-out could not be completed.", "error");
+    } finally {
+      setBusy(els.staffLogout, false);
+    }
   }
 
   function currentRecord() {
@@ -237,6 +334,7 @@
     const draft = getDraft(id);
     els.lastSaved.textContent = draft && draft.__savedAt ? "Draft saved " + new Date(draft.__savedAt).toLocaleString() : "No local draft saved yet.";
     els.commitMessage.value = "Update " + id + " metadata";
+    setCommitEnabled(Boolean(staffUser));
     setAlert("", "");
     renderList();
   }
@@ -292,136 +390,40 @@
     setAlert("Draft JSON downloaded.", "info");
   }
 
-  function getStoredToken() {
-    return window.localStorage.getItem(tokenStorageKey) || "";
-  }
-
-  function storeToken() {
-    const token = (els.githubToken.value || "").trim();
-    if (!token) {
-      window.localStorage.removeItem(tokenStorageKey);
-      els.githubToken.placeholder = "GitHub token";
-      setAlert("Stored GitHub token cleared from this browser.", "info");
-      return;
-    }
-    window.localStorage.setItem(tokenStorageKey, token);
-    els.githubToken.value = "";
-    els.githubToken.placeholder = "GitHub token stored";
-    setAlert("GitHub token stored in this browser.", "info");
-  }
-
-  function parseCsv(text) {
-    const rows = [];
-    let row = [];
-    let value = "";
-    let inQuotes = false;
-    for (let i = 0; i < text.length; i += 1) {
-      const char = text[i];
-      if (inQuotes) {
-        if (char === '"') {
-          if (text[i + 1] === '"') {
-            value += '"';
-            i += 1;
-          } else {
-            inQuotes = false;
-          }
-        } else {
-          value += char;
-        }
-      } else if (char === '"') {
-        inQuotes = true;
-      } else if (char === ",") {
-        row.push(value);
-        value = "";
-      } else if (char === "\n") {
-        row.push(value);
-        rows.push(row);
-        row = [];
-        value = "";
-      } else if (char !== "\r") {
-        value += char;
-      }
-    }
-    if (value !== "" || row.length) {
-      row.push(value);
-      rows.push(row);
-    }
-    return rows;
-  }
-
-  function csvEscape(value) {
-    const text = String(value == null ? "" : value);
-    if (/[",\n]/.test(text)) {
-      return '"' + text.replace(/"/g, '""') + '"';
-    }
-    return text;
-  }
-
-  async function fetchRepoFile(token) {
-    const response = await fetch("https://api.github.com/repos/" + repoFullName + "/contents/" + encodeURIComponent(csvPath), {
-      headers: {
-        "Accept": "application/vnd.github+json",
-        "Authorization": "Bearer " + token
-      }
-    });
-    if (!response.ok) {
-      throw new Error("GitHub file fetch failed (" + response.status + ").");
-    }
-    return response.json();
-  }
-
   async function commitCsvUpdate() {
     if (!activeId) return;
-    const token = getStoredToken();
-    if (!token) {
-      setAlert("Store a GitHub token before committing catalog changes.", "error");
-      els.githubToken.focus();
+    if (!hasStaffAuthConfig || !supabaseClient) {
+      setAlert("Staff write-back has not been configured yet.", "error");
+      return;
+    }
+    const sessionResponse = await supabaseClient.auth.getSession();
+    const session = sessionResponse.data.session || null;
+    if (!session) {
+      setAlert("Sign in with a staff account before committing catalog changes.", "error");
+      els.staffEmail.focus();
       return;
     }
     setBusy(els.commitCsv, true, "Committing...");
     try {
-      const file = await fetchRepoFile(token);
-      const csvText = decodeURIComponent(escape(atob(file.content.replace(/\n/g, ""))));
-      const rows = parseCsv(csvText);
-      const headers = rows[0];
-      const objectNameIndex = headers.indexOf("Object name");
-      if (objectNameIndex === -1) {
-        throw new Error("Object name column not found in the master CSV.");
-      }
-      const rowIndex = rows.findIndex((row, index) => index > 0 && row[objectNameIndex] === activeId);
-      if (rowIndex === -1) {
-        throw new Error("Could not find " + activeId + " in the master CSV.");
-      }
-
       const currentDraft = collectFormData();
-      editableKeys.forEach((key) => {
-        const headerIndex = headers.indexOf(key);
-        if (headerIndex > -1) {
-          rows[rowIndex][headerIndex] = currentDraft[key] || "";
-        }
-      });
-
-      const newCsv = rows.map((row) => headers.map(function (_, index) {
-        return csvEscape(row[index] || "");
-      }).join(",")).join("\n") + "\n";
-
-      const response = await fetch("https://api.github.com/repos/" + repoFullName + "/contents/" + encodeURIComponent(csvPath), {
-        method: "PUT",
+      const response = await fetch(writebackEndpoint, {
+        method: "POST",
         headers: {
-          "Accept": "application/vnd.github+json",
-          "Authorization": "Bearer " + token,
+          "Authorization": "Bearer " + session.access_token,
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          message: (els.commitMessage.value || ("Update " + activeId + " metadata")).trim(),
-          content: btoa(unescape(encodeURIComponent(newCsv))),
-          sha: file.sha,
-          branch: "main"
+          objectName: activeId,
+          updates: currentDraft,
+          commitMessage: (els.commitMessage.value || ("Update " + activeId + " metadata")).trim()
         })
       });
 
+      const result = await response.json().catch(function () {
+        return {};
+      });
       if (!response.ok) {
-        throw new Error("GitHub commit failed (" + response.status + ").");
+        throw new Error(result.error || ("Catalog write-back failed (" + response.status + ")."));
       }
 
       const merged = mergedRecord(activeId);
@@ -434,7 +436,7 @@
       }
       window.localStorage.removeItem(draftKey(activeId));
       els.lastSaved.textContent = "Committed to GitHub at " + new Date().toLocaleString();
-      setAlert("Record committed to the master CSV on GitHub.", "info");
+      setAlert("Record committed to the master CSV. GitHub Pages will refresh the public site after the deploy completes.", "info");
       openRecord(activeId);
     } catch (error) {
       setAlert(error.message, "error");
@@ -464,17 +466,17 @@
   els.reset.addEventListener("click", handleReset);
   els.copyJson.addEventListener("click", handleCopyJson);
   els.downloadJson.addEventListener("click", handleDownloadJson);
-  els.saveToken.addEventListener("click", storeToken);
+  els.staffLogin.addEventListener("click", handleStaffLogin);
+  els.staffLogout.addEventListener("click", handleStaffLogout);
   els.commitCsv.addEventListener("click", commitCsvUpdate);
 
   const params = new URLSearchParams(window.location.search);
   const requested = params.get("id");
-  if (getStoredToken()) {
-    els.githubToken.placeholder = "GitHub token stored";
-  }
-  renderList();
-  if (requested && records.some((record) => record["Object name"] === requested)) {
-    openRecord(requested);
-  }
+  initializeStaffAuth().then(function () {
+    renderList();
+    if (requested && records.some((record) => record["Object name"] === requested)) {
+      openRecord(requested);
+    }
+  });
 })();
 </script>

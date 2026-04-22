@@ -1,0 +1,10 @@
+<script>
+window.JSUCatalogEditorConfig = {
+  supabaseUrl: {{ site.data.theme.editor-supabase-url | default: "" | jsonify }},
+  supabaseAnonKey: {{ site.data.theme.editor-supabase-anon-key | default: "" | jsonify }},
+  writebackEndpoint: {{ site.data.theme.editor-writeback-endpoint | default: "" | jsonify }}
+};
+</script>
+{% if site.data.theme.editor-supabase-url and site.data.theme.editor-supabase-anon-key %}
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+{% endif %}
