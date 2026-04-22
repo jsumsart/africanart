@@ -1300,6 +1300,12 @@ body.collection-unlocked [data-auth-trigger] {
   gap: 0.45rem;
 }
 
+.nav-editor-form {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
 .nav-auth-input {
   min-width: 132px;
   max-width: 160px;
@@ -1501,6 +1507,10 @@ body.collection-unlocked [data-auth-trigger] {
   .nav-auth-form {
     width: 100%;
     margin-top: 0.4rem;
+  }
+
+  .nav-editor-form {
+    width: 100%;
   }
 
   .nav-auth-input {

@@ -8,6 +8,9 @@
     const sessionKey = {{ site.data.theme.staff-gate-session-key | default: 'jsu-african-art-access' | jsonify }};
     const passwordHash = {{ site.data.theme.staff-gate-password-sha256 | jsonify }};
     const label = {{ site.data.theme.staff-gate-label | default: 'Staff Access' | jsonify }};
+    const editorSessionKey = {{ site.data.theme.editor-gate-session-key | default: 'jsu-african-art-editor' | jsonify }};
+    const editorPasswordHash = {{ site.data.theme.editor-gate-password-sha256 | jsonify }};
+    const editorLabel = {{ site.data.theme.editor-gate-label | default: 'Catalog Room' | jsonify }};
 
     function normalizePath(path) {
         if (!path) return "/";
@@ -35,7 +38,12 @@
         return window.localStorage.getItem(sessionKey) === "granted";
     }
 
+    function isEditorUnlocked() {
+        return window.localStorage.getItem(editorSessionKey) === "granted";
+    }
+
     function setUnlockedState(unlocked) {
+        const editorUnlocked = unlocked && isEditorUnlocked();
         document.body.classList.remove("collection-locked", "collection-unlocked");
         document.body.classList.add(unlocked ? "collection-unlocked" : "collection-locked");
         document.body.classList.add("auth-ready");
@@ -51,6 +59,15 @@
         });
         document.querySelectorAll(".nav-access-prompt").forEach((el) => {
             el.classList.toggle("d-none", !unlocked);
+        });
+        document.querySelectorAll("[data-auth-editor-link]").forEach((el) => {
+            el.classList.toggle("d-none", !editorUnlocked);
+        });
+        document.querySelectorAll("[data-editor-auth-form]").forEach((el) => {
+            el.classList.toggle("d-none", !unlocked || editorUnlocked);
+        });
+        document.querySelectorAll("[data-editor-logout]").forEach((el) => {
+            el.classList.toggle("d-none", !editorUnlocked);
         });
         document.querySelectorAll("[data-auth-logout]").forEach((el) => {
             el.classList.toggle("d-none", !unlocked);
@@ -132,12 +149,40 @@
         passwordInput.focus();
     }
 
+    async function handleEditorSubmit(event) {
+        event.preventDefault();
+        clearAlert();
+        const form = event.currentTarget;
+        const passwordInput = form.querySelector("input[type='password']");
+        const submittedHash = await sha256(passwordInput.value);
+        if (submittedHash === editorPasswordHash) {
+            window.localStorage.setItem(editorSessionKey, "granted");
+            setUnlockedState(true);
+            passwordInput.value = "";
+            window.location.assign(editorUrl);
+            return;
+        }
+        passwordInput.value = "";
+        showAlert("That " + editorLabel.toLowerCase() + " password was not recognized. Please try again.", "error");
+        passwordInput.focus();
+    }
+
     function handleLogout(event) {
         if (event) event.preventDefault();
         window.localStorage.removeItem(sessionKey);
+        window.localStorage.removeItem(editorSessionKey);
         setUnlockedState(false);
         if (!isPublicPage()) {
             window.location.assign(homeUrl);
+        }
+    }
+
+    function handleEditorLogout(event) {
+        if (event) event.preventDefault();
+        window.localStorage.removeItem(editorSessionKey);
+        setUnlockedState(isUnlocked());
+        if (normalizePath(window.location.pathname) === normalizePath(editorUrl)) {
+            window.location.assign(browseUrl);
         }
     }
 
@@ -157,14 +202,28 @@
     document.querySelectorAll("[data-auth-form]").forEach((el) => {
         el.addEventListener("submit", handleSubmit);
     });
+    document.querySelectorAll("[data-editor-auth-form]").forEach((el) => {
+        el.addEventListener("submit", handleEditorSubmit);
+    });
     document.querySelectorAll("[data-auth-logout]").forEach((el) => {
         el.addEventListener("click", handleLogout);
     });
-    document.querySelectorAll("[data-auth-editor]").forEach((el) => {
+    document.querySelectorAll("[data-editor-logout]").forEach((el) => {
+        el.addEventListener("click", handleEditorLogout);
+    });
+    document.querySelectorAll("[data-auth-editor], [data-auth-editor-link]").forEach((el) => {
         el.addEventListener("click", function (event) {
             event.preventDefault();
             if (!isUnlocked()) {
                 onTriggerClick(event);
+                return;
+            }
+            if (!isEditorUnlocked()) {
+                const editorInput = document.querySelector(".nav-editor-form input[type='password']");
+                if (editorInput) {
+                    editorInput.focus();
+                }
+                showAlert("Enter the " + editorLabel.toLowerCase() + " password to open editing access.", "info");
                 return;
             }
             window.location.assign(editorUrl);
@@ -172,7 +231,7 @@
     });
 
     document.addEventListener("keydown", function (event) {
-        if (!isUnlocked()) return;
+        if (!(isUnlocked() && isEditorUnlocked())) return;
         if (!(event.shiftKey && event.key.toLowerCase() === "e")) return;
         const tag = (event.target && event.target.tagName) ? event.target.tagName.toLowerCase() : "";
         if (tag === "input" || tag === "textarea" || event.target.isContentEditable) return;
@@ -184,6 +243,10 @@
     if (!unlocked && normalizePath(window.location.pathname) !== normalizePath(homeUrl) && !isPublicPage()) {
         const next = encodeURIComponent(currentPathWithQuery());
         window.location.replace(homeUrl + "?auth=required&next=" + next);
+        return;
+    }
+    if (unlocked && normalizePath(window.location.pathname) === normalizePath(editorUrl) && !isEditorUnlocked()) {
+        window.location.replace(browseUrl);
         return;
     }
 

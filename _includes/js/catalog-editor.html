@@ -3,6 +3,7 @@
 (function () {
   const editorPath = {{ '/catalog-room.html' | relative_url | jsonify }};
   const sessionKey = {{ site.data.theme.staff-gate-session-key | default: 'jsu-african-art-access' | jsonify }};
+  const editorSessionKey = {{ site.data.theme.editor-gate-session-key | default: 'jsu-african-art-editor' | jsonify }};
   const records = [
     {% for item in editor_items %}
     {
@@ -77,7 +78,7 @@
   const path = window.location.pathname;
   if (path !== editorPath && !path.endsWith("/catalog-room.html")) return;
 
-  if (window.localStorage.getItem(sessionKey) !== "granted") {
+  if (window.localStorage.getItem(sessionKey) !== "granted" || window.localStorage.getItem(editorSessionKey) !== "granted") {
     window.location.replace({{ '/' | relative_url | jsonify }} + "?auth=required&next=" + encodeURIComponent(editorPath));
     return;
   }
