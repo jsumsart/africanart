@@ -8,6 +8,7 @@
   const supabaseTable = config.supabaseTable || "catalog_records";
   const writebackEndpoint = config.writebackEndpoint || "";
   const hasStaffAuthConfig = Boolean(config.supabaseUrl && config.supabaseAnonKey && window.supabase);
+  const exportHeaders = [{% assign header_source = editor_items | first %}{% for pair in header_source %}{{ pair[0] | jsonify }}{% unless forloop.last %}, {% endunless %}{% endfor %}];
   const embeddedRecords = [
     {% for item in editor_items %}
     {
@@ -107,6 +108,7 @@
     staffLogin: document.getElementById("editor-staff-login"),
     staffLogout: document.getElementById("editor-staff-logout"),
     staffStatus: document.getElementById("editor-staff-status"),
+    exportCsv: document.getElementById("editor-export-csv"),
     commitCsv: document.getElementById("editor-commit-csv"),
     commitMessage: document.getElementById("editor-commit-message")
   };
@@ -158,6 +160,11 @@
     els.commitCsv.disabled = !enabled;
   }
 
+  function setExportEnabled(enabled) {
+    if (!els.exportCsv) return;
+    els.exportCsv.disabled = !enabled;
+  }
+
   function toFlatRecord(row) {
     const record = Object.assign({}, row.record || {});
     record["Object name"] = row.object_name || record["Object name"] || "";
@@ -193,6 +200,7 @@
     if (!hasStaffAuthConfig) {
       els.staffStatus.textContent = "Configure Supabase before staff sign-in can be enabled.";
       setCommitEnabled(false);
+      setExportEnabled(false);
       return;
     }
 
@@ -207,6 +215,27 @@
       els.staffStatus.textContent = "Staff sign-in is required before changes can be saved to the live catalog.";
     }
     setCommitEnabled(signedIn && Boolean(activeId));
+    setExportEnabled(signedIn);
+  }
+
+  function csvEscape(value) {
+    const text = String(value == null ? "" : value);
+    if (text.indexOf(",") > -1 || text.indexOf("\"") > -1 || text.indexOf("\n") > -1) {
+      return "\"" + text.replace(/"/g, "\"\"") + "\"";
+    }
+    return text;
+  }
+
+  function downloadTextFile(filename, content, mimeType) {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   }
 
   async function loadSupabaseRecords() {
@@ -306,6 +335,46 @@
       setAlert(error.message || "Staff sign-out could not be completed.", "error");
     } finally {
       setBusy(els.staffLogout, false);
+    }
+  }
+
+  async function handleExportCsv() {
+    if (!hasStaffAuthConfig || !supabaseClient) {
+      setAlert("CSV export has not been configured yet.", "error");
+      return;
+    }
+    if (!staffUser) {
+      setAlert("Sign in with a staff account before exporting the catalog.", "error");
+      els.staffEmail.focus();
+      return;
+    }
+
+    setBusy(els.exportCsv, true, "Exporting...");
+    try {
+      const response = await supabaseClient
+        .from(supabaseTable)
+        .select("object_name,title,culture_community,geographic_location,file_name,asset_format,record")
+        .order("object_name", { ascending: true });
+
+      if (response.error) {
+        throw response.error;
+      }
+
+      const rows = (response.data || []).map(function (row) {
+        const flat = toFlatRecord(row);
+        return exportHeaders.map(function (header) {
+          return csvEscape(flat[header] || "");
+        }).join(",");
+      });
+
+      const csv = exportHeaders.map(csvEscape).join(",") + "\n" + rows.join("\n") + "\n";
+      const stamp = new Date().toISOString().slice(0, 10);
+      downloadTextFile("africanart_mdl_export_" + stamp + ".csv", csv, "text/csv;charset=utf-8");
+      setAlert("MDL CSV exported from the live catalog.", "info");
+    } catch (error) {
+      setAlert(error.message || "CSV export failed.", "error");
+    } finally {
+      setBusy(els.exportCsv, false);
     }
   }
 
@@ -544,6 +613,7 @@
   els.reset.addEventListener("click", handleReset);
   els.staffLogin.addEventListener("click", handleStaffLogin);
   els.staffLogout.addEventListener("click", handleStaffLogout);
+  els.exportCsv.addEventListener("click", handleExportCsv);
   els.commitCsv.addEventListener("click", commitCsvUpdate);
 
   const params = new URLSearchParams(window.location.search);
