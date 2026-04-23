@@ -6,6 +6,7 @@
   const editorSessionKey = {{ site.data.theme.editor-gate-session-key | default: 'jsu-african-art-editor' | jsonify }};
   const config = window.JSUCatalogEditorConfig || {};
   const supabaseTable = config.supabaseTable || "catalog_records";
+  const siteSettingsTable = config.siteSettingsTable || "site_settings";
   const writebackEndpoint = config.writebackEndpoint || "";
   const hasStaffAuthConfig = Boolean(config.supabaseUrl && config.supabaseAnonKey && window.supabase);
   const exportHeaders = [{% assign header_source = editor_items | first %}{% for pair in header_source %}{{ pair[0] | jsonify }}{% unless forloop.last %}, {% endunless %}{% endfor %}];
@@ -108,6 +109,17 @@
     staffLogin: document.getElementById("editor-staff-login"),
     staffLogout: document.getElementById("editor-staff-logout"),
     staffStatus: document.getElementById("editor-staff-status"),
+    settingsAlert: document.getElementById("editor-settings-alert"),
+    settingsForm: document.getElementById("editor-settings-form"),
+    settingsPrimaryColor: document.getElementById("settings-primary-color"),
+    settingsSecondaryColor: document.getElementById("settings-secondary-color"),
+    settingsTextColor: document.getElementById("settings-text-color"),
+    settingsLinkColor: document.getElementById("settings-link-color"),
+    settingsBodyFontFamily: document.getElementById("settings-body-font-family"),
+    settingsHeadingFontFamily: document.getElementById("settings-heading-font-family"),
+    settingsFeaturedImage: document.getElementById("settings-featured-image"),
+    settingsBannerPosition: document.getElementById("settings-banner-position"),
+    settingsSaveButton: document.getElementById("settings-save-button"),
     exportCsv: document.getElementById("editor-export-csv"),
     commitCsv: document.getElementById("editor-commit-csv"),
     commitMessage: document.getElementById("editor-commit-message")
@@ -119,6 +131,7 @@
   let supabaseClient = null;
   let staffSession = null;
   let staffUser = null;
+  let siteSettings = Object.assign({}, (window.JSUSiteSettingsConfig && window.JSUSiteSettingsConfig.defaults) || {});
 
   function draftKey(id) {
     return draftPrefix + id;
@@ -143,6 +156,18 @@
     if (tone) els.alert.classList.add("access-alert-" + tone);
   }
 
+  function setSettingsAlert(message, tone) {
+    if (!els.settingsAlert) return;
+    if (!message) {
+      els.settingsAlert.textContent = "";
+      els.settingsAlert.className = "access-alert d-none";
+      return;
+    }
+    els.settingsAlert.textContent = message;
+    els.settingsAlert.className = "access-alert";
+    if (tone) els.settingsAlert.classList.add("access-alert-" + tone);
+  }
+
   function setBusy(button, busy, text) {
     if (!button) return;
     if (busy) {
@@ -163,6 +188,13 @@
   function setExportEnabled(enabled) {
     if (!els.exportCsv) return;
     els.exportCsv.disabled = !enabled;
+  }
+
+  function setSettingsEnabled(enabled) {
+    if (!els.settingsForm) return;
+    els.settingsForm.querySelectorAll("input, select, button").forEach(function (control) {
+      control.disabled = !enabled;
+    });
   }
 
   function toFlatRecord(row) {
@@ -201,6 +233,7 @@
       els.staffStatus.textContent = "Configure Supabase before staff sign-in can be enabled.";
       setCommitEnabled(false);
       setExportEnabled(false);
+      setSettingsEnabled(false);
       return;
     }
 
@@ -216,6 +249,7 @@
     }
     setCommitEnabled(signedIn && Boolean(activeId));
     setExportEnabled(signedIn);
+    setSettingsEnabled(signedIn);
   }
 
   function csvEscape(value) {
@@ -238,6 +272,86 @@
     URL.revokeObjectURL(url);
   }
 
+  function fillSettingsForm(values) {
+    if (!els.settingsForm) return;
+    els.settingsPrimaryColor.value = values.primary_color || "";
+    els.settingsSecondaryColor.value = values.secondary_color || "";
+    els.settingsTextColor.value = values.text_color || "";
+    els.settingsLinkColor.value = values.link_color || "";
+    els.settingsBodyFontFamily.value = values.body_font_family || "";
+    els.settingsHeadingFontFamily.value = values.heading_font_family || "";
+    els.settingsFeaturedImage.value = values.featured_image || "";
+    els.settingsBannerPosition.value = values.home_banner_image_position || "center";
+  }
+
+  async function loadSiteSettings() {
+    if (!supabaseClient) return;
+    const response = await supabaseClient
+      .from(siteSettingsTable)
+      .select("*")
+      .eq("id", 1)
+      .maybeSingle();
+
+    if (response.error) {
+      throw response.error;
+    }
+
+    siteSettings = Object.assign({}, siteSettings, response.data || {});
+    fillSettingsForm(siteSettings);
+    if (window.JSUApplySiteSettings) {
+      window.JSUApplySiteSettings(siteSettings);
+    }
+  }
+
+  async function handleSaveSiteSettings() {
+    if (!hasStaffAuthConfig || !supabaseClient) {
+      setSettingsAlert("Site settings are not configured yet.", "error");
+      return;
+    }
+    if (!staffUser) {
+      setSettingsAlert("Sign in with a staff account before saving site settings.", "error");
+      els.staffEmail.focus();
+      return;
+    }
+
+    setBusy(els.settingsSaveButton, true, "Saving...");
+    try {
+      const payload = {
+        id: 1,
+        primary_color: (els.settingsPrimaryColor.value || "").trim(),
+        secondary_color: (els.settingsSecondaryColor.value || "").trim(),
+        text_color: (els.settingsTextColor.value || "").trim(),
+        link_color: (els.settingsLinkColor.value || "").trim(),
+        body_font_family: (els.settingsBodyFontFamily.value || "").trim(),
+        heading_font_family: (els.settingsHeadingFontFamily.value || "").trim(),
+        featured_image: (els.settingsFeaturedImage.value || "").trim(),
+        home_banner_image_position: (els.settingsBannerPosition.value || "center").trim(),
+        updated_by: staffUser.id
+      };
+
+      const response = await supabaseClient
+        .from(siteSettingsTable)
+        .upsert(payload, { onConflict: "id" })
+        .select("*")
+        .single();
+
+      if (response.error) {
+        throw response.error;
+      }
+
+      siteSettings = Object.assign({}, siteSettings, response.data || {});
+      fillSettingsForm(siteSettings);
+      if (window.JSUApplySiteSettings) {
+        window.JSUApplySiteSettings(siteSettings);
+      }
+      setSettingsAlert("Site settings saved successfully.", "info");
+    } catch (error) {
+      setSettingsAlert(error.message || "Site settings could not be saved.", "error");
+    } finally {
+      setBusy(els.settingsSaveButton, false);
+    }
+  }
+
   async function loadSupabaseRecords() {
     if (!supabaseClient || !staffUser) return;
     const response = await supabaseClient
@@ -258,6 +372,7 @@
   async function initializeStaffAuth() {
     if (!hasStaffAuthConfig) {
       updateStaffUi();
+      fillSettingsForm(siteSettings);
       return;
     }
     supabaseClient = window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey);
@@ -279,8 +394,10 @@
     });
     if (staffUser) {
       await loadSupabaseRecords();
+      await loadSiteSettings();
     }
     updateStaffUi();
+    fillSettingsForm(siteSettings);
   }
 
   async function handleStaffLogin() {
@@ -306,6 +423,7 @@
       staffSession = response.data.session || null;
       staffUser = staffSession ? staffSession.user : null;
       await loadSupabaseRecords();
+      await loadSiteSettings();
       updateStaffUi();
       renderList();
       if (activeId) openRecord(activeId);
@@ -327,7 +445,9 @@
       staffUser = null;
       records = embeddedRecords.slice();
       filteredRecords = records.slice();
+      siteSettings = Object.assign({}, (window.JSUSiteSettingsConfig && window.JSUSiteSettingsConfig.defaults) || {});
       updateStaffUi();
+      fillSettingsForm(siteSettings);
       renderList();
       if (activeId) openRecord(activeId);
       setAlert("Staff sign-in cleared on this device.", "info");
@@ -613,6 +733,7 @@
   els.reset.addEventListener("click", handleReset);
   els.staffLogin.addEventListener("click", handleStaffLogin);
   els.staffLogout.addEventListener("click", handleStaffLogout);
+  els.settingsSaveButton.addEventListener("click", handleSaveSiteSettings);
   els.exportCsv.addEventListener("click", handleExportCsv);
   els.commitCsv.addEventListener("click", commitCsvUpdate);
 

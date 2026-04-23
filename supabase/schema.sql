@@ -43,6 +43,61 @@ for insert
 to authenticated
 with check (auth.uid() is not null);
 
+create table if not exists public.site_settings (
+  id integer primary key default 1 check (id = 1),
+  primary_color text,
+  secondary_color text,
+  text_color text,
+  link_color text,
+  body_font_family text,
+  heading_font_family text,
+  featured_image text,
+  home_banner_image_position text,
+  created_at timestamptz not null default timezone('utc', now()),
+  updated_at timestamptz not null default timezone('utc', now()),
+  updated_by uuid references auth.users(id) on delete set null
+);
+
+create or replace function public.set_site_settings_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = timezone('utc', now());
+  return new;
+end;
+$$;
+
+drop trigger if exists set_site_settings_updated_at on public.site_settings;
+create trigger set_site_settings_updated_at
+before update on public.site_settings
+for each row
+execute function public.set_site_settings_updated_at();
+
+alter table public.site_settings enable row level security;
+
+drop policy if exists "site settings readable by all users" on public.site_settings;
+create policy "site settings readable by all users"
+on public.site_settings
+for select
+to anon, authenticated
+using (true);
+
+drop policy if exists "site settings insert by authenticated users" on public.site_settings;
+create policy "site settings insert by authenticated users"
+on public.site_settings
+for insert
+to authenticated
+with check (auth.uid() is not null and id = 1);
+
+drop policy if exists "site settings update by authenticated users" on public.site_settings;
+create policy "site settings update by authenticated users"
+on public.site_settings
+for update
+to authenticated
+using (auth.uid() is not null and id = 1)
+with check (auth.uid() is not null and id = 1);
+
 drop policy if exists "catalog records update by authenticated users" on public.catalog_records;
 create policy "catalog records update by authenticated users"
 on public.catalog_records

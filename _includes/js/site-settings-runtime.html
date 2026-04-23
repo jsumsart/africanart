@@ -1,0 +1,89 @@
+{% if site.data.theme.editor-supabase-url and site.data.theme.editor-supabase-anon-key %}
+<script>
+window.JSUSiteSettingsConfig = {
+  supabaseUrl: {{ site.data.theme.editor-supabase-url | jsonify }},
+  supabaseAnonKey: {{ site.data.theme.editor-supabase-anon-key | jsonify }},
+  table: {{ site.data.theme.editor-site-settings-table | default: "site_settings" | jsonify }},
+  metadataUrl: {{ '/assets/data/metadata.json' | relative_url | jsonify }},
+  defaults: {
+    primary_color: "#14213d",
+    secondary_color: "#243b63",
+    text_color: "#111827",
+    link_color: "#1f3a68",
+    body_font_family: "\"Source Sans 3\", system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    heading_font_family: "\"Source Serif 4\", Georgia, serif",
+    featured_image: {{ site.data.theme.featured-image | default: "" | jsonify }},
+    home_banner_image_position: {{ site.data.theme.home-banner-image-position | default: "center" | jsonify }}
+  }
+};
+
+window.JSUApplySiteSettings = async function (settings) {
+  const config = window.JSUSiteSettingsConfig || {};
+  const merged = Object.assign({}, config.defaults || {}, settings || {});
+  const root = document.documentElement;
+
+  if (merged.primary_color) root.style.setProperty("--indigo", merged.primary_color);
+  if (merged.secondary_color) root.style.setProperty("--indigo-soft", merged.secondary_color);
+  if (merged.text_color) root.style.setProperty("--ink", merged.text_color);
+  if (merged.link_color) root.style.setProperty("--ochre", merged.link_color);
+  if (merged.body_font_family) root.style.setProperty("--body-font-family", merged.body_font_family);
+  if (merged.heading_font_family) root.style.setProperty("--heading-font-family", merged.heading_font_family);
+
+  const homeBanner = document.getElementById("home-banner");
+  if (homeBanner && merged.home_banner_image_position) {
+    homeBanner.style.backgroundPosition = merged.home_banner_image_position;
+  }
+
+  if (homeBanner && merged.featured_image) {
+    let imageUrl = merged.featured_image;
+    if (imageUrl.indexOf("/") !== 0 && imageUrl.indexOf("http") !== 0) {
+      try {
+        const response = await fetch(config.metadataUrl, { cache: "no-store" });
+        const metadata = await response.json();
+        const match = (metadata || []).find(function (item) {
+          return item["Object name"] === merged.featured_image;
+        });
+        if (match && match["File name"]) {
+          imageUrl = {{ '/objects/' | relative_url | jsonify }} + match["File name"];
+        }
+      } catch (_error) {}
+    }
+    homeBanner.style.backgroundImage = "url('" + imageUrl + "')";
+  }
+};
+
+(function () {
+  const config = window.JSUSiteSettingsConfig || {};
+  if (!config.supabaseUrl || !config.supabaseAnonKey) return;
+
+  function initRuntime() {
+    const client = window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey);
+    client
+      .from(config.table || "site_settings")
+      .select("*")
+      .eq("id", 1)
+      .single()
+      .then(function (response) {
+        if (!response.error && response.data) {
+          window.JSUApplySiteSettings(response.data);
+        } else {
+          window.JSUApplySiteSettings(config.defaults);
+        }
+      })
+      .catch(function () {
+        window.JSUApplySiteSettings(config.defaults);
+      });
+  }
+
+  if (window.supabase) {
+    initRuntime();
+    return;
+  }
+
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+  script.onload = initRuntime;
+  document.head.appendChild(script);
+})();
+</script>
+{% endif %}

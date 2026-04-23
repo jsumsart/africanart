@@ -24,6 +24,7 @@ editor-gate-label: "Catalog Room"
 editor-supabase-url: "https://wdlbruqjozfwgejvoqje.supabase.co"
 editor-supabase-anon-key: "sb_publishable_YhhaTLt6L1sQc6SdD2Tx9A_yy3hR_tw"
 editor-supabase-table: "catalog_records"
+editor-site-settings-table: "site_settings"
 editor-writeback-endpoint: ""
 
 ##########
