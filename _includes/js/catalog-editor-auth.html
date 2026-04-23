@@ -2,6 +2,7 @@
 window.JSUCatalogEditorConfig = {
   supabaseUrl: {{ site.data.theme.editor-supabase-url | default: "" | jsonify }},
   supabaseAnonKey: {{ site.data.theme.editor-supabase-anon-key | default: "" | jsonify }},
+  supabaseTable: {{ site.data.theme.editor-supabase-table | default: "catalog_records" | jsonify }},
   writebackEndpoint: {{ site.data.theme.editor-writeback-endpoint | default: "" | jsonify }}
 };
 </script>

@@ -1,19 +1,19 @@
-# Staff write-back setup
+# Live catalog setup
 
-This site keeps GitHub Pages and Jekyll for the public presentation layer while using Supabase for staff authentication and a small server-side write-back bridge.
+The public site stays on GitHub Pages and Jekyll, but the staff editor now treats Supabase as the live catalog database.
 
-## What this does
+## Architecture
 
-- staff sign in with Supabase email/password accounts from any device
-- the Edge Function receives an authenticated request
-- the function updates `_data/africanart_mdl_medata.csv` in GitHub
+- staff sign in with Supabase email/password accounts
+- record edits save into `public.catalog_records`
+- the editor can request a publish step after save
+- the publish function exports the current Supabase catalog snapshot to `_data/africanart_mdl_medata.csv` in GitHub
 - the commit to `main` triggers the normal GitHub Pages rebuild
-- the public site reflects the update after the Pages deploy finishes
 
-## Required Supabase setup
+## Required setup
 
-1. Create a Supabase project.
-2. Run [`supabase/schema.sql`](./schema.sql) in the SQL editor.
+1. Run [`supabase/schema.sql`](./schema.sql) in the Supabase SQL editor.
+2. Run [`supabase/catalog_records_seed.sql`](./catalog_records_seed.sql) once to seed the live catalog from the current CSV snapshot.
 3. Deploy the Edge Function from [`supabase/functions/catalog-writeback/index.ts`](./functions/catalog-writeback/index.ts).
 4. Set these function secrets:
    - `GITHUB_TOKEN`
@@ -28,12 +28,11 @@ Set these values in `_data/theme.yml`:
 
 - `editor-supabase-url`
 - `editor-supabase-anon-key`
+- `editor-supabase-table`
 - `editor-writeback-endpoint`
 
-The write-back endpoint should be the full HTTPS URL of the deployed `catalog-writeback` function.
+## Operational model
 
-## Notes
-
-- The hidden password-based gates in the site still control access to the research tools and the editor UI.
-- Supabase staff sign-in is the trusted layer that allows actual write-back.
-- The editor still supports local drafts even when write-back is not configured.
+- Supabase is the live editable catalog.
+- `_data/africanart_mdl_medata.csv` is the published site snapshot.
+- Staff can keep working in Supabase even if the publish step is temporarily unavailable.

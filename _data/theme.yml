@@ -23,6 +23,7 @@ editor-gate-session-key: "jsu-african-art-editor"
 editor-gate-label: "Catalog Room"
 editor-supabase-url: "https://wdlbruqjozfwgejvoqje.supabase.co"
 editor-supabase-anon-key: "sb_publishable_YhhaTLt6L1sQc6SdD2Tx9A_yy3hR_tw"
+editor-supabase-table: "catalog_records"
 editor-writeback-endpoint: "https://wdlbruqjozfwgejvoqje.supabase.co/functions/v1/smart-function"
 
 ##########

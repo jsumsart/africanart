@@ -7,17 +7,55 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS"
 };
 
-const editableKeys = [
+const csvHeaders = [
+  "Object name",
   "Identifier",
+  "Alternate ID",
   "Title",
-  "preferred_term",
-  "legacy_title",
+  "Alternate title(s)",
+  "Replaces",
+  "Replaced by",
+  "Description",
   "Creator",
-  "Date",
   "Searchable date",
+  "Date",
+  "Coverage (time period)",
+  "Time period",
+  "Subject",
+  "Mississippi county",
+  "Geographic location",
+  "Resource type",
+  "Format",
+  "Media format",
+  "Language",
+  "Language code",
+  "Publisher",
+  "Contributors",
+  "Notes",
+  "Rights",
+  "Disclaimer",
+  "Contributing institution",
+  "Collection",
+  "Source",
+  "Digital repository",
+  "Digital collection",
+  "File size",
+  "File extension",
+  "Width",
+  "Height",
+  "Color space",
+  "Date digital",
+  "Capture method",
+  "Processing software",
+  "Master image",
+  "Record created by",
+  "Hidden notes",
+  "Custom searches",
+  "IP resolution",
+  "Transcript",
+  "File name",
   "culture_community",
   "people_ethnolinguistic_group",
-  "Geographic location",
   "place_of_creation",
   "place_of_use",
   "materials",
@@ -25,17 +63,17 @@ const editableKeys = [
   "object_type",
   "function_use",
   "period_dynasty",
-  "Subject",
-  "Description",
   "provenance",
   "acquisition_context",
-  "Source",
-  "Notes",
-  "Transcript",
-  "Rights",
-  "Disclaimer",
+  "preferred_term",
+  "legacy_title",
   "attribution_confidence",
-  "cultural_sensitivity_note"
+  "cultural_sensitivity_note",
+  "youtubeid",
+  "vimeoid",
+  "latitude",
+  "longitude",
+  "format"
 ];
 
 function jsonResponse(status: number, body: Record<string, unknown>) {
@@ -46,48 +84,6 @@ function jsonResponse(status: number, body: Record<string, unknown>) {
       "Content-Type": "application/json"
     }
   });
-}
-
-function parseCsv(text: string): string[][] {
-  const rows: string[][] = [];
-  let row: string[] = [];
-  let value = "";
-  let inQuotes = false;
-
-  for (let i = 0; i < text.length; i += 1) {
-    const char = text[i];
-    if (inQuotes) {
-      if (char === "\"") {
-        if (text[i + 1] === "\"") {
-          value += "\"";
-          i += 1;
-        } else {
-          inQuotes = false;
-        }
-      } else {
-        value += char;
-      }
-    } else if (char === "\"") {
-      inQuotes = true;
-    } else if (char === ",") {
-      row.push(value);
-      value = "";
-    } else if (char === "\n") {
-      row.push(value);
-      rows.push(row);
-      row = [];
-      value = "";
-    } else if (char !== "\r") {
-      value += char;
-    }
-  }
-
-  if (value !== "" || row.length) {
-    row.push(value);
-    rows.push(row);
-  }
-
-  return rows;
 }
 
 function csvEscape(value: unknown): string {
@@ -133,29 +129,34 @@ serve(async (req) => {
 
   const userResponse = await supabase.auth.getUser();
   if (userResponse.error || !userResponse.data.user) {
-    return jsonResponse(401, { error: "Staff sign-in is required before write-back can continue." });
+    return jsonResponse(401, { error: "Staff sign-in is required before publishing can continue." });
   }
 
   const user = userResponse.data.user;
+  const payload = await req.json().catch(() => ({}));
+  const saveMessage = String(payload.saveMessage || "Publish updated catalog snapshot").trim();
 
-  let payload: {
-    objectName?: string;
-    commitMessage?: string;
-    updates?: Record<string, string>;
-  };
-  try {
-    payload = await req.json();
-  } catch {
-    return jsonResponse(400, { error: "Request body must be valid JSON." });
+  const recordsResponse = await supabase
+    .from("catalog_records")
+    .select("object_name,title,culture_community,geographic_location,file_name,asset_format,record")
+    .order("object_name", { ascending: true });
+
+  if (recordsResponse.error) {
+    return jsonResponse(500, { error: recordsResponse.error.message });
   }
 
-  const objectName = String(payload.objectName || "").trim();
-  const commitMessage = String(payload.commitMessage || "").trim() || `Update ${objectName} metadata`;
-  const updates = payload.updates || {};
+  const rows = (recordsResponse.data || []).map((row) => {
+    const record = Object.assign({}, row.record || {});
+    record["Object name"] = row.object_name || record["Object name"] || "";
+    record["Title"] = row.title || record["Title"] || "";
+    record["Geographic location"] = row.geographic_location || record["Geographic location"] || "";
+    record["culture_community"] = row.culture_community || record["culture_community"] || "";
+    record["File name"] = row.file_name || record["File name"] || "";
+    record["format"] = row.asset_format || record["format"] || "";
+    return csvHeaders.map((header) => csvEscape(record[header] || "")).join(",");
+  });
 
-  if (!objectName) {
-    return jsonResponse(400, { error: "An object identifier is required." });
-  }
+  const nextCsv = [csvHeaders.join(","), ...rows].join("\n") + "\n";
 
   const fileResponse = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${encodeURIComponent(githubCsvPath)}`, {
     headers: {
@@ -169,28 +170,6 @@ serve(async (req) => {
   }
 
   const file = await fileResponse.json();
-  const csvText = new TextDecoder().decode(Uint8Array.from(atob(file.content.replace(/\n/g, "")), (char) => char.charCodeAt(0)));
-  const rows = parseCsv(csvText);
-  const headers = rows[0] || [];
-  const objectNameIndex = headers.indexOf("Object name");
-
-  if (objectNameIndex === -1) {
-    return jsonResponse(500, { error: "The master CSV does not contain an Object name column." });
-  }
-
-  const rowIndex = rows.findIndex((row, index) => index > 0 && row[objectNameIndex] === objectName);
-  if (rowIndex === -1) {
-    return jsonResponse(404, { error: `Could not find ${objectName} in the master CSV.` });
-  }
-
-  editableKeys.forEach((key) => {
-    const headerIndex = headers.indexOf(key);
-    if (headerIndex > -1) {
-      rows[rowIndex][headerIndex] = String(updates[key] || "");
-    }
-  });
-
-  const nextCsv = rows.map((row) => headers.map((_, index) => csvEscape(row[index] || "")).join(",")).join("\n") + "\n";
   const encoded = btoa(String.fromCharCode(...new TextEncoder().encode(nextCsv)));
 
   const commitResponse = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${encodeURIComponent(githubCsvPath)}`, {
@@ -201,7 +180,7 @@ serve(async (req) => {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      message: commitMessage,
+      message: saveMessage,
       content: encoded,
       sha: file.sha,
       branch: githubBranch
@@ -209,7 +188,7 @@ serve(async (req) => {
   });
 
   if (!commitResponse.ok) {
-    return jsonResponse(502, { error: `GitHub commit failed (${commitResponse.status}).` });
+    return jsonResponse(502, { error: `GitHub publish failed (${commitResponse.status}).` });
   }
 
   const commitResult = await commitResponse.json();
@@ -217,16 +196,15 @@ serve(async (req) => {
   await supabase.from("catalog_edit_audit").insert({
     user_id: user.id,
     user_email: user.email,
-    object_name: objectName,
-    commit_message: commitMessage,
-    commit_sha: commitResult.commit?.sha || null,
-    payload: updates
+    object_name: String(payload.objectName || ""),
+    save_message: saveMessage,
+    publish_sha: commitResult.commit?.sha || null,
+    payload
   });
 
   return jsonResponse(200, {
     ok: true,
-    objectName,
-    commitSha: commitResult.commit?.sha || null,
-    message: "Catalog update committed to GitHub. GitHub Pages will refresh the public site after the deploy finishes."
+    publishSha: commitResult.commit?.sha || null,
+    message: "Live catalog snapshot published to GitHub. GitHub Pages will refresh the public site after the deploy finishes."
   });
 });
