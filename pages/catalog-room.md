@@ -11,7 +11,7 @@ search_exclude: true
     <div>
       <p class="section-kicker">Staff Workspace</p>
       <h1 class="page-title">Catalog Room</h1>
-      <p class="page-intro">Review, refine, and save catalog records from a protected workspace designed for day-to-day metadata editing.</p>
+      <p class="page-intro">Review, refine, and save catalog records from a protected workspace designed for daily record editing.</p>
     </div>
   </div>
 </section>
@@ -19,12 +19,12 @@ search_exclude: true
 <section class="research-panel editor-shell">
   <div class="research-panel-header">
       <div>
-        <p class="section-kicker">Record Editing</p>
-        <h2 class="record-section-title">Catalog editing workspace</h2>
+        <p class="section-kicker">Edit Records</p>
+        <h2 class="record-section-title">Record editing workspace</h2>
         <p class="section-lead">Select a record, confirm the image and identifying details, then move through the metadata sections from top to bottom before saving the revision.</p>
       </div>
       <div class="editor-page-actions">
-        <button type="button" class="btn btn-outline-dark" id="editor-export-csv">Export all records in MDL format as CSV</button>
+        <button type="button" class="btn btn-outline-dark" id="editor-export-csv">Export all records as MDL CSV</button>
       </div>
     </div>
 
@@ -32,8 +32,8 @@ search_exclude: true
     <div class="editor-settings-header">
       <div>
         <p class="section-kicker">Site Settings</p>
-        <h3 class="editor-settings-title">Appearance and featured content</h3>
-        <p class="small-note mb-0">Update collection-wide presentation details here, including colors, typography, and featured content shown across the public-facing site.</p>
+        <h3 class="editor-settings-title">Site appearance</h3>
+        <p class="small-note mb-0">Update collection-wide presentation details here, including colors, typography, and featured content shown across the site.</p>
       </div>
     </div>
     <div id="editor-settings-alert" class="access-alert d-none"></div>
@@ -131,7 +131,7 @@ search_exclude: true
             <button type="button" class="btn btn-outline-dark" id="editor-staff-login">Sign in</button>
             <button type="button" class="btn btn-outline-dark d-none" id="editor-staff-logout">Sign out</button>
           </div>
-          <p id="editor-staff-status" class="small-note editor-staff-status mb-0">Staff sign-in is required before changes can be saved to the live catalog.</p>
+          <p id="editor-staff-status" class="small-note editor-staff-status mb-0">Sign in with a staff account before saving changes.</p>
         </div>
 
         <div class="editor-preview-row">

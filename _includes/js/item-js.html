@@ -74,7 +74,7 @@
             return '<div class="record-quickfact"><span class="record-quickfact-label">' + escapeHtml(fact.label) + '</span><span class="record-quickfact-value">' + escapeHtml(fact.value) + '</span></div>';
         }).join("");
         if (record.Subject) {
-            document.getElementById("item-links").insertAdjacentHTML("beforebegin", '<div class="record-context-panel"><span class="record-context-label">Subject threads</span><div class="record-context-links">' + splitTerms(record.Subject).slice(0, 6).map(function(term) { return '<a class="record-term-link" href="{{ '/browse.html' | relative_url }}?q=' + encodeURIComponent(term) + '">' + escapeHtml(term) + '</a>'; }).join("") + '</div></div>');
+            document.getElementById("item-links").insertAdjacentHTML("beforebegin", '<div class="record-context-panel"><span class="record-context-label">Related subjects</span><div class="record-context-links">' + splitTerms(record.Subject).slice(0, 6).map(function(term) { return '<a class="record-term-link" href="{{ '/browse.html' | relative_url }}?q=' + encodeURIComponent(term) + '">' + escapeHtml(term) + '</a>'; }).join("") + '</div></div>');
         }
         /* add object */ 
         var format = "" + record.format;

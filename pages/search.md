@@ -6,4 +6,4 @@ permalink: /search/
 # Lunr.js search will be added below the content in this file
 ---
 
-Search across object title, description, date, culture or community, place, medium, subject, and other indexed fields in the master catalog.
+Search across object title, description, date, culture or community, place, medium, subject, and other indexed record fields.

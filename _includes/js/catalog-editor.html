@@ -230,7 +230,7 @@
   function updateStaffUi() {
     const signedIn = Boolean(staffUser);
     if (!hasStaffAuthConfig) {
-      els.staffStatus.textContent = "Configure Supabase before staff sign-in can be enabled.";
+      els.staffStatus.textContent = "Finish setup before staff sign-in can be enabled.";
       setCommitEnabled(false);
       setExportEnabled(false);
       setSettingsEnabled(false);
@@ -245,7 +245,7 @@
       els.staffStatus.textContent = "Signed in as " + (staffUser.email || "authorized staff user") + ".";
       els.staffPassword.value = "";
     } else {
-      els.staffStatus.textContent = "Staff sign-in is required before changes can be saved to the live catalog.";
+      els.staffStatus.textContent = "Sign in with a staff account before saving changes.";
     }
     setCommitEnabled(signedIn && Boolean(activeId));
     setExportEnabled(signedIn);
@@ -490,7 +490,7 @@
       const csv = exportHeaders.map(csvEscape).join(",") + "\n" + rows.join("\n") + "\n";
       const stamp = new Date().toISOString().slice(0, 10);
       downloadTextFile("africanart_mdl_export_" + stamp + ".csv", csv, "text/csv;charset=utf-8");
-      setAlert("MDL CSV exported from the live catalog.", "info");
+      setAlert("MDL CSV exported successfully.", "info");
     } catch (error) {
       setAlert(error.message || "CSV export failed.", "error");
     } finally {
@@ -668,13 +668,13 @@
   async function commitCsvUpdate() {
     if (!activeId) return;
     if (!hasStaffAuthConfig || !supabaseClient) {
-      setAlert("Live catalog saving has not been configured yet.", "error");
+      setAlert("Saving has not been configured yet.", "error");
       return;
     }
     const sessionResponse = await supabaseClient.auth.getSession();
     const session = sessionResponse.data.session || null;
     if (!session) {
-      setAlert("Sign in with a staff account before saving catalog changes.", "error");
+      setAlert("Sign in with a staff account before saving changes.", "error");
       els.staffEmail.focus();
       return;
     }
@@ -701,7 +701,7 @@
       }
       filteredRecords = records.slice();
       window.localStorage.removeItem(draftKey(activeId));
-      els.lastSaved.textContent = "Saved to live catalog at " + new Date().toLocaleString();
+      els.lastSaved.textContent = "Saved at " + new Date().toLocaleString();
 
       setAlert("Record saved successfully.", "info");
       openRecord(activeId);

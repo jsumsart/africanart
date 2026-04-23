@@ -16,13 +16,13 @@
             </div>
             <div class="modal-body">
 
-                <p>Download public-facing exports derived from the current master catalog.</p>
+                <p>Download data exports derived from the current collection records.</p>
                 
                 {% if site.data.theme.metadata-export-fields %}
                 <div class="card my-3 data-export-card">
                     <div class="card-body">
                         <h2 class="card-title h4">Collection Metadata</h2>
-                        <p class="card-text">Exportable public-facing metadata for the collection records, available as CSV or JSON.</p>
+                        <p class="card-text">Collection record information available as CSV or JSON.</p>
                         <a href="{{ '/assets/data/metadata.csv' | relative_url }}" class="btn btn-outline-dark" target="_blank">Metadata CSV</a>
                         <a href="{{ '/assets/data/metadata.json' | relative_url }}" class="btn btn-outline-dark" target="_blank">Metadata JSON</a>
                     </div>
@@ -51,7 +51,7 @@
                 <div class="card my-3 data-export-card">
                     <div class="card-body">
                         <h2 class="card-title h4">Geographic Terms</h2>
-                        <p class="card-text">Unique geographic values and counts drawn from the current public catalog.</p>
+                        <p class="card-text">Unique geographic values and counts drawn from the current collection records.</p>
                         <a href="{{ '/assets/data/locations.csv' | relative_url }}" class="btn btn-outline-dark" target="_blank">Locations CSV</a>
                         <a href="{{ '/assets/data/locations.json' | relative_url }}" class="btn btn-outline-dark" target="_blank">Locations JSON</a>
                     </div>
@@ -78,7 +78,7 @@
                 <div class="card my-3 data-export-card">
                     <div class="card-body">
                         <h2 class="card-title h4">Website Source Code</h2>
-                        <p class="card-text">GitHub repository containing the source code for this project and its Jekyll-based public site.</p>
+                        <p class="card-text">GitHub repository containing the source code for this project and its public website.</p>
                         <a href="{{ site.source-code | default: 'https://github.com/CollectionBuilder/collectionbuilder-gh' }}" class="btn btn-outline-dark" target="_blank">Source Code</a>
                     </div>
                 </div>

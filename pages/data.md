@@ -6,4 +6,4 @@ permalink: /data.html
 # a table visualization will be added below the content in this file
 ---
 
-Use this table to sort, search, and export public-facing catalog fields drawn from the master MDL-aligned metadata file.
+Use this table to sort, search, and export collection data drawn from the current site records.
