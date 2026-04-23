@@ -8,25 +8,32 @@ custom-foot: js/browse-js.html
 
 <section class="page-hero browse-hero">
     <div class="page-hero-grid">
-        <div>
+        <div class="browse-hero-copy">
             <p class="section-kicker">Research Access</p>
             <h1 class="page-title">Browse the catalog</h1>
-            <p class="page-intro">Browse the catalog through object title, culture or community, place, subject, material, and format. This view is designed for close research use and catalog review.</p>
+            <p class="page-intro">Browse the catalog through title, culture or community, place, subject, material, and format. This page is designed for close research use and sustained catalog review.</p>
         </div>
-        <div class="browse-guide-grid">
-            <article class="browse-guide-card">
-                <h3 class="h5">Begin broadly</h3>
-                <p>Use object types, communities, places, or themes to surface patterns across the catalog before narrowing to individual records.</p>
-            </article>
-            <article class="browse-guide-card">
-                <h3 class="h5">Follow linked terms</h3>
-                <p>Metadata links beneath each record trace shared subjects and places across related objects.</p>
-            </article>
-            <article class="browse-guide-card">
-                <h3 class="h5">Consult full records</h3>
-                <p>Each object page presents a concise overview followed by the fuller descriptive record.</p>
-            </article>
+        <div class="browse-hero-side">
+            <p class="section-kicker">Using This Page</p>
+            <p class="mb-0">Search broadly at first, then narrow by linked terms and open full records as patterns begin to emerge.</p>
         </div>
+    </div>
+</section>
+
+<section class="browse-guide-band">
+    <div class="browse-guide-grid">
+        <article class="browse-guide-card">
+            <h3 class="h5">Begin broadly</h3>
+            <p>Use object types, communities, places, or themes to surface patterns across the catalog before narrowing to individual records.</p>
+        </article>
+        <article class="browse-guide-card">
+            <h3 class="h5">Follow linked terms</h3>
+            <p>Metadata links beneath each record trace shared subjects and places across related objects.</p>
+        </article>
+        <article class="browse-guide-card">
+            <h3 class="h5">Consult full records</h3>
+            <p>Each object page begins with a concise overview before moving into the fuller descriptive record.</p>
+        </article>
     </div>
 </section>
 
@@ -70,4 +77,4 @@ custom-foot: js/browse-js.html
     <div class="spinner-border text-dark" role="status"><span class="visually-hidden">Loading...</span></div>
 </div>
 
-<div class="row" id="browseItems"></div>
+<div class="browse-results-grid row" id="browseItems"></div>

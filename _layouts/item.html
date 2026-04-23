@@ -34,13 +34,15 @@ gallery: true
 
         <div class="record-detail-grid">
             <section class="record-meta-panel">
-                <h2 class="record-section-title">Full Record</h2>
+                <p class="section-kicker">Catalog Record</p>
+                <h2 class="record-section-title">Extended object information</h2>
                 <div id="item-metadata"></div>
             </section>
 
             <aside class="record-summary-panel">
-                <h2 class="record-section-title">Navigate the Catalog</h2>
-                <p class="section-lead mb-3">Move to adjacent records or return to the browse interface to continue reviewing the collection.</p>
+                <p class="section-kicker">Catalog Navigation</p>
+                <h2 class="record-section-title">Continue through the collection</h2>
+                <p class="section-lead mb-3">Move to adjacent records or return to browse in order to continue comparing related works, places, and subject terms.</p>
                 {%- if site.data.theme.browse-buttons == true -%}
                 <div class="collection-nav-row">
                     <a id="prev-button" class="btn btn-outline-dark">&laquo; Previous</a>

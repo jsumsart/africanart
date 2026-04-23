@@ -8,15 +8,24 @@ layout: page
 {%- assign dates = items | map: 'Date' | compact | uniq -%}
 
 <section class="landing-shell">
-  <div class="landing-grid landing-grid-single">
+  <div class="landing-grid">
     <div class="landing-copy">
       <p class="landing-kicker">Collection Overview</p>
       <h2 class="landing-title">The Jackson State University African Art Collection</h2>
-      <p class="landing-lead">The Jackson State University African Art Collection supports teaching, research, and stewardship through an evolving digital catalog grounded in fuller description, stronger historical context, and more responsible interpretation.</p>
+      <p class="landing-lead">The Jackson State University African Art Collection supports teaching, research, and stewardship through a digital catalog designed to foreground historical context, cultural specificity, and responsible interpretation.</p>
       <div class="landing-actions">
         <a class="btn btn-outline-dark btn-lg" href="{{ '/about.html' | relative_url }}">About the collection</a>
+        <a class="btn btn-primary btn-lg" href="{{ '/browse.html' | relative_url }}">Browse the catalog</a>
       </div>
-      <div class="landing-stats">
+      <p class="landing-supporting-note">The site is structured as both a public-facing introduction to the collection and a working research environment for ongoing catalog development.</p>
+    </div>
+
+    <aside class="landing-overview-panel">
+      <div class="landing-panel-header">
+        <p class="landing-kicker">At a Glance</p>
+        <h3>Current scope of the digital catalog</h3>
+      </div>
+      <div class="landing-stats landing-stats-compact">
         <article class="landing-stat-card">
           <span class="landing-stat-value">{{ items | size }}</span>
           <span class="landing-stat-label">Objects represented in the current digital catalog</span>
@@ -34,19 +43,35 @@ layout: page
           <span class="landing-stat-label">Chronological references preserved in the catalog</span>
         </article>
       </div>
-    </div>
+      <div class="landing-overview-links">
+        <a class="landing-overview-link" href="{{ '/browse.html' | relative_url }}">Open the working catalog</a>
+        <a class="landing-overview-link" href="{{ '/subjects.html' | relative_url }}">Browse subject terms</a>
+        <a class="landing-overview-link" href="{{ '/locations.html' | relative_url }}">Browse geographic references</a>
+      </div>
+    </aside>
   </div>
 
-  <div class="landing-content-grid">
+  <div class="landing-content-grid landing-content-grid-balanced">
     <section class="landing-feature-panel">
       <div class="landing-panel-header">
         <p class="landing-kicker">Featured Objects</p>
         <h3>Selected works from the digital catalog</h3>
-        <p class="section-lead">A rotating view into the collection as the public-facing site and internal research tools continue to develop in tandem.</p>
+        <p class="section-lead">A rotating selection of collection records that offers one path into the broader catalog.</p>
       </div>
       {% include index/carousel.html title="Collection Highlights" height="420" btn-color="light" btn-text="Open Record" %}
     </section>
 
+    <section class="landing-feature-panel">
+      <div class="landing-panel-header">
+        <p class="landing-kicker">Collection Profile</p>
+        <h3>Chronology and media at a glance</h3>
+      </div>
+      {% include index/time.html %}
+      {% include index/objects.html %}
+    </section>
+  </div>
+
+  <div class="landing-secondary-grid">
     <section class="landing-feature-panel">
       <div class="landing-panel-header">
         <p class="landing-kicker">Catalog Priorities</p>
@@ -59,29 +84,19 @@ layout: page
         </article>
         <article class="landing-note-card">
           <h4>Research-centered access</h4>
-          <p>The collection supports teaching, student research, curatorial study, and future collections-management work through a more intentional metadata model.</p>
+          <p>The collection supports teaching, student research, curatorial study, and future collections-management work through a clearer and more intentional metadata model.</p>
         </article>
         <article class="landing-note-card">
           <h4>Single-source metadata</h4>
-          <p>The site reads from one MDL-aligned master catalog file, helping keep cataloging and public presentation in closer alignment.</p>
+          <p>The site reads from one MDL-aligned master catalog source, keeping catalog development and public presentation in closer alignment.</p>
         </article>
       </div>
-    </section>
-  </div>
-
-  <div class="landing-secondary-grid">
-    <section class="landing-feature-panel">
-      <div class="landing-panel-header">
-        <p class="landing-kicker">Collection Profile</p>
-        <h3>Chronology and media at a glance</h3>
-      </div>
-      {% include index/time.html %}
-      {% include index/objects.html %}
     </section>
     <section class="landing-feature-panel">
       <div class="landing-panel-header">
         <p class="landing-kicker">Discovery Paths</p>
         <h3>Subjects and places reflected in the catalog</h3>
+        <p class="section-lead">Use shared terms to move through the collection by theme, geography, and related histories rather than by title alone.</p>
       </div>
       {% include index/featured-terms.html field="Subject" title="Subject Threads" btn-color="primary" max=8 %}
       {% include index/featured-terms.html field="Geographic location" title="Places in the Collection" btn-color="outline-secondary" max=8 %}

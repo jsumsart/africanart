@@ -21,7 +21,7 @@ search_exclude: true
       <div>
         <p class="section-kicker">Record Editing</p>
         <h2 class="record-section-title">Catalog editing workspace</h2>
-        <p class="section-lead">Select a record, review the object image and record summary, then work through the metadata sections from top to bottom.</p>
+        <p class="section-lead">Select a record, confirm the image and identifying details, then move through the metadata sections from top to bottom before saving the revision.</p>
       </div>
       <div class="editor-page-actions">
         <button type="button" class="btn btn-outline-dark" id="editor-export-csv">Export all records in MDL format as CSV</button>
@@ -33,7 +33,7 @@ search_exclude: true
       <div>
         <p class="section-kicker">Site Settings</p>
         <h3 class="editor-settings-title">Appearance and featured content</h3>
-        <p class="small-note mb-0">Update collection-wide presentation details here, including colors, font families, and the featured object used in the homepage banner.</p>
+        <p class="small-note mb-0">Update collection-wide presentation details here, including colors, typography, and featured content shown across the public-facing site.</p>
       </div>
     </div>
     <div id="editor-settings-alert" class="access-alert d-none"></div>

@@ -66,7 +66,23 @@ function makeCard(obj) {
         card += '<a class="collection-card-media collection-card-thumb" href="' + itemHref + '"><img class="lazyload w-50" data-src="' + thumbSrc + '" alt="Media icon for ' + escapeHtml(obj.title) + '"></a>';
     }
     card += '<div class="collection-card-body">';
+    if(obj.culture_community || obj["Geographic location"]) {
+        card += '<div class="collection-card-eyebrow">';
+        if (obj.culture_community) {
+            card += escapeHtml(obj.culture_community);
+        }
+        if (obj.culture_community && obj["Geographic location"]) {
+            card += ' \u2022 ';
+        }
+        if (obj["Geographic location"]) {
+            card += escapeHtml(obj["Geographic location"]);
+        }
+        card += '</div>';
+    }
     card += '<h3 class="collection-card-title"><a href="' + itemHref + '">' + escapeHtml(obj.title) + '</a></h3>';
+    if (obj.Description) {
+        card += '<p class="collection-card-summary">' + escapeHtml(obj.Description).slice(0, 220) + (obj.Description.length > 220 ? '&hellip;' : '') + '</p>';
+    }
     card += '<div class="collection-card-meta">';
     {% for f in fields %}{% unless f.hidden == 'true' %}
     if(obj[{{ f.field | jsonify }}]){
@@ -90,9 +106,9 @@ function makeCard(obj) {
     card += '</div>';
     if(obj.format != "") {
         card += '<div class="collection-card-footer"><span class="collection-format-badge">' + 
-        escapeHtml(obj.format.split("/").pop().replace("_", " ").toUpperCase()) + '</span><a class="btn btn-sm btn-outline-dark" href="' + itemHref + '" title="link to ' + escapeHtml(obj.title) + '">View record</a></div>';
+        escapeHtml(obj.format.split("/").pop().replace("_", " ").toUpperCase()) + '</span><a class="btn btn-sm btn-outline-dark" href="' + itemHref + '" title="link to ' + escapeHtml(obj.title) + '">Open record</a></div>';
     } else {
-        card += '<div class="collection-card-footer"><span class="collection-format-badge">Record</span><a class="btn btn-sm btn-outline-dark" href="' + itemHref + '" title="link to ' + escapeHtml(obj.title) + '">View record</a></div>';
+        card += '<div class="collection-card-footer"><span class="collection-format-badge">Record</span><a class="btn btn-sm btn-outline-dark" href="' + itemHref + '" title="link to ' + escapeHtml(obj.title) + '">Open record</a></div>';
     }
     card += '</div></article></div>';
     return card;
