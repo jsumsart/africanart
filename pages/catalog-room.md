@@ -83,7 +83,7 @@ search_exclude: true
         <div class="editor-preview-row">
           <div class="editor-preview-card">
             <div class="record-image-shell">
-              <img id="editor-preview-image" class="protected-image" alt="">
+              <img id="editor-preview-image" class="protected-image editor-preview-image" alt="">
             </div>
           </div>
           <div class="editor-preview-note">

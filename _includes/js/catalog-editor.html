@@ -198,13 +198,18 @@
   }
 
   function toFlatRecord(row) {
-    const record = Object.assign({}, row.record || {});
+    const embedded = embeddedRecords.find(function (record) {
+      return record["Object name"] === row.object_name;
+    });
+    const record = {};
+    mergeNonEmpty(record, embedded || {});
+    mergeNonEmpty(record, row.record || {});
     record["Object name"] = row.object_name || record["Object name"] || "";
-    record.Title = row.title || record.Title || "";
-    record.culture_community = row.culture_community || record.culture_community || "";
-    record["Geographic location"] = row.geographic_location || record["Geographic location"] || "";
-    record["File name"] = row.file_name || record["File name"] || "";
-    record.format = row.asset_format || record.format || "";
+    if (row.title) record.Title = row.title;
+    if (row.culture_community) record.culture_community = row.culture_community;
+    if (row.geographic_location) record["Geographic location"] = row.geographic_location;
+    if (row.file_name) record["File name"] = row.file_name;
+    if (row.asset_format) record.format = row.asset_format;
     return record;
   }
 

@@ -1750,7 +1750,7 @@ body.collection-unlocked [data-auth-trigger] {
 
 .editor-preview-row {
   display: grid;
-  grid-template-columns: 180px minmax(0, 1fr);
+  grid-template-columns: 220px minmax(0, 1fr);
   gap: 1rem;
   align-items: start;
   margin-bottom: 1.2rem;
@@ -1766,6 +1766,17 @@ body.collection-unlocked [data-auth-trigger] {
 
 .editor-preview-note h4 {
   margin-bottom: 0.55rem;
+}
+
+.editor-preview-card .record-image-shell {
+  min-height: 0;
+}
+
+.editor-preview-image {
+  width: 180px !important;
+  height: 180px !important;
+  max-width: 180px !important;
+  max-height: 180px !important;
 }
 
 .editor-fields {
