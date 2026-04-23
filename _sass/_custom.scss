@@ -928,8 +928,8 @@ a:focus {
 
 .collection-card-media img,
 .collection-card-media .collection-card-thumb {
-  width: 150px;
-  height: 150px;
+  width: 250px;
+  height: 250px;
   object-fit: contain;
   display: block;
 }
@@ -1080,10 +1080,10 @@ a:focus {
 .timeline-thumb,
 .mapthumb,
 .compound-thumb {
-  width: 150px !important;
-  height: 150px !important;
-  max-width: 150px !important;
-  max-height: 150px !important;
+  width: 250px !important;
+  height: 250px !important;
+  max-width: 250px !important;
+  max-height: 250px !important;
   object-fit: contain;
 }
 

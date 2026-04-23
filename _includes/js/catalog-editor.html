@@ -614,7 +614,7 @@
       els.preview.src = fileName.indexOf("/") > -1 ? fileName : {{ '/assets/thumbs/' | relative_url | jsonify }} + fileName;
       els.preview.alt = record.Title || record["Object name"];
     } else {
-      els.preview.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150' viewBox='0 0 150 150'%3E%3Crect width='150' height='150' rx='18' fill='%23eff3f8'/%3E%3Ctext x='75' y='70' text-anchor='middle' font-family='Arial, sans-serif' font-size='14' fill='%2345556f'%3ENo image%3C/text%3E%3Ctext x='75' y='92' text-anchor='middle' font-family='Arial, sans-serif' font-size='12' fill='%23737f93'%3Epreview available%3C/text%3E%3C/svg%3E";
+      els.preview.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250' viewBox='0 0 250 250'%3E%3Crect width='250' height='250' rx='18' fill='%23eff3f8'/%3E%3Ctext x='125' y='118' text-anchor='middle' font-family='Arial, sans-serif' font-size='16' fill='%2345556f'%3ENo image%3C/text%3E%3Ctext x='125' y='144' text-anchor='middle' font-family='Arial, sans-serif' font-size='13' fill='%23737f93'%3Epreview available%3C/text%3E%3C/svg%3E";
       els.preview.alt = "No image preview available";
     }
   }

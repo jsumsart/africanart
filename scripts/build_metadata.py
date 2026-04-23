@@ -433,10 +433,10 @@ def generate_thumbnails(rows):
             [
                 "sips",
                 "--resampleHeightWidthMax",
-                "150",
+                "250",
                 "--padToHeightWidth",
-                "150",
-                "150",
+                "250",
+                "250",
                 str(source_path),
                 "--out",
                 str(thumb_path),
