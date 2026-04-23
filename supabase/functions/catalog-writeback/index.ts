@@ -95,9 +95,11 @@ function csvEscape(value) {
 }
 
 function csvRow(values) {
-  return values.map(function (value) {
-    return csvEscape(value);
-  }).join(",");
+  const escaped = [];
+  for (let i = 0; i < values.length; i += 1) {
+    escaped.push(csvEscape(values[i]));
+  }
+  return escaped.join(",");
 }
 
 function toBase64(text) {
@@ -166,8 +168,13 @@ serve(async function (req) {
     return jsonResponse(500, { error: recordsResponse.error.message });
   }
 
-  const rows = (recordsResponse.data || []).map(function (row) {
+  const sourceRows = recordsResponse.data || [];
+  const rows = [];
+  for (let i = 0; i < sourceRows.length; i += 1) {
+    const row = sourceRows[i];
     const record = Object.assign({}, row.record || {});
+    const values = [];
+
     record["Object name"] = row.object_name || record["Object name"] || "";
     record["Title"] = row.title || record["Title"] || "";
     record["Geographic location"] = row.geographic_location || record["Geographic location"] || "";
@@ -175,10 +182,12 @@ serve(async function (req) {
     record["File name"] = row.file_name || record["File name"] || "";
     record["format"] = row.asset_format || record["format"] || "";
 
-    return csvRow(csvHeaders.map(function (header) {
-      return record[header] || "";
-    }));
-  });
+    for (let j = 0; j < csvHeaders.length; j += 1) {
+      values.push(record[csvHeaders[j]] || "");
+    }
+
+    rows.push(csvRow(values));
+  }
 
   const nextCsv = csvRow(csvHeaders) + "\n" + rows.join("\n") + "\n";
   const githubUrl = "https://api.github.com/repos/" + githubRepo + "/contents/" + encodeURIComponent(githubCsvPath);
