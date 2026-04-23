@@ -11,21 +11,22 @@ layout: page
   <div class="landing-grid">
     <div class="landing-copy">
       <p class="landing-kicker">Collection Overview</p>
-      <h2 class="landing-title">The Jackson State University African Art Collection</h2>
-      <p class="landing-lead">The Jackson State University African Art Collection supports teaching, research, and stewardship through a digital catalog designed to foreground historical context, cultural specificity, and responsible interpretation.</p>
+      <h2 class="landing-title">Explore the collection through objects, histories, and catalog records.</h2>
+      <p class="landing-lead">This site introduces the Jackson State University African Art Collection through an evolving digital catalog designed to support teaching, research, and responsible interpretation.</p>
       <div class="landing-actions">
-        <a class="btn btn-outline-dark btn-lg" href="{{ '/about.html' | relative_url }}">About the collection</a>
         <a class="btn btn-primary btn-lg" href="{{ '/browse.html' | relative_url }}">Browse the catalog</a>
+        <a class="btn btn-outline-dark btn-lg" href="{{ '/about.html' | relative_url }}">About the collection</a>
       </div>
-      <p class="landing-supporting-note">This site brings together public interpretation and ongoing catalog work in one place.</p>
+      <p class="landing-supporting-note">Use the public pages to learn about the collection, then move into the catalog to follow cultures, places, materials, and subjects across related records.</p>
     </div>
 
     <aside class="landing-overview-panel">
       <div class="landing-panel-header">
         <p class="landing-kicker">At a Glance</p>
-        <h3>Highlights from the catalog</h3>
+        <h3>Collection snapshot</h3>
+        <p class="section-lead">A quick view of the people, places, and date references currently represented in the online records.</p>
       </div>
-      <div class="landing-stats landing-stats-compact">
+      <div class="landing-stats">
         <article class="landing-stat-card">
           <span class="landing-stat-value">{{ items | size }}</span>
           <span class="landing-stat-label">Objects currently described online</span>
@@ -44,9 +45,9 @@ layout: page
         </article>
       </div>
       <div class="landing-overview-links">
-        <a class="landing-overview-link" href="{{ '/browse.html' | relative_url }}">Open the catalog</a>
-        <a class="landing-overview-link" href="{{ '/subjects.html' | relative_url }}">Browse subject terms</a>
-        <a class="landing-overview-link" href="{{ '/locations.html' | relative_url }}">Browse geographic references</a>
+        <a class="landing-overview-link" href="{{ '/browse.html' | relative_url }}">Browse all records</a>
+        <a class="landing-overview-link" href="{{ '/subjects.html' | relative_url }}">Browse by subject</a>
+        <a class="landing-overview-link" href="{{ '/locations.html' | relative_url }}">Browse by place</a>
       </div>
     </aside>
   </div>
