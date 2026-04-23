@@ -28,60 +28,6 @@ search_exclude: true
       </div>
     </div>
 
-  <div class="editor-settings-panel">
-    <div class="editor-settings-header">
-      <div>
-        <p class="section-kicker">Site Settings</p>
-        <h3 class="editor-settings-title">Site appearance</h3>
-        <p class="small-note mb-0">Update collection-wide presentation details here, including colors, typography, and featured content shown across the site.</p>
-      </div>
-    </div>
-    <div id="editor-settings-alert" class="access-alert d-none"></div>
-    <form id="editor-settings-form" class="editor-settings-form">
-      <label class="editor-field">
-        <span class="editor-field-label">Primary color</span>
-        <input id="settings-primary-color" class="form-control" type="text" placeholder="#14213d">
-      </label>
-      <label class="editor-field">
-        <span class="editor-field-label">Secondary color</span>
-        <input id="settings-secondary-color" class="form-control" type="text" placeholder="#243b63">
-      </label>
-      <label class="editor-field">
-        <span class="editor-field-label">Text color</span>
-        <input id="settings-text-color" class="form-control" type="text" placeholder="#111827">
-      </label>
-      <label class="editor-field">
-        <span class="editor-field-label">Link color</span>
-        <input id="settings-link-color" class="form-control" type="text" placeholder="#1f3a68">
-      </label>
-      <label class="editor-field">
-        <span class="editor-field-label">Body font family</span>
-        <input id="settings-body-font-family" class="form-control" type="text" placeholder="&quot;Source Sans 3&quot;, system-ui, sans-serif">
-      </label>
-      <label class="editor-field">
-        <span class="editor-field-label">Heading font family</span>
-        <input id="settings-heading-font-family" class="form-control" type="text" placeholder="&quot;Source Serif 4&quot;, Georgia, serif">
-      </label>
-      <label class="editor-field">
-        <span class="editor-field-label">Featured object or image</span>
-        <input id="settings-featured-image" class="form-control" type="text" placeholder="coll032 or /assets/img/banner.jpg">
-      </label>
-      <label class="editor-field">
-        <span class="editor-field-label">Banner image position</span>
-        <select id="settings-banner-position" class="form-control">
-          <option value="center">Center</option>
-          <option value="top">Top</option>
-          <option value="bottom">Bottom</option>
-          <option value="left">Left</option>
-          <option value="right">Right</option>
-        </select>
-      </label>
-      <div class="editor-settings-actions">
-        <button type="button" class="btn btn-primary" id="settings-save-button">Save site settings</button>
-      </div>
-    </form>
-  </div>
-
   <div class="editor-grid">
     <aside class="editor-sidebar">
       <label class="form-label" for="editor-search">Find a record</label>
@@ -160,5 +106,59 @@ search_exclude: true
         </div>
       </form>
     </div>
+  </div>
+
+  <div class="editor-settings-panel">
+    <div class="editor-settings-header">
+      <div>
+        <p class="section-kicker">Site Settings</p>
+        <h3 class="editor-settings-title">Site appearance</h3>
+        <p class="small-note mb-0">Update collection-wide presentation details here, including colors, typography, and featured content shown across the site.</p>
+      </div>
+    </div>
+    <div id="editor-settings-alert" class="access-alert d-none"></div>
+    <form id="editor-settings-form" class="editor-settings-form">
+      <label class="editor-field">
+        <span class="editor-field-label">Primary color</span>
+        <input id="settings-primary-color" class="form-control" type="text" placeholder="#14213d">
+      </label>
+      <label class="editor-field">
+        <span class="editor-field-label">Secondary color</span>
+        <input id="settings-secondary-color" class="form-control" type="text" placeholder="#243b63">
+      </label>
+      <label class="editor-field">
+        <span class="editor-field-label">Text color</span>
+        <input id="settings-text-color" class="form-control" type="text" placeholder="#111827">
+      </label>
+      <label class="editor-field">
+        <span class="editor-field-label">Link color</span>
+        <input id="settings-link-color" class="form-control" type="text" placeholder="#1f3a68">
+      </label>
+      <label class="editor-field">
+        <span class="editor-field-label">Body font family</span>
+        <input id="settings-body-font-family" class="form-control" type="text" placeholder="&quot;Source Sans 3&quot;, system-ui, sans-serif">
+      </label>
+      <label class="editor-field">
+        <span class="editor-field-label">Heading font family</span>
+        <input id="settings-heading-font-family" class="form-control" type="text" placeholder="&quot;Source Serif 4&quot;, Georgia, serif">
+      </label>
+      <label class="editor-field">
+        <span class="editor-field-label">Featured object or image</span>
+        <input id="settings-featured-image" class="form-control" type="text" placeholder="coll032 or /assets/img/banner.jpg">
+      </label>
+      <label class="editor-field">
+        <span class="editor-field-label">Banner image position</span>
+        <select id="settings-banner-position" class="form-control">
+          <option value="center">Center</option>
+          <option value="top">Top</option>
+          <option value="bottom">Bottom</option>
+          <option value="left">Left</option>
+          <option value="right">Right</option>
+        </select>
+      </label>
+      <div class="editor-settings-actions">
+        <button type="button" class="btn btn-primary" id="settings-save-button">Save site settings</button>
+      </div>
+    </form>
   </div>
 </section>
