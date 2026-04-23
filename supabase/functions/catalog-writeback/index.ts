@@ -88,8 +88,9 @@ function jsonResponse(status, body) {
 
 function csvEscape(value) {
   const text = String(value == null ? "" : value);
-  if (/[",\n]/.test(text)) {
-    return `"${text.replace(/"/g, "\"\"")}"`;
+  const needsQuotes = text.indexOf(",") > -1 || text.indexOf("\"") > -1 || text.indexOf("\n") > -1;
+  if (needsQuotes) {
+    return "\"" + text.replaceAll("\"", "\"\"") + "\"";
   }
   return text;
 }
