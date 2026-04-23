@@ -101,8 +101,6 @@
     alert: document.getElementById("editor-alert"),
     lastSaved: document.getElementById("editor-last-saved"),
     reset: document.getElementById("editor-reset"),
-    copyJson: document.getElementById("editor-copy-json"),
-    downloadJson: document.getElementById("editor-download-json"),
     preview: document.getElementById("editor-preview-image"),
     staffEmail: document.getElementById("editor-staff-email"),
     staffPassword: document.getElementById("editor-staff-password"),
@@ -478,28 +476,6 @@
     setAlert("Local draft removed for this record.", "info");
   }
 
-  async function handleCopyJson() {
-    if (!activeId) return;
-    const payload = JSON.stringify(collectFormData(), null, 2);
-    await navigator.clipboard.writeText(payload);
-    setAlert("Draft JSON copied to the clipboard.", "info");
-  }
-
-  function handleDownloadJson() {
-    if (!activeId) return;
-    const payload = JSON.stringify(collectFormData(), null, 2);
-    const blob = new Blob([payload], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = activeId + "-draft.json";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    setAlert("Draft JSON downloaded.", "info");
-  }
-
   async function commitCsvUpdate() {
     if (!activeId) return;
     if (!hasStaffAuthConfig || !supabaseClient) {
@@ -538,11 +514,7 @@
       window.localStorage.removeItem(draftKey(activeId));
       els.lastSaved.textContent = "Saved to live catalog at " + new Date().toLocaleString();
 
-      const publishNote = writebackEndpoint
-        ? "The live catalog was updated. Public-site publishing is currently disabled while the export workflow is being stabilized."
-        : "The live catalog was updated in Supabase. The public site snapshot will not change until a publish/export step is run.";
-
-      setAlert("Record saved to the live catalog. " + publishNote, "info");
+      setAlert("Record saved successfully.", "info");
       openRecord(activeId);
     } catch (error) {
       setAlert(error.message, "error");
@@ -570,8 +542,6 @@
   els.search.addEventListener("input", filterRecords);
   els.form.addEventListener("submit", handleSave);
   els.reset.addEventListener("click", handleReset);
-  els.copyJson.addEventListener("click", handleCopyJson);
-  els.downloadJson.addEventListener("click", handleDownloadJson);
   els.staffLogin.addEventListener("click", handleStaffLogin);
   els.staffLogout.addEventListener("click", handleStaffLogout);
   els.commitCsv.addEventListener("click", commitCsvUpdate);

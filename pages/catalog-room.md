@@ -11,12 +11,7 @@ search_exclude: true
     <div>
       <p class="section-kicker">Staff Workspace</p>
       <h1 class="page-title">Catalog Room</h1>
-      <p class="page-intro">Review, refine, and save catalog records from a protected workspace that stays outside the public site navigation.</p>
-    </div>
-    <div class="page-aside-card">
-      <h2 class="h5">Current behavior</h2>
-      <p>This editor can save local drafts in the browser and save approved changes directly to the live Supabase catalog.</p>
-      <p class="mb-0"><strong>Hidden access:</strong> this page is not linked in the public navigation and can also be opened with <kbd>Shift</kbd> + <kbd>E</kbd> after unlocking research access.</p>
+      <p class="page-intro">Review, refine, and save catalog records from a protected workspace designed for day-to-day metadata editing.</p>
     </div>
   </div>
 </section>
@@ -26,7 +21,7 @@ search_exclude: true
       <div>
         <p class="section-kicker">Record Editing</p>
         <h2 class="record-section-title">Catalog editing workspace</h2>
-        <p class="section-lead">Use the left panel to locate a record, review the image and record summary, and then move through the metadata sections in a consistent order before saving your revision.</p>
+        <p class="section-lead">Select a record, review the object image and record summary, then work through the metadata sections from top to bottom.</p>
       </div>
     </div>
 
@@ -39,7 +34,7 @@ search_exclude: true
         <span id="editor-draft-count">0 drafts</span>
       </div>
       <div class="editor-sidebar-tip">
-        Start with the title or object ID, then confirm image, place, and culture before editing longer interpretive fields.
+        Start with the title or object ID, then confirm image, place, and culture before editing longer descriptive fields.
       </div>
       <div id="editor-record-list" class="editor-record-list" aria-live="polite"></div>
     </aside>
@@ -59,8 +54,6 @@ search_exclude: true
           </div>
           <div class="editor-form-actions">
             <button type="button" class="btn btn-outline-dark" id="editor-reset">Reset draft</button>
-            <button type="button" class="btn btn-outline-dark" id="editor-copy-json">Copy JSON</button>
-            <button type="button" class="btn btn-outline-dark" id="editor-download-json">Download JSON</button>
             <button type="submit" class="btn btn-primary">Save draft</button>
           </div>
         </div>
@@ -73,7 +66,7 @@ search_exclude: true
         <div class="editor-github-panel">
           <div>
             <span class="editor-field-label">Staff sign-in</span>
-            <p class="small-note mb-0">Sign in with an authorized staff account to save changes from this device. Local draft saving will still work without sign-in.</p>
+            <p class="small-note mb-0">Sign in with your staff account to save changes from this device. Draft saving in the browser will still work without sign-in.</p>
           </div>
           <div class="editor-github-row">
             <input id="editor-staff-email" class="form-control" type="email" autocomplete="username" placeholder="Staff email">
@@ -84,17 +77,6 @@ search_exclude: true
           <p id="editor-staff-status" class="small-note editor-staff-status mb-0">Staff sign-in is required before changes can be saved to the live catalog.</p>
         </div>
 
-        <div class="editor-github-panel">
-          <div>
-            <span class="editor-field-label">Catalog save</span>
-            <p class="small-note mb-0">Saving writes directly to the live Supabase catalog. Treat the message field as a short internal note describing what changed.</p>
-          </div>
-          <div class="editor-github-row">
-            <input id="editor-commit-message" class="form-control" type="text" value="" placeholder="Example: revised title and culture/community">
-            <button type="button" class="btn btn-primary" id="editor-commit-csv">Save to Catalog</button>
-          </div>
-        </div>
-
         <div class="editor-preview-row">
           <div class="editor-preview-card">
             <div class="record-image-shell">
@@ -103,11 +85,22 @@ search_exclude: true
           </div>
           <div class="editor-preview-note">
             <h4>Suggested workflow</h4>
-            <p>Confirm the image and record identity first, then work from top to bottom through identification, cultural context, and interpretive notes. Save a browser draft while you are still researching; use <strong>Save to Catalog</strong> once the revision is ready.</p>
+            <p>Confirm the image and record identity first, then work from top to bottom through identification, cultural context, and descriptive notes. Use <strong>Save draft</strong> while you are still working, and use the final save button at the bottom of the form when the revision is ready.</p>
           </div>
         </div>
 
         <div id="editor-fields" class="editor-fields"></div>
+
+        <div class="editor-save-bar">
+          <div class="editor-save-copy">
+            <span class="editor-field-label">Final Save</span>
+            <p class="small-note mb-0">When you are finished reviewing the record, save your changes here.</p>
+          </div>
+          <div class="editor-save-actions">
+            <input id="editor-commit-message" class="form-control" type="text" value="" placeholder="Optional note about this revision">
+            <button type="button" class="btn btn-primary" id="editor-commit-csv">Save Record</button>
+          </div>
+        </div>
       </form>
     </div>
   </div>
