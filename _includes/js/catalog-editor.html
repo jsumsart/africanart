@@ -315,11 +315,26 @@
     return mergedRecord(activeId);
   }
 
+  function mergeNonEmpty(target, source) {
+    if (!source) return target;
+    Object.keys(source).forEach(function (key) {
+      const value = source[key];
+      if (value !== null && value !== undefined && value !== "") {
+        target[key] = value;
+      }
+    });
+    return target;
+  }
+
   function mergedRecord(id) {
     const embedded = embeddedRecords.find((record) => record["Object name"] === id);
     const base = records.find((record) => record["Object name"] === id);
     const draft = getDraft(id);
-    return Object.assign({}, embedded || {}, base || {}, draft || {});
+    const merged = {};
+    mergeNonEmpty(merged, embedded || {});
+    mergeNonEmpty(merged, base || {});
+    mergeNonEmpty(merged, draft || {});
+    return merged;
   }
 
   function updateCounts() {
