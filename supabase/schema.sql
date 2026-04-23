@@ -43,7 +43,9 @@ for insert
 to authenticated
 with check (auth.uid() is not null);
 
-create table if not exists public.site_settings (
+drop table if exists public.site_settings cascade;
+
+create table public.site_settings (
   id integer primary key default 1 check (id = 1),
   primary_color text,
   secondary_color text,
@@ -97,6 +99,10 @@ for update
 to authenticated
 using (auth.uid() is not null and id = 1)
 with check (auth.uid() is not null and id = 1);
+
+insert into public.site_settings (id)
+values (1)
+on conflict (id) do nothing;
 
 drop policy if exists "catalog records update by authenticated users" on public.catalog_records;
 create policy "catalog records update by authenticated users"
