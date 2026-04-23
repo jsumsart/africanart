@@ -312,13 +312,14 @@
   }
 
   function currentRecord() {
-    return records.find((record) => record["Object name"] === activeId);
+    return mergedRecord(activeId);
   }
 
   function mergedRecord(id) {
+    const embedded = embeddedRecords.find((record) => record["Object name"] === id);
     const base = records.find((record) => record["Object name"] === id);
     const draft = getDraft(id);
-    return Object.assign({}, base || {}, draft || {});
+    return Object.assign({}, embedded || {}, base || {}, draft || {});
   }
 
   function updateCounts() {
@@ -407,7 +408,7 @@
   }
 
   function collectFormData() {
-    const data = {};
+    const data = Object.assign({}, mergedRecord(activeId));
     const formData = new FormData(els.form);
     fieldConfig.forEach((field) => {
       if (field.readonly) return;
