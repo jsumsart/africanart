@@ -20,7 +20,7 @@
     "events": [
       {% for item in items %}{% if item["Searchable date"] %}{
         "media": {
-          "url": "{% if item.youtubeid %}{{ 'https://www.youtube.com/watch?v=' | append: item.youtubeid }}{% elsif item.vimeoid %}{{ 'https://vimeo.com/' | append: item.vimeoid }}{% elsif item["File name"] contains 'http' %}{{ item["File name"] }}{% else %}{{ item["File name"] | prepend: '/objects/' | absolute_url }}{% endif %}",
+          "url": "{% if item.youtubeid %}{{ 'https://www.youtube.com/watch?v=' | append: item.youtubeid }}{% elsif item.vimeoid %}{{ 'https://vimeo.com/' | append: item.vimeoid }}{% elsif item.format contains 'image' %}{{ site.url }}{{ site.baseurl }}{% include image/thumbnail-image.html item=item %}{% elsif item['File name'] contains 'http' %}{{ item['File name'] }}{% else %}{{ item['File name'] | prepend: '/objects/' | absolute_url }}{% endif %}",
           "caption": {{ item["Title"] | jsonify }},
           "link": "{{ '/item.html' | absolute_url | append: '?id=' | append: item["Object name"] }}",
           "credit": "{{ site.title }}"

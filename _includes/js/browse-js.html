@@ -12,7 +12,7 @@
 /* add items */
 var items = [
     {% for i in items %}
-    { "title":{{ i["Title"] | strip | jsonify }}, "format":{% if i.format %}{{ i.format | jsonify }}{% else %}""{% endif %}, {% for f in fields %}{% if i[f.field] %}{{ f.field | jsonify }}:{{ i[f.field] | strip | jsonify }},{% endif %}{% endfor %} {% if i.youtubeid %} "youtube": {{ i.youtubeid | jsonify }}, {% endif %}{% if  i["File name"] contains '/' %}"filename": "{{ i["File name"] }}" {% else %}"filename":"{{ '/objects/' | relative_url | append: i["File name"] }}"{% endif %}, "link": "{% if i.parentid %}{{ i.parentid }}#{{ i["Object name"] }}{% else %}{{ i["Object name"] }}{% endif %}", "id":{{ i["Object name"] | jsonify }} }{% unless forloop.last %},{% endunless %}{% endfor %}
+    { "title":{{ i["Title"] | strip | jsonify }}, "format":{% if i.format %}{{ i.format | jsonify }}{% else %}""{% endif %}, {% for f in fields %}{% if i[f.field] %}{{ f.field | jsonify }}:{{ i[f.field] | strip | jsonify }},{% endif %}{% endfor %} {% if i.youtubeid %} "youtube": {{ i.youtubeid | jsonify }}, {% endif %}"filename":{% capture browseThumb %}{% include image/thumbnail-image.html item=i %}{% endcapture %}{{ browseThumb | jsonify }}, "link": "{% if i.parentid %}{{ i.parentid }}#{{ i["Object name"] }}{% else %}{{ i["Object name"] }}{% endif %}", "id":{{ i["Object name"] | jsonify }} }{% unless forloop.last %},{% endunless %}{% endfor %}
 ];
 
 var defaultSortField = "Title";

@@ -23,10 +23,8 @@
 {% assign jumboItem = site.data[site.metadata] | where: "Object name", jumboId | first %}
 {% if jumboItem.youtubeid %}
 {% assign jumboSrc = 'https://img.youtube.com/vi/' | append: jumboItem.youtubeid | append: '/maxresdefault.jpg' %}
-{% elsif jumboItem["File name"] contains '/' %}
-{% assign jumboSrc = jumboItem["File name"] | relative_url %}
-{% else %}
-{% assign jumboSrc = jumboItem["File name"] | prepend: '/objects/' | relative_url %}
+{% elsif jumboItem["File name"] %}
+{% capture jumboSrc %}{% include image/thumbnail-image.html item=jumboItem %}{% endcapture %}
 {%- endif -%}
 {%- endif -%}
 

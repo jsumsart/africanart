@@ -36,7 +36,7 @@
         {%- capture image_link -%}{% if figure.parentid %}{{ figure["Object name"] | prepend: '#' | prepend: figure.parentid | prepend: '/item.html?id=' | relative_url }}{% else %}{{ figure["Object name"] | prepend: '/item.html?id=' | relative_url }}{% endif %}{% endcapture %}
         {%- capture image_caption -%}{{ captions[forloop.index0] | default: figure["Title"] }}{%- endcapture -%}
         {%- capture image_alt -%}{{ alts[forloop.index0] | default: figure["Title"] }}{%- endcapture -%}
-        {%- capture image_src -%}{% if figure.youtubeid %}{{ 'https://img.youtube.com/vi/' | append: figure.youtubeid | append: '/hqdefault.jpg' }}{% elsif figure["File name"] contains '/' %}{{ figure["File name"] | relative_url }}{% else %}{{ '/objects/' | append: figure["File name"] | relative_url }}{% endif %}{% endcapture %}
+        {%- capture image_src -%}{% include image/thumbnail-image.html item=figure %}{%- endcapture -%}
     {% endif %}
     <div class="col-md text-center">
         <figure class="figure mx-3{% if include.width %} feature-w-{{ include.width }}{% endif %}">

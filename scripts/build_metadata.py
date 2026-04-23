@@ -2,18 +2,21 @@
 
 import csv
 import re
+import subprocess
 from pathlib import Path
 
 
 ROOT = Path("/Users/Birittany/Documents/African Art")
 OBJECTS_DIR = ROOT / "objects"
 DATA_DIR = ROOT / "_data"
+THUMBS_DIR = ROOT / "assets" / "thumbs"
 MASTER_CSV = DATA_DIR / "africanart_mdl_medata.csv"
 SITE_CSV = DATA_DIR / "africanart_metadata.csv"
 SOURCE_CSV = Path(
     "/Users/Birittany/Downloads/Data  Jackson State University African Art Collection - Data  Jackson State University African Art Collection (1).csv"
 )
 MAX_OBJECT_ID = 148
+IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".gif", ".tif", ".tiff"}
 
 MASTER_HEADERS = [
     "Object name",
@@ -413,9 +416,41 @@ def load_or_seed_master():
     return merged_rows
 
 
+def generate_thumbnails(rows):
+    THUMBS_DIR.mkdir(parents=True, exist_ok=True)
+    for row in rows:
+        filename = (row.get("File name") or "").strip()
+        if not filename:
+            continue
+        source_path = OBJECTS_DIR / filename
+        if not source_path.exists():
+            continue
+        if source_path.suffix.lower() not in IMAGE_SUFFIXES:
+            continue
+        thumb_path = THUMBS_DIR / filename
+        thumb_path.parent.mkdir(parents=True, exist_ok=True)
+        subprocess.run(
+            [
+                "sips",
+                "--resampleHeightWidthMax",
+                "150",
+                "--padToHeightWidth",
+                "150",
+                "150",
+                str(source_path),
+                "--out",
+                str(thumb_path),
+            ],
+            check=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+
+
 def main():
     master_rows = load_or_seed_master()
     write_csv(MASTER_CSV, MASTER_HEADERS, master_rows)
+    generate_thumbnails(master_rows)
     print(f"Wrote {len(master_rows)} master records to {MASTER_CSV}")
 
 

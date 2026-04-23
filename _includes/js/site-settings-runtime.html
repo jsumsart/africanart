@@ -44,7 +44,7 @@ window.JSUApplySiteSettings = async function (settings) {
           return item["Object name"] === merged.featured_image;
         });
         if (match && match["File name"]) {
-          imageUrl = {{ '/objects/' | relative_url | jsonify }} + match["File name"];
+          imageUrl = {{ '/assets/thumbs/' | relative_url | jsonify }} + match["File name"];
         }
       } catch (_error) {}
     }

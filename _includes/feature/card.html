@@ -19,7 +19,7 @@
 {%- capture alt -%}{{ include.alt | default: include.title }}{% endcapture %}
 {%- elsif include.objectid -%}
 {%- assign item = site.data[site.metadata] | where: "Object name", include.objectid | first -%}
-{%- capture src -%}{% if item["File name"] contains '/' %}{{ item["File name"] | relative_url }}{% else %}{{ '/objects/' | append: item["File name"] | relative_url }}{% endif %}{% endcapture %}
+{%- capture src -%}{% include image/thumbnail-image.html item=item %}{%- endcapture -%}
 {%- capture alt -%}{{ item["Title"] | default: include.title }}{% endcapture %}
 {%- endif -%}
 <div class="card mb-3{% if include.width %} feature-w-{{ include.width }}{% endif %}{% if include.centered %} mx-auto{% endif %}">

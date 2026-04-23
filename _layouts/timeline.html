@@ -73,7 +73,7 @@ custom-foot: js/timeline-js.html
                     <div class="col-lg-4 col-md-6">
                         <a href="{% if item.parentid == nil %}{{ '/item.html' | relative_url | append: '?id=' | append: item["Object name"] }}{% elsif item.parentid %}{{ '/item.html' | relative_url | append: '?id=' | append: item.parentid | relative_url }}#{{ item["Object name"] }}{% endif %}">
                             {% if item.format contains 'image' or item.youtubeid %}
-                            <img class="lazyload img-thumbnail timeline-thumb" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2'%3E%3C/svg%3E" data-src="{% if item.youtubeid %}{{ 'https://img.youtube.com/vi/' | append: item.youtubeid | append: '/hqdefault.jpg' | relative_url }}{% elsif item["File name"] contains '/' %}{{ item["File name"] }}{% else %}{{ item["File name"] | prepend: '/objects/' | relative_url }}{% endif %}" alt="{{ item["Title"] | escape }}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ item["Title"] | escape }} | {{ item["Date"] | escape }}">
+                            <img class="lazyload img-thumbnail timeline-thumb" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2'%3E%3C/svg%3E" data-src="{% include image/thumbnail-image.html item=item %}" alt="{{ item["Title"] | escape }}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ item["Title"] | escape }} | {{ item["Date"] | escape }}">
                             {% else %}
                             <div class="card">
                                 <div class="card-body text-center">
