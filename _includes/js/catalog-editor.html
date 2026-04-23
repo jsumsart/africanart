@@ -47,35 +47,35 @@
   ];
 
   const fieldConfig = [
-    { key: "Object name", label: "Object ID", type: "text", readonly: true },
-    { key: "Identifier", label: "Institutional Identifier", type: "text" },
-    { key: "Title", label: "Title", type: "text" },
-    { key: "preferred_term", label: "Preferred Term", type: "text" },
-    { key: "legacy_title", label: "Legacy Title", type: "text" },
-    { key: "Creator", label: "Creator / Maker", type: "text" },
-    { key: "Date", label: "Display Date", type: "text" },
-    { key: "Searchable date", label: "Searchable Date", type: "text" },
-    { key: "culture_community", label: "Culture / Community", type: "text" },
-    { key: "people_ethnolinguistic_group", label: "People / Ethnolinguistic Group", type: "text" },
-    { key: "Geographic location", label: "Geographic Location", type: "text" },
-    { key: "place_of_creation", label: "Place of Creation", type: "text" },
-    { key: "place_of_use", label: "Place of Use", type: "text" },
-    { key: "materials", label: "Materials", type: "text" },
-    { key: "technique", label: "Technique", type: "text" },
-    { key: "object_type", label: "Object Type", type: "text" },
-    { key: "function_use", label: "Function / Use", type: "textarea" },
-    { key: "period_dynasty", label: "Period / Dynasty", type: "text" },
-    { key: "Subject", label: "Subjects", type: "textarea" },
-    { key: "Description", label: "Description", type: "textarea", rows: 7 },
-    { key: "provenance", label: "Provenance", type: "textarea" },
-    { key: "acquisition_context", label: "Acquisition Context", type: "textarea" },
-    { key: "Source", label: "Source", type: "text" },
-    { key: "Notes", label: "Catalog Notes", type: "textarea" },
-    { key: "Transcript", label: "Transcript", type: "textarea" },
-    { key: "Rights", label: "Rights", type: "text" },
-    { key: "Disclaimer", label: "Disclaimer", type: "textarea" },
-    { key: "attribution_confidence", label: "Attribution Confidence", type: "text" },
-    { key: "cultural_sensitivity_note", label: "Cultural Sensitivity Note", type: "textarea" }
+    { key: "Object name", label: "Object ID", type: "text", readonly: true, section: "Record Identification" },
+    { key: "Identifier", label: "Institutional Identifier", type: "text", section: "Record Identification" },
+    { key: "Title", label: "Title", type: "text", section: "Record Identification" },
+    { key: "preferred_term", label: "Preferred Term", type: "text", section: "Record Identification" },
+    { key: "legacy_title", label: "Legacy Title", type: "text", section: "Record Identification" },
+    { key: "Creator", label: "Creator / Maker", type: "text", section: "Record Identification" },
+    { key: "Date", label: "Display Date", type: "text", section: "Record Identification" },
+    { key: "Searchable date", label: "Searchable Date", type: "text", section: "Record Identification" },
+    { key: "culture_community", label: "Culture / Community", type: "text", section: "Cultural Context" },
+    { key: "people_ethnolinguistic_group", label: "People / Ethnolinguistic Group", type: "text", section: "Cultural Context" },
+    { key: "Geographic location", label: "Geographic Location", type: "text", section: "Cultural Context" },
+    { key: "place_of_creation", label: "Place of Creation", type: "text", section: "Cultural Context" },
+    { key: "place_of_use", label: "Place of Use", type: "text", section: "Cultural Context" },
+    { key: "materials", label: "Materials", type: "text", section: "Cultural Context" },
+    { key: "technique", label: "Technique", type: "text", section: "Cultural Context" },
+    { key: "object_type", label: "Object Type", type: "text", section: "Cultural Context" },
+    { key: "period_dynasty", label: "Period / Dynasty", type: "text", section: "Cultural Context" },
+    { key: "function_use", label: "Function / Use", type: "textarea", section: "Interpretation" },
+    { key: "Subject", label: "Subjects", type: "textarea", section: "Interpretation" },
+    { key: "Description", label: "Description", type: "textarea", rows: 7, section: "Interpretation" },
+    { key: "provenance", label: "Provenance", type: "textarea", section: "Interpretation" },
+    { key: "acquisition_context", label: "Acquisition Context", type: "textarea", section: "Interpretation" },
+    { key: "Source", label: "Source", type: "text", section: "Administrative Notes" },
+    { key: "Notes", label: "Catalog Notes", type: "textarea", section: "Administrative Notes" },
+    { key: "Transcript", label: "Transcript", type: "textarea", section: "Administrative Notes" },
+    { key: "Rights", label: "Rights", type: "text", section: "Administrative Notes" },
+    { key: "Disclaimer", label: "Disclaimer", type: "textarea", section: "Administrative Notes" },
+    { key: "attribution_confidence", label: "Attribution Confidence", type: "text", section: "Administrative Notes" },
+    { key: "cultural_sensitivity_note", label: "Cultural Sensitivity Note", type: "textarea", section: "Administrative Notes" }
   ];
   const editableKeys = fieldConfig.filter((field) => !field.readonly).map((field) => field.key);
 
@@ -375,21 +375,48 @@
   }
 
   function renderFields(record) {
-    els.fields.innerHTML = fieldConfig.map((field) => {
-      const value = record[field.key] || "";
-      if (field.type === "textarea") {
+    const sections = [];
+
+    fieldConfig.forEach(function (field) {
+      const sectionName = field.section || "Metadata";
+      let section = sections.find(function (entry) {
+        return entry.name === sectionName;
+      });
+      if (!section) {
+        section = { name: sectionName, fields: [] };
+        sections.push(section);
+      }
+      section.fields.push(field);
+    });
+
+    els.fields.innerHTML = sections.map(function (section) {
+      const fields = section.fields.map(function (field) {
+        const value = record[field.key] || "";
+        if (field.type === "textarea") {
+          return `
+            <label class="editor-field">
+              <span class="editor-field-label">${escapeHtml(field.label)}</span>
+              <textarea class="form-control" name="${escapeHtml(field.key)}" rows="${field.rows || 4}">${escapeHtml(value)}</textarea>
+            </label>
+          `;
+        }
         return `
           <label class="editor-field">
             <span class="editor-field-label">${escapeHtml(field.label)}</span>
-            <textarea class="form-control" name="${escapeHtml(field.key)}" rows="${field.rows || 4}">${escapeHtml(value)}</textarea>
+            <input class="form-control" name="${escapeHtml(field.key)}" type="${field.type}" value="${escapeHtml(value)}" ${field.readonly ? "readonly" : ""}>
           </label>
         `;
-      }
+      }).join("");
+
       return `
-        <label class="editor-field">
-          <span class="editor-field-label">${escapeHtml(field.label)}</span>
-          <input class="form-control" name="${escapeHtml(field.key)}" type="${field.type}" value="${escapeHtml(value)}" ${field.readonly ? "readonly" : ""}>
-        </label>
+        <section class="editor-field-section">
+          <div class="editor-field-section-header">
+            <h4>${escapeHtml(section.name)}</h4>
+          </div>
+          <div class="editor-fields-grid">
+            ${fields}
+          </div>
+        </section>
       `;
     }).join("");
   }

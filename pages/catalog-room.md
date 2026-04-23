@@ -23,20 +23,23 @@ search_exclude: true
 
 <section class="research-panel editor-shell">
   <div class="research-panel-header">
-    <div>
-      <p class="section-kicker">Record Editing</p>
-      <h2 class="record-section-title">Protected draft editor</h2>
-      <p class="section-lead">Use the left panel to locate a record, revise the catalog fields on the right, then save a local draft or save the approved revision to the live catalog.</p>
+      <div>
+        <p class="section-kicker">Record Editing</p>
+        <h2 class="record-section-title">Catalog editing workspace</h2>
+        <p class="section-lead">Use the left panel to locate a record, review the image and record summary, and then move through the metadata sections in a consistent order before saving your revision.</p>
+      </div>
     </div>
-  </div>
 
   <div class="editor-grid">
     <aside class="editor-sidebar">
       <label class="form-label" for="editor-search">Find a record</label>
-      <input id="editor-search" class="form-control editor-search" type="search" placeholder="Search by object id, title, community, or place">
+      <input id="editor-search" class="form-control editor-search" type="search" placeholder="Search by object ID, title, culture, or place">
       <div class="editor-sidebar-meta">
         <span id="editor-count">0 records</span>
         <span id="editor-draft-count">0 drafts</span>
+      </div>
+      <div class="editor-sidebar-tip">
+        Start with the title or object ID, then confirm image, place, and culture before editing longer interpretive fields.
       </div>
       <div id="editor-record-list" class="editor-record-list" aria-live="polite"></div>
     </aside>
@@ -84,10 +87,10 @@ search_exclude: true
         <div class="editor-github-panel">
           <div>
             <span class="editor-field-label">Catalog save</span>
-            <p class="small-note mb-0">When you save a record update here, the change is written to the live Supabase catalog. Public-site publishing is temporarily disabled while the export workflow is being stabilized.</p>
+            <p class="small-note mb-0">Saving writes directly to the live Supabase catalog. Treat the message field as a short internal note describing what changed.</p>
           </div>
           <div class="editor-github-row">
-            <input id="editor-commit-message" class="form-control" type="text" value="">
+            <input id="editor-commit-message" class="form-control" type="text" value="" placeholder="Example: revised title and culture/community">
             <button type="button" class="btn btn-primary" id="editor-commit-csv">Save to Catalog</button>
           </div>
         </div>
@@ -99,8 +102,8 @@ search_exclude: true
             </div>
           </div>
           <div class="editor-preview-note">
-            <h4>Draft and save workflow</h4>
-            <p>Drafts remain in this browser until you are ready. When a revision is approved, sign in above and save it to the live catalog. The public site snapshot can be republished separately once the export step is restored.</p>
+            <h4>Suggested workflow</h4>
+            <p>Confirm the image and record identity first, then work from top to bottom through identification, cultural context, and interpretive notes. Save a browser draft while you are still researching; use <strong>Save to Catalog</strong> once the revision is ready.</p>
           </div>
         </div>
 
