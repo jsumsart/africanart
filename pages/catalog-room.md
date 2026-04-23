@@ -23,6 +23,9 @@ search_exclude: true
         <h2 class="record-section-title">Catalog editing workspace</h2>
         <p class="section-lead">Select a record, review the object image and record summary, then work through the metadata sections from top to bottom.</p>
       </div>
+      <div class="editor-page-actions">
+        <button type="button" class="btn btn-outline-dark" id="editor-export-csv">Export all records in MDL format as CSV</button>
+      </div>
     </div>
 
   <div class="editor-grid">
@@ -75,16 +78,6 @@ search_exclude: true
             <button type="button" class="btn btn-outline-dark d-none" id="editor-staff-logout">Sign out</button>
           </div>
           <p id="editor-staff-status" class="small-note editor-staff-status mb-0">Staff sign-in is required before changes can be saved to the live catalog.</p>
-        </div>
-
-        <div class="editor-github-panel">
-          <div>
-            <span class="editor-field-label">Catalog export</span>
-            <p class="small-note mb-0">Download the current live catalog as an MDL CSV export when you are ready to review or submit updated metadata.</p>
-          </div>
-          <div class="editor-github-row editor-export-row">
-            <button type="button" class="btn btn-outline-dark" id="editor-export-csv">Export MDL CSV</button>
-          </div>
         </div>
 
         <div class="editor-preview-row">
