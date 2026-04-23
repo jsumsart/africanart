@@ -4,7 +4,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS"
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
 const csvHeaders = [
@@ -73,20 +73,20 @@ const csvHeaders = [
   "vimeoid",
   "latitude",
   "longitude",
-  "format"
+  "format",
 ];
 
-function jsonResponse(status: number, body: Record<string, unknown>) {
+function jsonResponse(status, body) {
   return new Response(JSON.stringify(body), {
-    status,
+    status: status,
     headers: {
       ...corsHeaders,
-      "Content-Type": "application/json"
-    }
+      "Content-Type": "application/json",
+    },
   });
 }
 
-function csvEscape(value: unknown): string {
+function csvEscape(value) {
   const text = String(value == null ? "" : value);
   if (/[",\n]/.test(text)) {
     return `"${text.replace(/"/g, "\"\"")}"`;
@@ -94,7 +94,22 @@ function csvEscape(value: unknown): string {
   return text;
 }
 
-serve(async (req) => {
+function csvRow(values) {
+  return values.map(function (value) {
+    return csvEscape(value);
+  }).join(",");
+}
+
+function toBase64(text) {
+  const bytes = new TextEncoder().encode(text);
+  let binary = "";
+  for (let i = 0; i < bytes.length; i += 1) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
+serve(async function (req) {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -122,9 +137,9 @@ serve(async (req) => {
   const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     global: {
       headers: {
-        Authorization: authHeader
-      }
-    }
+        Authorization: authHeader,
+      },
+    },
   });
 
   const userResponse = await supabase.auth.getUser();
@@ -133,7 +148,13 @@ serve(async (req) => {
   }
 
   const user = userResponse.data.user;
-  const payload = await req.json().catch(() => ({}));
+  let payload = {};
+  try {
+    payload = await req.json();
+  } catch (_error) {
+    payload = {};
+  }
+
   const saveMessage = String(payload.saveMessage || "Publish updated catalog snapshot").trim();
 
   const recordsResponse = await supabase
@@ -145,7 +166,7 @@ serve(async (req) => {
     return jsonResponse(500, { error: recordsResponse.error.message });
   }
 
-  const rows = (recordsResponse.data || []).map((row) => {
+  const rows = (recordsResponse.data || []).map(function (row) {
     const record = Object.assign({}, row.record || {});
     record["Object name"] = row.object_name || record["Object name"] || "";
     record["Title"] = row.title || record["Title"] || "";
@@ -153,42 +174,46 @@ serve(async (req) => {
     record["culture_community"] = row.culture_community || record["culture_community"] || "";
     record["File name"] = row.file_name || record["File name"] || "";
     record["format"] = row.asset_format || record["format"] || "";
-    return csvHeaders.map((header) => csvEscape(record[header] || "")).join(",");
+
+    return csvRow(csvHeaders.map(function (header) {
+      return record[header] || "";
+    }));
   });
 
-  const nextCsv = [csvHeaders.join(","), ...rows].join("\n") + "\n";
+  const nextCsv = csvRow(csvHeaders) + "\n" + rows.join("\n") + "\n";
+  const githubUrl = "https://api.github.com/repos/" + githubRepo + "/contents/" + encodeURIComponent(githubCsvPath);
 
-  const fileResponse = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${encodeURIComponent(githubCsvPath)}`, {
+  const fileResponse = await fetch(githubUrl, {
     headers: {
-      "Accept": "application/vnd.github+json",
-      "Authorization": `Bearer ${githubToken}`
-    }
+      Accept: "application/vnd.github+json",
+      Authorization: "Bearer " + githubToken,
+    },
   });
 
   if (!fileResponse.ok) {
-    return jsonResponse(502, { error: `GitHub file fetch failed (${fileResponse.status}).` });
+    return jsonResponse(502, { error: "GitHub file fetch failed (" + fileResponse.status + ")." });
   }
 
   const file = await fileResponse.json();
-  const encoded = btoa(String.fromCharCode(...new TextEncoder().encode(nextCsv)));
+  const encodedCsv = toBase64(nextCsv);
 
-  const commitResponse = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${encodeURIComponent(githubCsvPath)}`, {
+  const commitResponse = await fetch(githubUrl, {
     method: "PUT",
     headers: {
-      "Accept": "application/vnd.github+json",
-      "Authorization": `Bearer ${githubToken}`,
-      "Content-Type": "application/json"
+      Accept: "application/vnd.github+json",
+      Authorization: "Bearer " + githubToken,
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       message: saveMessage,
-      content: encoded,
+      content: encodedCsv,
       sha: file.sha,
-      branch: githubBranch
-    })
+      branch: githubBranch,
+    }),
   });
 
   if (!commitResponse.ok) {
-    return jsonResponse(502, { error: `GitHub publish failed (${commitResponse.status}).` });
+    return jsonResponse(502, { error: "GitHub publish failed (" + commitResponse.status + ")." });
   }
 
   const commitResult = await commitResponse.json();
@@ -198,13 +223,13 @@ serve(async (req) => {
     user_email: user.email,
     object_name: String(payload.objectName || ""),
     save_message: saveMessage,
-    publish_sha: commitResult.commit?.sha || null,
-    payload
+    publish_sha: commitResult.commit && commitResult.commit.sha ? commitResult.commit.sha : null,
+    payload: payload,
   });
 
   return jsonResponse(200, {
     ok: true,
-    publishSha: commitResult.commit?.sha || null,
-    message: "Live catalog snapshot published to GitHub. GitHub Pages will refresh the public site after the deploy finishes."
+    publishSha: commitResult.commit && commitResult.commit.sha ? commitResult.commit.sha : null,
+    message: "Live catalog snapshot published to GitHub. GitHub Pages will refresh the public site after the deploy finishes.",
   });
 });
