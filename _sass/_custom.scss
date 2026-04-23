@@ -440,6 +440,10 @@ a:focus {
   grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
 }
 
+.about-grid-balanced {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .landing-copy {
   position: relative;
   overflow: hidden;
@@ -567,6 +571,53 @@ a:focus {
   gap: 1rem;
 }
 
+.about-hero-grid {
+  grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+  align-items: stretch;
+}
+
+.about-hero-copy {
+  max-width: 62ch;
+}
+
+.about-hero-copy .page-title {
+  max-width: 15ch;
+  margin-bottom: 1rem;
+}
+
+.about-hero-panel {
+  display: grid;
+  gap: 1rem;
+  padding: 1.7rem;
+  background: linear-gradient(180deg, rgba(248, 250, 254, 0.98), rgba(242, 246, 252, 0.96));
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.045);
+}
+
+.about-pillar-list {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.about-pillar-card {
+  padding: 1.05rem 1.1rem;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(22, 35, 61, 0.1);
+  border-radius: 20px;
+}
+
+.about-pillar-card h3 {
+  font-size: 1.08rem;
+  margin-bottom: 0.45rem;
+}
+
+.about-pillar-card p {
+  margin-bottom: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
 .access-panel {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(243, 246, 251, 0.98)), var(--panel);
   align-self: start;
@@ -612,6 +663,28 @@ a:focus {
 .landing-feature-panel {
   padding: 1.8rem;
   background: var(--panel-strong);
+}
+
+.about-richtext {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.995), rgba(244, 247, 252, 0.975));
+}
+
+.about-richtext .record-section-title {
+  margin-bottom: 0.85rem;
+}
+
+.about-richtext p,
+.about-side-panel p {
+  color: var(--muted);
+  line-height: 1.78;
+}
+
+.about-side-panel {
+  background: linear-gradient(180deg, rgba(248, 250, 254, 0.985), rgba(243, 246, 252, 0.97));
+}
+
+.about-side-list {
+  margin-top: 1rem;
 }
 
 .landing-note-card h4,
