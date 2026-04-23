@@ -15,7 +15,7 @@ search_exclude: true
     </div>
     <div class="page-aside-card">
       <h2 class="h5">Current behavior</h2>
-      <p>This editor can save local drafts in the browser and save approved changes to the live Supabase catalog, which can then refresh the public site snapshot.</p>
+      <p>This editor can save local drafts in the browser and save approved changes directly to the live Supabase catalog.</p>
       <p class="mb-0"><strong>Hidden access:</strong> this page is not linked in the public navigation and can also be opened with <kbd>Shift</kbd> + <kbd>E</kbd> after unlocking research access.</p>
     </div>
   </div>
@@ -84,7 +84,7 @@ search_exclude: true
         <div class="editor-github-panel">
           <div>
             <span class="editor-field-label">Catalog save</span>
-            <p class="small-note mb-0">When you save a record update here, the change is written to the live Supabase catalog. If site publishing is connected, the public site will refresh after the next Pages deploy completes.</p>
+            <p class="small-note mb-0">When you save a record update here, the change is written to the live Supabase catalog. Public-site publishing is temporarily disabled while the export workflow is being stabilized.</p>
           </div>
           <div class="editor-github-row">
             <input id="editor-commit-message" class="form-control" type="text" value="">
@@ -100,7 +100,7 @@ search_exclude: true
           </div>
           <div class="editor-preview-note">
             <h4>Draft and save workflow</h4>
-            <p>Drafts remain in this browser until you are ready. When a revision is approved, sign in above and save it to the live catalog; if publishing is enabled, the public site will update after GitHub Pages rebuilds.</p>
+            <p>Drafts remain in this browser until you are ready. When a revision is approved, sign in above and save it to the live catalog. The public site snapshot can be republished separately once the export step is restored.</p>
           </div>
         </div>
 

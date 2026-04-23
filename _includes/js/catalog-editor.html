@@ -495,42 +495,9 @@
       window.localStorage.removeItem(draftKey(activeId));
       els.lastSaved.textContent = "Saved to live catalog at " + new Date().toLocaleString();
 
-      let publishNote = "The public site snapshot has not been refreshed yet.";
-      if (writebackEndpoint) {
-        const controller = new AbortController();
-        const timeoutId = window.setTimeout(function () {
-          controller.abort();
-        }, 20000);
-        try {
-          const publishResponse = await fetch(writebackEndpoint, {
-            method: "POST",
-            headers: {
-              "apikey": config.supabaseAnonKey,
-              "Authorization": "Bearer " + session.access_token,
-              "Content-Type": "application/json"
-            },
-            signal: controller.signal,
-            body: JSON.stringify({
-              objectName: activeId,
-              saveMessage: (els.commitMessage.value || ("Save " + activeId + " metadata")).trim()
-            })
-          });
-          window.clearTimeout(timeoutId);
-          const publishResult = await publishResponse.json().catch(function () {
-            return {};
-          });
-          if (!publishResponse.ok) {
-            throw new Error(publishResult.error || ("Site publish failed (" + publishResponse.status + ")."));
-          }
-          publishNote = "The public site will refresh after the next Pages deploy completes.";
-        } catch (publishError) {
-          if (publishError && publishError.name === "AbortError") {
-            publishNote = "The record was saved to Supabase, but the public-site refresh request timed out.";
-          } else {
-            publishNote = "The record was saved to Supabase, but the public-site refresh did not complete: " + publishError.message;
-          }
-        }
-      }
+      const publishNote = writebackEndpoint
+        ? "The live catalog was updated. Public-site publishing is currently disabled while the export workflow is being stabilized."
+        : "The live catalog was updated in Supabase. The public site snapshot will not change until a publish/export step is run.";
 
       setAlert("Record saved to the live catalog. " + publishNote, "info");
       openRecord(activeId);
