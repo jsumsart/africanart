@@ -3,8 +3,10 @@
     const editorUrl = {{ '/catalog-room.html' | relative_url | jsonify }};
     const browseUrl = {{ '/browse.html' | relative_url | jsonify }};
     const editorSessionKey = {{ site.data.theme.editor-gate-session-key | default: 'jsu-african-art-editor' | jsonify }};
-    const editorPasswordHash = {{ site.data.theme.editor-gate-password-sha256 | jsonify }};
     const editorLabel = {{ site.data.theme.editor-gate-label | default: 'Catalog Room' | jsonify }};
+    const supabaseUrl = {{ site.data.theme.editor-supabase-url | default: "" | jsonify }};
+    const supabaseAnonKey = {{ site.data.theme.editor-supabase-anon-key | default: "" | jsonify }};
+    let supabaseClient = null;
 
     function normalizePath(path) {
         if (!path) return "/";
@@ -62,28 +64,105 @@
         });
     }
 
+    function setEditorSessionGranted(granted) {
+        if (granted) {
+            window.localStorage.setItem(editorSessionKey, "granted");
+        } else {
+            window.localStorage.removeItem(editorSessionKey);
+        }
+        setUnlockedState();
+    }
+
+    async function ensureSupabaseClient() {
+        if (!(supabaseUrl && supabaseAnonKey)) return null;
+        if (window.supabase && !supabaseClient) {
+            supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+        }
+        if (supabaseClient) return supabaseClient;
+        if (!window.supabase) {
+            await new Promise(function (resolve, reject) {
+                const existing = document.querySelector('script[data-supabase-auth-loader="true"]');
+                if (existing) {
+                    existing.addEventListener('load', resolve, { once: true });
+                    existing.addEventListener('error', reject, { once: true });
+                    return;
+                }
+                const script = document.createElement("script");
+                script.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+                script.dataset.supabaseAuthLoader = "true";
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+        if (window.supabase && !supabaseClient) {
+            supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+        }
+        return supabaseClient;
+    }
+
+    async function initializeSupabaseAuth() {
+        const client = await ensureSupabaseClient();
+        if (!client) {
+            setEditorSessionGranted(false);
+            return;
+        }
+        const sessionResponse = await client.auth.getSession();
+        setEditorSessionGranted(Boolean(sessionResponse.data.session));
+        client.auth.onAuthStateChange(function (_event, session) {
+            setEditorSessionGranted(Boolean(session));
+        });
+    }
+
     async function handleEditorSubmit(event) {
         event.preventDefault();
         clearAlert();
-        const form = event.currentTarget;
-        const passwordInput = form.querySelector("input[type='password']");
-        const submittedHash = await sha256(passwordInput.value);
-        if (submittedHash === editorPasswordHash) {
-            window.localStorage.setItem(editorSessionKey, "granted");
-            setUnlockedState();
-            passwordInput.value = "";
-            window.location.assign(editorUrl);
+        const client = await ensureSupabaseClient();
+        if (!client) {
+            showAlert("Editor sign-in is not configured yet.", "error");
             return;
         }
-        passwordInput.value = "";
-        showAlert("That " + editorLabel.toLowerCase() + " password was not recognized. Please try again.", "error");
-        passwordInput.focus();
+        const form = event.currentTarget;
+        const emailInput = form.querySelector('input[type="email"]');
+        const passwordInput = form.querySelector('input[type="password"]');
+        const submitButton = form.querySelector('button[type="submit"]');
+        const email = (emailInput.value || "").trim();
+        const password = passwordInput.value || "";
+        if (!email || !password) {
+            showAlert("Enter your staff email and password to open editing access.", "error");
+            return;
+        }
+        const originalText = submitButton.textContent;
+        submitButton.disabled = true;
+        submitButton.textContent = "Signing in...";
+        try {
+            const response = await client.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+            if (response.error) throw response.error;
+            setEditorSessionGranted(true);
+            passwordInput.value = "";
+            window.location.assign(editorUrl);
+        } catch (error) {
+            showAlert(error.message || "Editor sign-in could not be completed.", "error");
+            passwordInput.value = "";
+            passwordInput.focus();
+        } finally {
+            submitButton.disabled = false;
+            submitButton.textContent = originalText;
+        }
     }
 
-    function handleEditorLogout(event) {
+    async function handleEditorLogout(event) {
         if (event) event.preventDefault();
-        window.localStorage.removeItem(editorSessionKey);
-        setUnlockedState();
+        try {
+            const client = await ensureSupabaseClient();
+            if (client) {
+                await client.auth.signOut();
+            }
+        } catch (_error) {}
+        setEditorSessionGranted(false);
         if (normalizePath(window.location.pathname) === normalizePath(editorUrl)) {
             window.location.assign(browseUrl);
         }
@@ -120,9 +199,8 @@
         window.location.assign(editorUrl);
     });
 
-    if (normalizePath(window.location.pathname) === normalizePath(editorUrl) && !isEditorUnlocked()) {
-        window.location.replace(browseUrl);
-        return;
-    }
+    initializeSupabaseAuth().catch(function () {
+        setEditorSessionGranted(false);
+    });
 })();
 </script>

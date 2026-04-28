@@ -45,7 +45,7 @@ search_exclude: true
     <div class="editor-main">
       <div id="editor-empty" class="editor-empty">
         <h3>Select a record to begin.</h3>
-        <p>The editor stays hidden from public navigation and only opens after the editor password has been accepted in this browser.</p>
+        <p>The editor stays hidden from public navigation and only opens after you sign in with a staff account.</p>
       </div>
 
       <form id="editor-form" class="editor-form d-none">
@@ -64,20 +64,6 @@ search_exclude: true
         <div class="editor-status-row">
           <div id="editor-alert" class="access-alert d-none"></div>
           <div id="editor-last-saved" class="editor-last-saved"></div>
-        </div>
-
-        <div class="editor-github-panel">
-          <div>
-            <span class="editor-field-label">Staff sign-in</span>
-            <p class="small-note mb-0">Sign in with your staff account to save changes from this device. Draft saving in the browser will still work without sign-in.</p>
-          </div>
-          <div class="editor-github-row">
-            <input id="editor-staff-email" class="form-control" type="email" autocomplete="username" placeholder="Staff email">
-            <input id="editor-staff-password" class="form-control" type="password" autocomplete="current-password" placeholder="Staff password">
-            <button type="button" class="btn btn-outline-dark" id="editor-staff-login">Sign in</button>
-            <button type="button" class="btn btn-outline-dark d-none" id="editor-staff-logout">Sign out</button>
-          </div>
-          <p id="editor-staff-status" class="small-note editor-staff-status mb-0">Sign in with a staff account before saving changes.</p>
         </div>
 
         <div class="editor-preview-row">

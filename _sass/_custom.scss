@@ -1518,6 +1518,11 @@ body.collection-unlocked [data-auth-trigger] {
   gap: 0.45rem;
 }
 
+.nav-editor-email {
+  min-width: 176px;
+  max-width: 220px;
+}
+
 .nav-auth-input {
   min-width: 132px;
   max-width: 160px;
@@ -1546,26 +1551,6 @@ body.collection-unlocked [data-auth-trigger] {
 
 .editor-shell {
   padding: 1.8rem;
-}
-
-.editor-github-panel {
-  display: grid;
-  gap: 0.9rem;
-  margin-bottom: 1.15rem;
-  padding: 1.1rem;
-  border-radius: 18px;
-  background: rgba(243, 246, 251, 0.9);
-  border: 1px solid rgba(22, 35, 61, 0.08);
-}
-
-.editor-github-row {
-  display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(220px, 1fr) auto auto;
-  gap: 0.75rem;
-}
-
-.editor-github-row:has(#editor-commit-csv) {
-  grid-template-columns: minmax(260px, 1fr) auto;
 }
 
 .editor-staff-status {
@@ -1977,6 +1962,13 @@ body.collection-unlocked [data-auth-trigger] {
 
   .site-banner-tools .nav-editor-form {
     width: 100%;
+  }
+
+  .nav-editor-email,
+  .nav-editor-input {
+    max-width: none;
+    min-width: 0;
+    flex: 1 1 12rem;
   }
 
   .site-hero-title h1 {

@@ -2,7 +2,6 @@
 <script>
 (function () {
   const editorPath = {{ '/catalog-room.html' | relative_url | jsonify }};
-  const sessionKey = {{ site.data.theme.staff-gate-session-key | default: 'jsu-african-art-access' | jsonify }};
   const editorSessionKey = {{ site.data.theme.editor-gate-session-key | default: 'jsu-african-art-editor' | jsonify }};
   const config = window.JSUCatalogEditorConfig || {};
   const supabaseTable = config.supabaseTable || "catalog_records";
@@ -85,11 +84,6 @@
   const path = window.location.pathname;
   if (path !== editorPath && !path.endsWith("/catalog-room.html")) return;
 
-  if (window.localStorage.getItem(sessionKey) !== "granted" || window.localStorage.getItem(editorSessionKey) !== "granted") {
-    window.location.replace({{ '/' | relative_url | jsonify }} + "?auth=required&next=" + encodeURIComponent(editorPath));
-    return;
-  }
-
   const els = {
     search: document.getElementById("editor-search"),
     count: document.getElementById("editor-count"),
@@ -104,10 +98,10 @@
     lastSaved: document.getElementById("editor-last-saved"),
     reset: document.getElementById("editor-reset"),
     preview: document.getElementById("editor-preview-image"),
-    staffEmail: document.getElementById("editor-staff-email"),
-    staffPassword: document.getElementById("editor-staff-password"),
-    staffLogin: document.getElementById("editor-staff-login"),
-    staffLogout: document.getElementById("editor-staff-logout"),
+    staffEmail: document.getElementById("banner-editor-email"),
+    staffPassword: document.getElementById("banner-editor-password"),
+    staffLogin: null,
+    staffLogout: null,
     staffStatus: document.getElementById("editor-staff-status"),
     settingsAlert: document.getElementById("editor-settings-alert"),
     settingsForm: document.getElementById("editor-settings-form"),
@@ -242,15 +236,10 @@
       return;
     }
 
-    els.staffLogin.classList.toggle("d-none", signedIn);
-    els.staffLogout.classList.toggle("d-none", !signedIn);
-    els.staffEmail.disabled = signedIn;
-    els.staffPassword.disabled = signedIn;
     if (signedIn) {
-      els.staffStatus.textContent = "Signed in as " + (staffUser.email || "authorized staff user") + ".";
-      els.staffPassword.value = "";
+      if (els.staffStatus) els.staffStatus.textContent = "Signed in as " + (staffUser.email || "authorized staff user") + ".";
     } else {
-      els.staffStatus.textContent = "Sign in with a staff account before saving changes.";
+      if (els.staffStatus) els.staffStatus.textContent = "Sign in with a staff account before saving changes.";
     }
     setCommitEnabled(signedIn && Boolean(activeId));
     setExportEnabled(signedIn);
@@ -315,7 +304,7 @@
     }
     if (!staffUser) {
       setSettingsAlert("Sign in with a staff account before saving site settings.", "error");
-      els.staffEmail.focus();
+      if (els.staffEmail) els.staffEmail.focus();
       return;
     }
 
@@ -405,64 +394,6 @@
     fillSettingsForm(siteSettings);
   }
 
-  async function handleStaffLogin() {
-    if (!hasStaffAuthConfig) {
-      setAlert("Supabase staff authentication has not been configured yet.", "error");
-      return;
-    }
-    const email = (els.staffEmail.value || "").trim();
-    const password = els.staffPassword.value || "";
-    if (!email || !password) {
-      setAlert("Enter a staff email and password to continue.", "error");
-      return;
-    }
-    setBusy(els.staffLogin, true, "Signing in...");
-    try {
-      const response = await supabaseClient.auth.signInWithPassword({
-        email: email,
-        password: password
-      });
-      if (response.error) {
-        throw response.error;
-      }
-      staffSession = response.data.session || null;
-      staffUser = staffSession ? staffSession.user : null;
-      await loadSupabaseRecords();
-      await loadSiteSettings();
-      updateStaffUi();
-      renderList();
-      if (activeId) openRecord(activeId);
-      setAlert("Staff sign-in confirmed. You can now save approved catalog changes.", "info");
-    } catch (error) {
-      setAlert(error.message || "Staff sign-in could not be completed.", "error");
-    } finally {
-      setBusy(els.staffLogin, false);
-    }
-  }
-
-  async function handleStaffLogout() {
-    if (!supabaseClient) return;
-    setBusy(els.staffLogout, true, "Signing out...");
-    try {
-      const response = await supabaseClient.auth.signOut();
-      if (response.error) throw response.error;
-      staffSession = null;
-      staffUser = null;
-      records = embeddedRecords.slice();
-      filteredRecords = records.slice();
-      siteSettings = Object.assign({}, (window.JSUSiteSettingsConfig && window.JSUSiteSettingsConfig.defaults) || {});
-      updateStaffUi();
-      fillSettingsForm(siteSettings);
-      renderList();
-      if (activeId) openRecord(activeId);
-      setAlert("Staff sign-in cleared on this device.", "info");
-    } catch (error) {
-      setAlert(error.message || "Staff sign-out could not be completed.", "error");
-    } finally {
-      setBusy(els.staffLogout, false);
-    }
-  }
-
   async function handleExportCsv() {
     if (!hasStaffAuthConfig || !supabaseClient) {
       setAlert("CSV export has not been configured yet.", "error");
@@ -470,7 +401,7 @@
     }
     if (!staffUser) {
       setAlert("Sign in with a staff account before exporting the catalog.", "error");
-      els.staffEmail.focus();
+      if (els.staffEmail) els.staffEmail.focus();
       return;
     }
 
@@ -736,8 +667,6 @@
   els.search.addEventListener("input", filterRecords);
   els.form.addEventListener("submit", handleSave);
   els.reset.addEventListener("click", handleReset);
-  els.staffLogin.addEventListener("click", handleStaffLogin);
-  els.staffLogout.addEventListener("click", handleStaffLogout);
   els.settingsSaveButton.addEventListener("click", handleSaveSiteSettings);
   els.exportCsv.addEventListener("click", handleExportCsv);
   els.commitCsv.addEventListener("click", commitCsvUpdate);
@@ -745,6 +674,10 @@
   const params = new URLSearchParams(window.location.search);
   const requested = params.get("id");
   initializeStaffAuth().then(function () {
+    if (!staffUser) {
+      window.location.replace({{ '/browse.html' | relative_url | jsonify }});
+      return;
+    }
     renderList();
     if (requested && records.some((record) => record["Object name"] === requested)) {
       openRecord(requested);
