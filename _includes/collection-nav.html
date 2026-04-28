@@ -15,16 +15,12 @@
             <ul class="navbar-nav me-auto">
                 {%- assign navItems = site.data.config-nav | where_exp: 'item', 'item.dropdown_parent == nil' -%} 
                 {% for nav in navItems %}
-                {% assign is_public_nav = false %}
-                {% if nav.stub == "/" or nav.stub == "/about.html" %}
-                {% assign is_public_nav = true %}
-                {% endif %}
                 {% if nav.stub %}
-                <li class="nav-item{% unless is_public_nav %} protected-nav-item{% endunless %}"{% unless is_public_nav %} data-protected-nav="true"{% endunless %}>
+                <li class="nav-item">
                     <a class="nav-link{% if page.url == nav.stub %} active{% endif %}" href="{{ nav.stub | relative_url }}">{{ nav.display_name }}</a>
                 </li>
                 {%- else -%}
-                <li class="nav-item dropdown protected-nav-item" data-protected-nav="true">
+                <li class="nav-item dropdown">
                     {% assign navChildren = site.data.config-nav | where_exp: 'item', 'item.dropdown_parent == nav.display_name' %}
                     {%- assign childStubs = navChildren | map: 'stub' -%}
                     <a class="nav-link  dropdown-toggle{% if childStubs contains page.url %} active{% endif %}" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">{{ nav.display_name }}</a>
@@ -37,19 +33,8 @@
                 {% endif %}
                 {%- endfor -%}
             </ul>
-            <div class="site-search-shell protected-nav-item" data-protected-nav="true">
+            <div class="site-search-shell">
                 {% include nav-search-lunr.html %}
-            </div>
-            <div class="nav-access-controls d-flex align-items-center gap-2 ms-lg-3">
-                <span class="nav-gate-label d-none d-lg-inline">Catalog Access</span>
-                <form class="nav-auth-form" data-auth-form>
-                    <label class="visually-hidden" for="nav-staff-password">Staff password</label>
-                    <input class="form-control form-control-sm nav-auth-input" id="nav-staff-password" name="password" type="password" autocomplete="current-password" placeholder="Password" required>
-                    <button class="btn btn-sm btn-outline-light nav-auth-submit" type="submit" aria-label="Open research access">Enter</button>
-                </form>
-                <a class="btn btn-sm btn-outline-light d-none" href="{{ '/browse.html' | relative_url }}" data-auth-open>Catalog</a>
-                <button class="btn btn-sm btn-outline-light nav-access-prompt" type="button" data-auth-trigger>{{ site.data.theme.staff-gate-label | default: "Staff Access" }}</button>
-                <button class="btn btn-sm btn-light d-none" type="button" data-auth-logout>Lock</button>
             </div>
         </div>
     </div>

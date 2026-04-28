@@ -13,7 +13,7 @@ featured-image: coll032
 home-title-y-padding: 10em # Default is 8em
 # optional: change position of background image, center, top, bottom
 home-banner-image-position: center # was blank (center). Top often works better for portraits/figures.
-staff-gate-enabled: true
+staff-gate-enabled: false
 staff-gate-password-sha256: "173a0c9ed0c9b7f432ce0d32e44d068a3d0e9d634863c4f9710f42330232637e"
 staff-gate-session-key: "jsu-african-art-access"
 staff-gate-public-paths: "/;/about.html"

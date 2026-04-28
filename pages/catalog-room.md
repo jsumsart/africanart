@@ -45,7 +45,7 @@ search_exclude: true
     <div class="editor-main">
       <div id="editor-empty" class="editor-empty">
         <h3>Select a record to begin.</h3>
-        <p>The editor stays hidden from public navigation and only works after the staff password has been accepted in this browser.</p>
+        <p>The editor stays hidden from public navigation and only opens after the editor password has been accepted in this browser.</p>
       </div>
 
       <form id="editor-form" class="editor-form d-none">
