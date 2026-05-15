@@ -1,0 +1,82 @@
+name: Catalog Room Save
+
+on:
+  workflow_dispatch:
+    inputs:
+      save_action_type:
+        description: "Type of save request"
+        required: true
+        type: choice
+        options:
+          - record
+          - settings
+      editor_email:
+        description: "Editor email address"
+        required: true
+        type: string
+      commit_message:
+        description: "Commit message for the save"
+        required: false
+        type: string
+      record_json:
+        description: "Serialized record JSON for record saves"
+        required: false
+        type: string
+      settings_json:
+        description: "Serialized site settings JSON for site settings saves"
+        required: false
+        type: string
+
+jobs:
+  save:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Apply save payload
+        env:
+          SAVE_ACTION_TYPE: ${{ inputs.save_action_type }}
+          SAVE_RECORD_JSON: ${{ inputs.record_json }}
+          SAVE_SETTINGS_JSON: ${{ inputs.settings_json }}
+        run: python scripts/github_catalog_save.py
+
+      - name: Commit repository changes
+        id: commit
+        env:
+          EDITOR_EMAIL: ${{ inputs.editor_email }}
+          COMMIT_MESSAGE: ${{ inputs.commit_message }}
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name "JSU African Art Catalog"
+          git config user.email "catalog-room@users.noreply.github.com"
+          git add _data/africanart_mdl_medata.csv _data/theme.yml
+          if [ -n "$COMMIT_MESSAGE" ]; then
+            MESSAGE="$COMMIT_MESSAGE"
+          elif [ "${{ inputs.save_action_type }}" = "settings" ]; then
+            MESSAGE="Save site settings from Catalog Room ($EDITOR_EMAIL)"
+          else
+            MESSAGE="Save catalog record from Catalog Room ($EDITOR_EMAIL)"
+          fi
+          git commit -m "$MESSAGE"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Push changes
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          PAGES_PUSH_TOKEN: ${{ secrets.PAGES_PUSH_TOKEN }}
+        run: |
+          git push "https://x-access-token:${PAGES_PUSH_TOKEN}@github.com/${{ github.repository }}.git" HEAD:main
