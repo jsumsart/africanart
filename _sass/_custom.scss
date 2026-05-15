@@ -157,7 +157,7 @@ a:focus {
 }
 
 .site-masthead {
-  padding: 1.25rem 0 1rem;
+  padding: 2rem 0 1rem;
 }
 
 .site-masthead h1,
@@ -203,8 +203,8 @@ a:focus {
 
 .site-masthead-frame {
   position: relative;
-  min-height: 3.2rem;
-  padding-top: 0.9rem;
+  min-height: 4.5rem;
+  padding-top: 1.1rem;
 }
 
 .site-banner-tools {
@@ -212,7 +212,7 @@ a:focus {
   justify-content: flex-end;
   align-items: flex-start;
   position: absolute;
-  top: 0.9rem;
+  top: 0.75rem;
   right: clamp(1rem, 4vw, 2.25rem);
   z-index: 2;
 }
