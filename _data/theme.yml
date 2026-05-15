@@ -18,7 +18,7 @@ staff-gate-password-sha256: "173a0c9ed0c9b7f432ce0d32e44d068a3d0e9d634863c4f9710
 staff-gate-session-key: "jsu-african-art-access"
 staff-gate-public-paths: "/;/about.html"
 staff-gate-label: "Staff Access"
-editor-gate-password-sha256: "ec59104e4ce20b30f2f55f50752c42953a3837556c146462fabfdb429d7ea9cf"
+editor-gate-password-sha256: "d728dd7ac61e7b2926968fab2b3d928f0c7110d86ea680154df2ead1e9672eda"
 editor-gate-session-key: "jsu-african-art-editor"
 editor-gate-label: "Catalog Room"
 editor-email-storage-key: "jsu-african-art-editor-email"
