@@ -3,20 +3,15 @@
     const editorUrl = {{ '/catalog-room.html' | relative_url | jsonify }};
     const browseUrl = {{ '/browse.html' | relative_url | jsonify }};
     const editorSessionKey = {{ site.data.theme.editor-gate-session-key | default: 'jsu-african-art-editor' | jsonify }};
+    const editorEmailKey = {{ site.data.theme.editor-email-storage-key | default: 'jsu-african-art-editor-email' | jsonify }};
+    const editorPasswordSha = {{ site.data.theme.editor-gate-password-sha256 | default: "" | jsonify }};
     const editorLabel = {{ site.data.theme.editor-gate-label | default: 'Catalog Room' | jsonify }};
-    const supabaseUrl = {{ site.data.theme.editor-supabase-url | default: "" | jsonify }};
-    const supabaseAnonKey = {{ site.data.theme.editor-supabase-anon-key | default: "" | jsonify }};
-    let supabaseClient = null;
 
     function normalizePath(path) {
         if (!path) return "/";
         let normalized = path;
-        if (normalized.endsWith("/index.html")) {
-            normalized = normalized.slice(0, -10) || "/";
-        }
-        if (normalized.length > 1 && normalized.endsWith("/")) {
-            normalized = normalized.slice(0, -1);
-        }
+        if (normalized.endsWith("/index.html")) normalized = normalized.slice(0, -10) || "/";
+        if (normalized.length > 1 && normalized.endsWith("/")) normalized = normalized.slice(0, -1);
         return normalized || "/";
     }
 
@@ -30,11 +25,27 @@
         return window.localStorage.getItem(editorSessionKey) === "granted";
     }
 
+    function getEditorEmail() {
+        return window.localStorage.getItem(editorEmailKey) || "";
+    }
+
+    function setEditorSession(granted, email) {
+        if (granted) {
+            window.localStorage.setItem(editorSessionKey, "granted");
+            if (email) window.localStorage.setItem(editorEmailKey, email);
+        } else {
+            window.localStorage.removeItem(editorSessionKey);
+            window.localStorage.removeItem(editorEmailKey);
+        }
+        setUnlockedState();
+    }
+
     function setUnlockedState() {
         const editorUnlocked = isEditorUnlocked();
+        const editorEmail = getEditorEmail();
         document.body.classList.remove("collection-locked", "collection-unlocked");
-        document.body.classList.add("collection-unlocked");
-        document.body.classList.add("auth-ready");
+        document.body.classList.add("collection-unlocked", "auth-ready");
+
         document.querySelectorAll("[data-auth-editor-link]").forEach((el) => {
             el.classList.toggle("d-none", !editorUnlocked);
         });
@@ -44,15 +55,17 @@
         document.querySelectorAll("[data-editor-logout]").forEach((el) => {
             el.classList.toggle("d-none", !editorUnlocked);
         });
+        document.querySelectorAll("[data-editor-session-label]").forEach((el) => {
+            el.textContent = editorUnlocked && editorEmail ? editorEmail : "";
+            el.classList.toggle("d-none", !(editorUnlocked && editorEmail));
+        });
     }
 
     function showAlert(message, tone) {
         document.querySelectorAll("[data-auth-alert]").forEach((el) => {
             el.textContent = message;
             el.className = "access-alert";
-            if (tone) {
-                el.classList.add("access-alert-" + tone);
-            }
+            if (tone) el.classList.add("access-alert-" + tone);
             el.classList.remove("d-none");
         });
     }
@@ -64,88 +77,39 @@
         });
     }
 
-    function setEditorSessionGranted(granted) {
-        if (granted) {
-            window.localStorage.setItem(editorSessionKey, "granted");
-        } else {
-            window.localStorage.removeItem(editorSessionKey);
-        }
-        setUnlockedState();
-    }
-
-    async function ensureSupabaseClient() {
-        if (!(supabaseUrl && supabaseAnonKey)) return null;
-        if (window.supabase && !supabaseClient) {
-            supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
-        }
-        if (supabaseClient) return supabaseClient;
-        if (!window.supabase) {
-            await new Promise(function (resolve, reject) {
-                const existing = document.querySelector('script[data-supabase-auth-loader="true"]');
-                if (existing) {
-                    existing.addEventListener('load', resolve, { once: true });
-                    existing.addEventListener('error', reject, { once: true });
-                    return;
-                }
-                const script = document.createElement("script");
-                script.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
-                script.dataset.supabaseAuthLoader = "true";
-                script.onload = resolve;
-                script.onerror = reject;
-                document.head.appendChild(script);
-            });
-        }
-        if (window.supabase && !supabaseClient) {
-            supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
-        }
-        return supabaseClient;
-    }
-
-    async function initializeSupabaseAuth() {
-        const client = await ensureSupabaseClient();
-        if (!client) {
-            setEditorSessionGranted(false);
-            return;
-        }
-        const sessionResponse = await client.auth.getSession();
-        setEditorSessionGranted(Boolean(sessionResponse.data.session));
-        client.auth.onAuthStateChange(function (_event, session) {
-            setEditorSessionGranted(Boolean(session));
-        });
-    }
-
     async function handleEditorSubmit(event) {
         event.preventDefault();
         clearAlert();
-        const client = await ensureSupabaseClient();
-        if (!client) {
-            showAlert("Editor sign-in is not configured yet.", "error");
-            return;
-        }
+
         const form = event.currentTarget;
         const emailInput = form.querySelector('input[type="email"]');
         const passwordInput = form.querySelector('input[type="password"]');
         const submitButton = form.querySelector('button[type="submit"]');
         const email = (emailInput.value || "").trim();
         const password = passwordInput.value || "";
+
         if (!email || !password) {
-            showAlert("Enter your staff email and password to open editing access.", "error");
+            showAlert("Enter your email and the catalog room password to continue.", "error");
             return;
         }
+        if (!editorPasswordSha) {
+            showAlert("Editor access is not configured yet.", "error");
+            return;
+        }
+
         const originalText = submitButton.textContent;
         submitButton.disabled = true;
-        submitButton.textContent = "Signing in...";
+        submitButton.textContent = "Opening...";
         try {
-            const response = await client.auth.signInWithPassword({
-                email: email,
-                password: password
-            });
-            if (response.error) throw response.error;
-            setEditorSessionGranted(true);
+            const digest = await sha256(password);
+            if (digest !== editorPasswordSha) {
+                throw new Error("That editor password was not recognized.");
+            }
             passwordInput.value = "";
+            setEditorSession(true, email);
             window.location.assign(editorUrl);
         } catch (error) {
-            showAlert(error.message || "Editor sign-in could not be completed.", "error");
+            showAlert(error.message || "Editor access could not be opened.", "error");
             passwordInput.value = "";
             passwordInput.focus();
         } finally {
@@ -154,19 +118,14 @@
         }
     }
 
-    async function handleEditorLogout(event) {
+    function handleEditorLogout(event) {
         if (event) event.preventDefault();
-        try {
-            const client = await ensureSupabaseClient();
-            if (client) {
-                await client.auth.signOut();
-            }
-        } catch (_error) {}
-        setEditorSessionGranted(false);
+        setEditorSession(false);
         if (normalizePath(window.location.pathname) === normalizePath(editorUrl)) {
             window.location.assign(browseUrl);
         }
     }
+
     setUnlockedState();
 
     document.querySelectorAll("[data-editor-auth-form]").forEach((el) => {
@@ -180,9 +139,7 @@
             event.preventDefault();
             if (!isEditorUnlocked()) {
                 const editorInput = document.querySelector(".nav-editor-form input[type='password']");
-                if (editorInput) {
-                    editorInput.focus();
-                }
+                if (editorInput) editorInput.focus();
                 showAlert("Enter the " + editorLabel.toLowerCase() + " password to open editing access.", "info");
                 return;
             }
@@ -197,10 +154,6 @@
         if (tag === "input" || tag === "textarea" || event.target.isContentEditable) return;
         event.preventDefault();
         window.location.assign(editorUrl);
-    });
-
-    initializeSupabaseAuth().catch(function () {
-        setEditorSessionGranted(false);
     });
 })();
 </script>

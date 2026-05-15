@@ -1,12 +1,20 @@
 <script>
 window.JSUCatalogEditorConfig = {
-  supabaseUrl: {{ site.data.theme.editor-supabase-url | default: "" | jsonify }},
-  supabaseAnonKey: {{ site.data.theme.editor-supabase-anon-key | default: "" | jsonify }},
-  supabaseTable: {{ site.data.theme.editor-supabase-table | default: "catalog_records" | jsonify }},
-  siteSettingsTable: {{ site.data.theme.editor-site-settings-table | default: "site_settings" | jsonify }},
-  writebackEndpoint: {{ site.data.theme.editor-writeback-endpoint | default: "" | jsonify }}
+  githubOwner: {{ site.data.theme.editor-github-owner | default: "jsumsart" | jsonify }},
+  githubRepo: {{ site.data.theme.editor-github-repo | default: "africanart" | jsonify }},
+  githubBranch: {{ site.data.theme.editor-github-branch | default: "main" | jsonify }},
+  metadataPath: {{ site.data.theme.editor-github-metadata-path | default: "_data/africanart_mdl_medata.csv" | jsonify }},
+  themePath: {{ site.data.theme.editor-github-theme-path | default: "_data/theme.yml" | jsonify }},
+  githubTokenStorageKey: {{ site.data.theme.editor-github-token-storage-key | default: "jsu-african-art-github-token" | jsonify }},
+  siteSettingsDefaults: {
+    primary_color: {{ site.data.theme["primary-color"] | default: "#14213d" | jsonify }},
+    secondary_color: {{ site.data.theme["secondary-color"] | default: "#243b63" | jsonify }},
+    text_color: {{ site.data.theme.text-color | default: "#111827" | jsonify }},
+    link_color: {{ site.data.theme.link-color | default: "#1f3a68" | jsonify }},
+    body_font_family: {{ site.data.theme.base-font-family | default: "'Source Sans 3', system-ui, sans-serif" | jsonify }},
+    heading_font_family: {{ site.data.theme.heading-font-family | default: "'Source Serif 4', Georgia, serif" | jsonify }},
+    featured_image: {{ site.data.theme.featured-image | default: "" | jsonify }},
+    home_banner_image_position: {{ site.data.theme.home-banner-image-position | default: "center" | jsonify }}
+  }
 };
 </script>
-{% if site.data.theme.editor-supabase-url and site.data.theme.editor-supabase-anon-key %}
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-{% endif %}

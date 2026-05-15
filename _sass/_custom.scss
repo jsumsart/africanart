@@ -1549,6 +1549,12 @@ body.collection-unlocked [data-auth-trigger] {
   padding-right: 0.8rem;
 }
 
+.nav-editor-session {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
 .editor-shell {
   padding: 1.8rem;
 }
@@ -1733,6 +1739,23 @@ body.collection-unlocked [data-auth-trigger] {
   margin-bottom: 1rem;
 }
 
+.editor-github-panel {
+  display: grid;
+  gap: 0.8rem;
+  margin-bottom: 1.15rem;
+  padding: 1rem;
+  border-radius: 18px;
+  background: rgba(243, 246, 251, 0.8);
+  border: 1px solid rgba(22, 35, 61, 0.08);
+}
+
+.editor-github-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 0.7rem;
+  align-items: center;
+}
+
 .editor-preview-row {
   display: grid;
   grid-template-columns: 220px minmax(0, 1fr);
@@ -1862,7 +1885,7 @@ body.collection-unlocked [data-auth-trigger] {
   .editor-save-bar,
   .editor-save-actions,
   .editor-form-header,
-  .editor-github-row {
+  .editor-github-actions {
     grid-template-columns: 1fr;
   }
 
@@ -1958,6 +1981,10 @@ body.collection-unlocked [data-auth-trigger] {
 
   .banner-access-controls {
     flex-wrap: wrap;
+  }
+
+  .nav-editor-session {
+    width: 100%;
   }
 
   .site-banner-tools .nav-editor-form {

@@ -45,7 +45,7 @@ search_exclude: true
     <div class="editor-main">
       <div id="editor-empty" class="editor-empty">
         <h3>Select a record to begin.</h3>
-        <p>The editor stays hidden from public navigation and only opens after you sign in with a staff account.</p>
+        <p>The editor stays hidden from public navigation and only opens after you enter the catalog room password.</p>
       </div>
 
       <form id="editor-form" class="editor-form d-none">
@@ -64,6 +64,20 @@ search_exclude: true
         <div class="editor-status-row">
           <div id="editor-alert" class="access-alert d-none"></div>
           <div id="editor-last-saved" class="editor-last-saved"></div>
+        </div>
+
+        <div class="editor-github-panel">
+          <div class="editor-github-copy">
+            <span class="editor-field-label">GitHub Save Connection</span>
+            <p class="small-note mb-0">Store a GitHub personal access token in this browser to save record changes and site settings back to the repository.</p>
+          </div>
+          <div id="editor-github-alert" class="access-alert d-none"></div>
+          <div class="editor-github-actions">
+            <input id="editor-github-token" class="form-control" type="password" autocomplete="off" placeholder="GitHub personal access token">
+            <button type="button" class="btn btn-outline-dark" id="editor-store-token">Store token</button>
+            <button type="button" class="btn btn-outline-dark" id="editor-clear-token">Clear token</button>
+          </div>
+          <p id="editor-github-status" class="small-note mb-0"></p>
         </div>
 
         <div class="editor-preview-row">
