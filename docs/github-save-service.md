@@ -22,18 +22,46 @@ Use a GitHub personal access token or GitHub App token with repository `Contents
 
 This secret is used by the workflow to push changes back to `main` so GitHub Pages rebuilds automatically.
 
-## The remaining missing piece
+## Netlify option now included in the repo
 
-The front end still needs one **private save service** that does this:
+This repository now includes a ready-to-deploy Netlify Function:
+
+- `/netlify/functions/catalog-room-save.js`
+- `/netlify.toml`
+
+That function:
 
 1. receives a save request from Catalog Room
-2. verifies the shared editor password or trusted editor session
+2. verifies the shared editor password on the server
 3. calls the GitHub `workflow_dispatch` API for `catalog-room-save.yml`
 4. passes the payload through as:
    - `save_action_type`
    - `editor_email`
    - `commit_message`
    - `record_json` or `settings_json`
+
+## Netlify environment variables required
+
+Add these in the Netlify project:
+
+- `EDITOR_PASSWORD_SHA256`
+  Use the same SHA-256 hash already stored in `/_data/theme.yml` for the Catalog Room password.
+- `GITHUB_WORKFLOW_TOKEN`
+  A GitHub token with permission to dispatch the workflow in `jsumsart/africanart`.
+- `GITHUB_OWNER`
+  `jsumsart`
+- `GITHUB_REPO`
+  `africanart`
+- `GITHUB_WORKFLOW_ID`
+  `catalog-room-save.yml`
+- `GITHUB_WORKFLOW_REF`
+  `main`
+
+## Recommended request shape to the Netlify function
+
+POST to:
+
+- `/.netlify/functions/catalog-room-save`
 
 ## Recommended request shapes
 
@@ -42,6 +70,8 @@ The front end still needs one **private save service** that does this:
 ```json
 {
   "editor_email": "student@jsums.edu",
+  "editor_password": "JSUAfricanArt2026",
+  "save_action_type": "record",
   "commit_message": "Save coll003 metadata",
   "record": {
     "Object name": "coll003",
@@ -56,6 +86,8 @@ The front end still needs one **private save service** that does this:
 ```json
 {
   "editor_email": "student@jsums.edu",
+  "editor_password": "JSUAfricanArt2026",
+  "save_action_type": "settings",
   "settings": {
     "primary_color": "#14213d",
     "secondary_color": "#243b63",
