@@ -4,6 +4,7 @@
     const browseUrl = {{ '/browse.html' | relative_url | jsonify }};
     const editorSessionKey = {{ site.data.theme.editor-gate-session-key | default: 'jsu-african-art-editor' | jsonify }};
     const editorEmailKey = {{ site.data.theme.editor-email-storage-key | default: 'jsu-african-art-editor-email' | jsonify }};
+    const editorProofKey = editorSessionKey + "-proof";
     const editorPasswordSha = {{ site.data.theme.editor-gate-password-sha256 | default: "" | jsonify }};
     const editorLabel = {{ site.data.theme.editor-gate-label | default: 'Catalog Room' | jsonify }};
 
@@ -29,13 +30,15 @@
         return window.localStorage.getItem(editorEmailKey) || "";
     }
 
-    function setEditorSession(granted, email) {
+    function setEditorSession(granted, email, passwordHash) {
         if (granted) {
             window.localStorage.setItem(editorSessionKey, "granted");
             if (email) window.localStorage.setItem(editorEmailKey, email);
+            if (passwordHash) window.localStorage.setItem(editorProofKey, passwordHash);
         } else {
             window.localStorage.removeItem(editorSessionKey);
             window.localStorage.removeItem(editorEmailKey);
+            window.localStorage.removeItem(editorProofKey);
         }
         setUnlockedState();
     }
@@ -106,7 +109,7 @@
                 throw new Error("That editor password was not recognized.");
             }
             passwordInput.value = "";
-            setEditorSession(true, email);
+            setEditorSession(true, email, digest);
             window.location.assign(editorUrl);
         } catch (error) {
             showAlert(error.message || "Editor access could not be opened.", "error");

@@ -22,12 +22,8 @@ editor-gate-password-sha256: "d728dd7ac61e7b2926968fab2b3d928f0c7110d86ea680154d
 editor-gate-session-key: "jsu-african-art-editor"
 editor-gate-label: "Catalog Room"
 editor-email-storage-key: "jsu-african-art-editor-email"
-editor-github-owner: "jsumsart"
-editor-github-repo: "africanart"
-editor-github-branch: "main"
-editor-github-metadata-path: "_data/africanart_mdl_medata.csv"
-editor-github-theme-path: "_data/theme.yml"
-editor-github-token-storage-key: "jsu-african-art-github-token"
+editor-save-endpoint: "https://jsuafricanart.netlify.app/.netlify/functions/catalog-room-save"
+editor-site-settings-endpoint: "https://jsuafricanart.netlify.app/.netlify/functions/catalog-room-save"
 
 ##########
 # ITEM PAGE

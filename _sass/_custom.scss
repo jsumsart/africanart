@@ -1739,23 +1739,6 @@ body.collection-unlocked [data-auth-trigger] {
   margin-bottom: 1rem;
 }
 
-.editor-github-panel {
-  display: grid;
-  gap: 0.8rem;
-  margin-bottom: 1.15rem;
-  padding: 1rem;
-  border-radius: 18px;
-  background: rgba(243, 246, 251, 0.8);
-  border: 1px solid rgba(22, 35, 61, 0.08);
-}
-
-.editor-github-actions {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
-  gap: 0.7rem;
-  align-items: center;
-}
-
 .editor-preview-row {
   display: grid;
   grid-template-columns: 220px minmax(0, 1fr);
@@ -1885,10 +1868,6 @@ body.collection-unlocked [data-auth-trigger] {
   .editor-save-bar,
   .editor-save-actions,
   .editor-form-header,
-  .editor-github-actions {
-    grid-template-columns: 1fr;
-  }
-
   .editor-form-actions {
     justify-content: flex-start;
   }

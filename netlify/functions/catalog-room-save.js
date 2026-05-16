@@ -70,18 +70,20 @@ exports.handler = async function (event) {
     const body = JSON.parse(event.body || "{}");
     const editorEmail = String(body.editor_email || "").trim();
     const editorPassword = String(body.editor_password || "");
+    const editorSessionHash = String(body.editor_session_hash || "");
     const saveActionType = String(body.save_action_type || "").trim();
     const commitMessage = String(body.commit_message || "").trim();
     const record = body.record || null;
     const settings = body.settings || null;
 
-    if (!editorEmail || !editorPassword) {
+    if (!editorEmail || (!editorPassword && !editorSessionHash)) {
       return json(400, {
-        message: "Editor email and password are required.",
+        message: "Editor email and editor authorization are required.",
       });
     }
 
-    if (sha256(editorPassword) !== expectedPasswordHash) {
+    const providedHash = editorSessionHash || sha256(editorPassword);
+    if (providedHash !== expectedPasswordHash) {
       return json(401, { message: "Editor credentials were not recognized." });
     }
 

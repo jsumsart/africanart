@@ -1,11 +1,7 @@
 <script>
 window.JSUCatalogEditorConfig = {
-  githubOwner: {{ site.data.theme.editor-github-owner | default: "jsumsart" | jsonify }},
-  githubRepo: {{ site.data.theme.editor-github-repo | default: "africanart" | jsonify }},
-  githubBranch: {{ site.data.theme.editor-github-branch | default: "main" | jsonify }},
-  metadataPath: {{ site.data.theme.editor-github-metadata-path | default: "_data/africanart_mdl_medata.csv" | jsonify }},
-  themePath: {{ site.data.theme.editor-github-theme-path | default: "_data/theme.yml" | jsonify }},
-  githubTokenStorageKey: {{ site.data.theme.editor-github-token-storage-key | default: "jsu-african-art-github-token" | jsonify }},
+  saveEndpoint: {{ site.data.theme.editor-save-endpoint | default: "" | jsonify }},
+  siteSettingsEndpoint: {{ site.data.theme.editor-site-settings-endpoint | default: "" | jsonify }},
   siteSettingsDefaults: {
     primary_color: {{ site.data.theme["primary-color"] | default: "#14213d" | jsonify }},
     secondary_color: {{ site.data.theme["secondary-color"] | default: "#243b63" | jsonify }},

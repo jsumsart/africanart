@@ -66,20 +66,6 @@ search_exclude: true
           <div id="editor-last-saved" class="editor-last-saved"></div>
         </div>
 
-        <div class="editor-github-panel">
-          <div class="editor-github-copy">
-            <span class="editor-field-label">GitHub Save Connection</span>
-            <p class="small-note mb-0">Store a GitHub personal access token in this browser to save record changes and site settings back to the repository.</p>
-          </div>
-          <div id="editor-github-alert" class="access-alert d-none"></div>
-          <div class="editor-github-actions">
-            <input id="editor-github-token" class="form-control" type="password" autocomplete="off" placeholder="GitHub personal access token">
-            <button type="button" class="btn btn-outline-dark" id="editor-store-token">Store token</button>
-            <button type="button" class="btn btn-outline-dark" id="editor-clear-token">Clear token</button>
-          </div>
-          <p id="editor-github-status" class="small-note mb-0"></p>
-        </div>
-
         <div class="editor-preview-row">
           <div class="editor-preview-card">
             <div class="record-image-shell">
@@ -97,7 +83,7 @@ search_exclude: true
         <div class="editor-save-bar">
           <div class="editor-save-copy">
             <span class="editor-field-label">Final Save</span>
-            <p class="small-note mb-0">When you are finished reviewing the record, save your changes here.</p>
+            <p class="small-note mb-0">When you are finished reviewing the record, save your changes here. The public site will update after the next GitHub Pages rebuild.</p>
           </div>
           <div class="editor-save-actions">
             <input id="editor-commit-message" class="form-control" type="text" value="" placeholder="Optional note about this revision">
