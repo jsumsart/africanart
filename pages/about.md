@@ -71,7 +71,7 @@ permalink: /about.html
   <article class="about-side-panel">
     <p class="section-kicker">Contact</p>
     <h3>Questions about the collection</h3>
-    <p>For additional information about the collection, teaching use, or collections stewardship, please contact the Department of Art at Jackson State University.</p>
+    <p>For additional information about the collection, teaching use, or collections stewardship, please contact the Department of Art, College of Liberal Arts.</p>
     <p class="small-note mb-0">This site is an evolving digital resource and will continue to grow as records are reviewed and expanded.</p>
   </article>
 </section>

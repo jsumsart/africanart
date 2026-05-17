@@ -11,7 +11,7 @@ search_exclude: true
     <div>
       <p class="section-kicker">Staff Workspace</p>
       <h1 class="page-title">Catalog Room</h1>
-      <p class="page-intro">Review, refine, and save catalog records from a protected workspace designed for daily record editing.</p>
+      <p class="page-intro">Review, refine, and save catalog records from a protected workspace designed for daily editing.</p>
     </div>
   </div>
 </section>
@@ -21,7 +21,7 @@ search_exclude: true
       <div>
         <p class="section-kicker">Edit Records</p>
         <h2 class="record-section-title">Record editing workspace</h2>
-        <p class="section-lead">Select a record, confirm the image and identifying details, then move through the metadata sections from top to bottom before saving the revision.</p>
+        <p class="section-lead">Select a record, confirm the image and identifying details, then move through the metadata sections from top to bottom before saving your changes.</p>
       </div>
       <div class="editor-page-actions">
         <button type="button" class="btn btn-outline-dark" id="editor-export-csv">Export all records as MDL CSV</button>
@@ -74,7 +74,7 @@ search_exclude: true
           </div>
           <div class="editor-preview-note">
             <h4>Suggested workflow</h4>
-            <p>Confirm the image and record identity first, then work from top to bottom through identification, cultural context, and descriptive notes. Use <strong>Save draft</strong> while you are still working, and use the final save button at the bottom of the form when the revision is ready.</p>
+            <p>Confirm the image and record identity first, then work from top to bottom through identification, cultural context, and descriptive notes. Use <strong>Save draft</strong> while you are still working, and use the final save button at the bottom of the form when the record is ready.</p>
           </div>
         </div>
 
@@ -83,7 +83,7 @@ search_exclude: true
         <div class="editor-save-bar">
           <div class="editor-save-copy">
             <span class="editor-field-label">Final Save</span>
-            <p class="small-note mb-0">When you are finished reviewing the record, save your changes here. The public site will update after the next GitHub Pages rebuild.</p>
+            <p class="small-note mb-0">When you are finished reviewing the record, save your changes here. The public site usually updates a minute or two after the save is accepted.</p>
           </div>
           <div class="editor-save-actions">
             <input id="editor-commit-message" class="form-control" type="text" value="" placeholder="Optional note about this revision">

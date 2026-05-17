@@ -275,7 +275,7 @@
   }
 
   function serviceUnavailableMessage(subject) {
-    return subject + " is not connected yet. Once the private GitHub save service is added, this button will save automatically.";
+    return subject + " is temporarily unavailable. Please try again after the save service is reconnected.";
   }
 
   async function postJson(endpoint, payload) {
@@ -424,7 +424,7 @@
     renderFields(record);
     updatePreview(record);
     const draft = getDraft(id);
-    els.lastSaved.textContent = draft && draft.__savedAt ? "Draft saved " + new Date(draft.__savedAt).toLocaleString() : "No local draft saved yet.";
+    els.lastSaved.textContent = draft && draft.__savedAt ? "Draft saved " + new Date(draft.__savedAt).toLocaleString() : "No draft saved in this browser yet.";
     els.commitMessage.value = "Save " + id + " metadata";
     updateSaveUi();
     setAlert("", "");
@@ -457,7 +457,7 @@
     if (!activeId) return;
     window.localStorage.removeItem(draftKey(activeId));
     openRecord(activeId);
-    setAlert("Local draft removed for this record.", "info");
+    setAlert("Draft removed for this record.", "info");
   }
 
   function filterRecords() {
@@ -498,7 +498,7 @@
     const csv = exportHeaders.map(csvEscape).join(",") + "\n" + rows.join("\n") + "\n";
     const stamp = new Date().toISOString().slice(0, 10);
     downloadTextFile("africanart_mdl_export_" + stamp + ".csv", csv, "text/csv;charset=utf-8");
-    setAlert("MDL CSV exported successfully.", "info");
+    setAlert("MDL CSV export is ready.", "info");
   }
 
   async function saveRecordToService() {
@@ -508,6 +508,7 @@
       setCommitEnabled(false);
       return;
     }
+    setAlert("Saving record...", "info");
     setBusy(els.commitCsv, true, "Saving...");
     try {
       const row = collectFormData();
@@ -521,11 +522,11 @@
       });
 
       storeLocalRecordSave(row);
-      els.lastSaved.textContent = "Saved to GitHub " + new Date().toLocaleString();
-      setAlert("Record saved to GitHub successfully. The public site will update after GitHub Pages rebuilds.", "info");
+      els.lastSaved.textContent = "Record saved " + new Date().toLocaleString();
+      setAlert("Record saved. The public site should refresh with the update shortly.", "info");
       openRecord(activeId);
     } catch (error) {
-      setAlert(error.message || "Record save failed.", "error");
+      setAlert(error.message || "Record could not be saved.", "error");
     } finally {
       setBusy(els.commitCsv, false);
     }
@@ -537,6 +538,7 @@
       return;
     }
 
+    setSettingsAlert("Saving site settings...", "info");
     setBusy(els.settingsSaveButton, true, "Saving...");
     try {
       const payload = buildSettingsPayload();
@@ -548,7 +550,7 @@
       });
 
       applyRuntimeSettings(payload);
-      setSettingsAlert("Site settings saved to GitHub successfully. The public site will update after GitHub Pages rebuilds.", "info");
+      setSettingsAlert("Site settings saved. The public site should refresh with the update shortly.", "info");
     } catch (error) {
       setSettingsAlert(error.message || "Site settings could not be saved.", "error");
     } finally {
