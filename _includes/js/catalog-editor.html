@@ -558,12 +558,12 @@
     }
   }
 
-  els.search.addEventListener("input", filterRecords);
-  els.form.addEventListener("submit", handleSaveDraft);
-  els.reset.addEventListener("click", handleReset);
-  els.settingsSaveButton.addEventListener("click", handleSaveSiteSettings);
-  els.exportCsv.addEventListener("click", handleExportCsv);
-  els.commitCsv.addEventListener("click", saveRecordToService);
+  if (els.search) els.search.addEventListener("input", filterRecords);
+  if (els.form) els.form.addEventListener("submit", handleSaveDraft);
+  if (els.reset) els.reset.addEventListener("click", handleReset);
+  if (els.settingsSaveButton) els.settingsSaveButton.addEventListener("click", handleSaveSiteSettings);
+  if (els.exportCsv) els.exportCsv.addEventListener("click", handleExportCsv);
+  if (els.commitCsv) els.commitCsv.addEventListener("click", saveRecordToService);
 
   const params = new URLSearchParams(window.location.search);
   const requested = params.get("id");
@@ -575,9 +575,11 @@
 
   loadSiteSettings();
   updateSaveUi();
-  renderList();
-  if (requested && records.some((record) => record["Object name"] === requested)) {
-    openRecord(requested);
+  if (els.list) {
+    renderList();
+    if (requested && records.some((record) => record["Object name"] === requested)) {
+      openRecord(requested);
+    }
   }
 })();
 </script>

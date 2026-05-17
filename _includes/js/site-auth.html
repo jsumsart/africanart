@@ -140,13 +140,14 @@
     document.querySelectorAll("[data-auth-editor], [data-auth-editor-link]").forEach((el) => {
         el.addEventListener("click", function (event) {
             event.preventDefault();
+            const targetUrl = el.getAttribute("href") || editorUrl;
             if (!isEditorUnlocked()) {
                 const editorInput = document.querySelector(".nav-editor-form input[type='password']");
                 if (editorInput) editorInput.focus();
                 showAlert("Enter the " + editorLabel.toLowerCase() + " password to open editing access.", "info");
                 return;
             }
-            window.location.assign(editorUrl);
+            window.location.assign(targetUrl);
         });
     });
 

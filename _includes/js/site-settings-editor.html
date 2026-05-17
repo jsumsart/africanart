@@ -1,0 +1,150 @@
+<script>
+(function () {
+  const settingsPath = {{ '/site-settings.html' | relative_url | jsonify }};
+  const browsePath = {{ '/browse.html' | relative_url | jsonify }};
+  const editorSessionKey = {{ site.data.theme.editor-gate-session-key | default: 'jsu-african-art-editor' | jsonify }};
+  const editorEmailKey = {{ site.data.theme.editor-email-storage-key | default: 'jsu-african-art-editor-email' | jsonify }};
+  const editorProofKey = editorSessionKey + "-proof";
+  const config = window.JSUCatalogEditorConfig || {};
+  const siteSettingsEndpoint = config.siteSettingsEndpoint || config.saveEndpoint || "";
+  const defaults = Object.assign({}, config.siteSettingsDefaults || {}, (window.JSUSiteSettingsConfig && window.JSUSiteSettingsConfig.defaults) || {});
+
+  if (window.location.pathname !== settingsPath && !window.location.pathname.endsWith("/site-settings.html")) return;
+
+  const els = {
+    alert: document.getElementById("editor-settings-alert"),
+    lastSaved: document.getElementById("editor-settings-last-saved"),
+    form: document.getElementById("editor-settings-form"),
+    primary: document.getElementById("settings-primary-color"),
+    secondary: document.getElementById("settings-secondary-color"),
+    text: document.getElementById("settings-text-color"),
+    link: document.getElementById("settings-link-color"),
+    bodyFont: document.getElementById("settings-body-font-family"),
+    headingFont: document.getElementById("settings-heading-font-family"),
+    featuredImage: document.getElementById("settings-featured-image"),
+    bannerPosition: document.getElementById("settings-banner-position"),
+    saveButton: document.getElementById("settings-save-button")
+  };
+
+  function isEditorUnlocked() {
+    return window.localStorage.getItem(editorSessionKey) === "granted";
+  }
+
+  function getEditorEmail() {
+    return window.localStorage.getItem(editorEmailKey) || "";
+  }
+
+  function getEditorSessionHash() {
+    return window.localStorage.getItem(editorProofKey) || "";
+  }
+
+  function setAlert(message, tone) {
+    if (!els.alert) return;
+    if (!message) {
+      els.alert.textContent = "";
+      els.alert.className = "access-alert d-none";
+      return;
+    }
+    els.alert.textContent = message;
+    els.alert.className = "access-alert";
+    if (tone) els.alert.classList.add("access-alert-" + tone);
+  }
+
+  function setBusy(button, busy, text) {
+    if (!button) return;
+    if (busy) {
+      button.dataset.originalText = button.textContent;
+      button.textContent = text || "Working...";
+      button.disabled = true;
+      return;
+    }
+    button.textContent = button.dataset.originalText || button.textContent;
+    button.disabled = false;
+  }
+
+  function fillForm(values) {
+    els.primary.value = values.primary_color || "";
+    els.secondary.value = values.secondary_color || "";
+    els.text.value = values.text_color || "";
+    els.link.value = values.link_color || "";
+    els.bodyFont.value = values.body_font_family || "";
+    els.headingFont.value = values.heading_font_family || "";
+    els.featuredImage.value = values.featured_image || "";
+    els.bannerPosition.value = values.home_banner_image_position || "center";
+  }
+
+  function buildPayload() {
+    return {
+      primary_color: (els.primary.value || "").trim(),
+      secondary_color: (els.secondary.value || "").trim(),
+      text_color: (els.text.value || "").trim(),
+      link_color: (els.link.value || "").trim(),
+      body_font_family: (els.bodyFont.value || "").trim(),
+      heading_font_family: (els.headingFont.value || "").trim(),
+      featured_image: (els.featuredImage.value || "").trim(),
+      home_banner_image_position: (els.bannerPosition.value || "center").trim()
+    };
+  }
+
+  function applyRuntimeSettings(values) {
+    if (window.JSUApplySiteSettings) {
+      window.JSUApplySiteSettings(values);
+    }
+  }
+
+  async function postJson(endpoint, payload) {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    let data = {};
+    try {
+      data = await response.json();
+    } catch (_error) {}
+
+    if (!response.ok) {
+      throw new Error((data && data.message) || "The save service did not accept the request.");
+    }
+    return data;
+  }
+
+  async function handleSave() {
+    if (!siteSettingsEndpoint) {
+      setAlert("Site settings are temporarily unavailable. Please try again after the save service is reconnected.", "error");
+      return;
+    }
+    setAlert("Saving site settings...", "info");
+    setBusy(els.saveButton, true, "Saving...");
+    try {
+      const payload = buildPayload();
+      await postJson(siteSettingsEndpoint, {
+        editor_email: getEditorEmail(),
+        editor_session_hash: getEditorSessionHash(),
+        save_action_type: "settings",
+        settings: payload
+      });
+      applyRuntimeSettings(payload);
+      if (els.lastSaved) els.lastSaved.textContent = "Site settings saved " + new Date().toLocaleString();
+      setAlert("Site settings saved. The public site should refresh with the update shortly.", "info");
+    } catch (error) {
+      setAlert(error.message || "Site settings could not be saved.", "error");
+    } finally {
+      setBusy(els.saveButton, false);
+    }
+  }
+
+  if (!isEditorUnlocked()) {
+    window.location.replace(browsePath);
+    return;
+  }
+
+  fillForm(defaults);
+  applyRuntimeSettings(defaults);
+  if (els.lastSaved) els.lastSaved.textContent = "No site settings changes saved in this browser yet.";
+  if (els.saveButton) els.saveButton.addEventListener("click", handleSave);
+})();
+</script>
