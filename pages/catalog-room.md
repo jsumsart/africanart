@@ -11,7 +11,7 @@ search_exclude: true
     <div>
       <p class="section-kicker">Staff Workspace</p>
       <h1 class="page-title">Catalog Room</h1>
-      <p class="page-intro">Review, refine, and save catalog records from a protected workspace designed for daily editing.</p>
+      <p class="page-intro">Review catalog records, confirm visual matches, and prepare spreadsheet-ready exports for collaborative work in Google Sheets.</p>
     </div>
   </div>
 </section>
@@ -20,14 +20,18 @@ search_exclude: true
   <div class="research-panel-header">
       <div>
         <p class="section-kicker">Edit Records</p>
-        <h2 class="record-section-title">Record editing workspace</h2>
-        <p class="section-lead">Select a record, confirm the image and identifying details, then move through the metadata sections from top to bottom before saving your changes to the working catalog.</p>
+        <h2 class="record-section-title">Catalog review workspace</h2>
+        <p class="section-lead">Use this page to review records, confirm object images, and export the working catalog for student editing in Google Sheets. The sheet should remain the day-to-day editing workspace.</p>
       </div>
       <div class="editor-page-actions">
         <a class="btn btn-outline-dark" href="{{ '/site-settings.html' | relative_url }}">Site settings</a>
-        <button type="button" class="btn btn-outline-dark" id="editor-export-csv">Export all records as MDL CSV</button>
+        <button type="button" class="btn btn-outline-dark" id="editor-export-csv">Export records for Google Sheets</button>
       </div>
     </div>
+
+  <div class="editor-sidebar-tip editor-workflow-tip">
+    Suggested workflow: export the catalog from this page, let students work in Google Sheets with the image columns included, then download that sheet as CSV for final upload back into the master catalog.
+  </div>
 
   <div class="editor-grid">
     <aside class="editor-sidebar">
@@ -46,7 +50,7 @@ search_exclude: true
     <div class="editor-main">
       <div id="editor-empty" class="editor-empty">
         <h3>Select a record to begin.</h3>
-        <p>The editor stays hidden from public navigation and only opens after you enter the catalog room password.</p>
+        <p>Open a record here when you want to verify titles, identifiers, and image matches before the spreadsheet is revised.</p>
       </div>
 
       <form id="editor-form" class="editor-form d-none">
@@ -58,7 +62,7 @@ search_exclude: true
           </div>
           <div class="editor-form-actions">
             <button type="button" class="btn btn-outline-dark" id="editor-reset">Reset draft</button>
-            <button type="submit" class="btn btn-primary">Save draft</button>
+            <button type="submit" class="btn btn-primary">Save browser draft</button>
           </div>
         </div>
 
@@ -75,7 +79,7 @@ search_exclude: true
           </div>
           <div class="editor-preview-note">
             <h4>Suggested workflow</h4>
-            <p>Confirm the image and record identity first, then work from top to bottom through identification, cultural context, and descriptive notes. Use <strong>Save draft</strong> while you are still working, and use the final save button at the bottom of the form when the record is ready.</p>
+            <p>Confirm the image and record identity first, then review identification, cultural context, and descriptive notes from top to bottom. Use <strong>Save browser draft</strong> only for temporary local notes while you compare the record against the Google Sheet.</p>
           </div>
         </div>
 
@@ -83,8 +87,8 @@ search_exclude: true
 
         <div class="editor-save-bar">
           <div class="editor-save-copy">
-            <span class="editor-field-label">Final Save</span>
-            <p class="small-note mb-0">When you are finished reviewing the record, save your changes here. Records saved in this workspace can later be exported as an updated MDL CSV.</p>
+            <span class="editor-field-label">Catalog Save</span>
+            <p class="small-note mb-0">If a live save connection is configured, you can still save directly from this page. Otherwise, treat this area as a review aid and use the spreadsheet export as the primary working file.</p>
           </div>
           <div class="editor-save-actions">
             <input id="editor-commit-message" class="form-control" type="text" value="" placeholder="Optional note about this revision">

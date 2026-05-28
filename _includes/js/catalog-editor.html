@@ -7,10 +7,11 @@
   const editorEmailKey = {{ site.data.theme.editor-email-storage-key | default: 'jsu-african-art-editor-email' | jsonify }};
   const editorProofKey = editorSessionKey + "-proof";
   const config = window.JSUCatalogEditorConfig || {};
-  const catalogServiceEndpoint = config.saveEndpoint || "";
-  const siteSettingsEndpoint = config.siteSettingsEndpoint || catalogServiceEndpoint;
+  const saveEndpoint = config.saveEndpoint || "";
+  const siteSettingsEndpoint = config.siteSettingsEndpoint || saveEndpoint;
   const siteSettingsDefaults = Object.assign({}, config.siteSettingsDefaults || {}, (window.JSUSiteSettingsConfig && window.JSUSiteSettingsConfig.defaults) || {});
   const exportHeaders = [{% assign header_source = editor_items | first %}{% for pair in header_source %}{{ pair[0] | jsonify }}{% unless forloop.last %}, {% endunless %}{% endfor %}];
+  const extraExportHeaders = ["Thumbnail URL", "Google Sheets Image", "Record URL"];
   const embeddedRecords = [
     {% for item in editor_items %}
     {
@@ -84,7 +85,8 @@
     settingsSaveButton: document.getElementById("settings-save-button"),
     exportCsv: document.getElementById("editor-export-csv"),
     commitCsv: document.getElementById("editor-commit-csv"),
-    commitMessage: document.getElementById("editor-commit-message")
+    commitMessage: document.getElementById("editor-commit-message"),
+    saveBar: document.querySelector(".editor-save-bar")
   };
 
   let records = embeddedRecords.slice();
@@ -117,7 +119,7 @@
   }
 
   function hasSaveService() {
-    return Boolean(catalogServiceEndpoint);
+    return Boolean(saveEndpoint);
   }
 
   function hasSiteSettingsService() {
@@ -217,6 +219,17 @@
     URL.revokeObjectURL(url);
   }
 
+  function thumbnailUrlForRecord(record) {
+    const fileName = record["File name"];
+    if (!fileName || String(record.format || "").indexOf("image") === -1) return "";
+    const relativePath = fileName.indexOf("/") > -1 ? fileName : {{ '/assets/thumbs/' | relative_url | jsonify }} + fileName;
+    return new URL(relativePath, window.location.origin).href;
+  }
+
+  function recordUrlForRecord(record) {
+    return new URL({{ '/item.html?id=' | relative_url | jsonify }} + encodeURIComponent(record["Object name"] || ""), window.location.origin).href;
+  }
+
   function fillSettingsForm(values) {
     if (!els.settingsForm) return;
     els.settingsPrimaryColor.value = values.primary_color || "";
@@ -242,29 +255,32 @@
     if (!isEditorUnlocked()) {
       if (els.commitCsv) els.commitCsv.textContent = "Save Record";
       if (els.settingsSaveButton) els.settingsSaveButton.textContent = "Save site settings";
+      if (els.saveBar) els.saveBar.classList.remove("d-none");
       setCommitEnabled(false);
       setSettingsEnabled(false);
       return;
     }
     if (!hasSaveService()) {
       if (els.commitCsv) {
-        els.commitCsv.textContent = "Save Record (setup needed)";
-        els.commitCsv.title = "A private GitHub save service still needs to be connected.";
+        els.commitCsv.textContent = "Direct save unavailable";
+        els.commitCsv.title = "The primary workflow is now Google Sheets export and re-import.";
       }
-      setCommitEnabled(true);
+      if (els.saveBar) els.saveBar.classList.add("d-none");
+      setCommitEnabled(false);
     } else {
       if (els.commitCsv) {
         els.commitCsv.textContent = "Save Record";
         els.commitCsv.title = "";
       }
+      if (els.saveBar) els.saveBar.classList.remove("d-none");
       setCommitEnabled(Boolean(activeId));
     }
     if (!hasSiteSettingsService()) {
       if (els.settingsSaveButton) {
-        els.settingsSaveButton.textContent = "Save site settings (setup needed)";
-        els.settingsSaveButton.title = "A private GitHub save service still needs to be connected.";
+        els.settingsSaveButton.textContent = "Direct settings save unavailable";
+        els.settingsSaveButton.title = "Direct site-setting saves are not connected right now.";
       }
-      setSettingsEnabled(true);
+      setSettingsEnabled(false);
     } else {
       if (els.settingsSaveButton) {
         els.settingsSaveButton.textContent = "Save site settings";
@@ -275,7 +291,7 @@
   }
 
   function serviceUnavailableMessage(subject) {
-    return subject + " is temporarily unavailable. Add the Google Sheets service URL to reconnect this workspace.";
+    return subject + " is not connected right now. Use the Google Sheets export workflow until a direct save service is available again.";
   }
 
   async function postJson(endpoint, payload) {
@@ -292,22 +308,8 @@
       data = await response.json();
     } catch (_error) {}
 
-    if (!response.ok || (data && data.ok === false)) {
+    if (!response.ok) {
       throw new Error((data && data.message) || "The save service did not accept the request.");
-    }
-    return data;
-  }
-
-  async function fetchJson(endpoint, action) {
-    const response = await fetch(endpoint + (endpoint.indexOf("?") > -1 ? "&" : "?") + "action=" + encodeURIComponent(action), {
-      method: "GET"
-    });
-    let data = {};
-    try {
-      data = await response.json();
-    } catch (_error) {}
-    if (!response.ok || (data && data.ok === false)) {
-      throw new Error((data && data.message) || "The catalog service could not be reached.");
     }
     return data;
   }
@@ -502,35 +504,23 @@
   }
 
   async function handleExportCsv() {
-    if (hasSaveService()) {
-      try {
-        const response = await fetch(catalogServiceEndpoint + (catalogServiceEndpoint.indexOf("?") > -1 ? "&" : "?") + "action=export_csv", {
-          method: "GET"
-        });
-        if (!response.ok) {
-          throw new Error("The working catalog export could not be prepared.");
-        }
-        const csv = await response.text();
-        const stamp = new Date().toISOString().slice(0, 10);
-        downloadTextFile("africanart_mdl_export_" + stamp + ".csv", csv, "text/csv;charset=utf-8");
-        setAlert("MDL CSV export is ready.", "info");
-        return;
-      } catch (error) {
-        setAlert(error.message || "The working catalog export could not be prepared.", "error");
-        return;
-      }
-    }
     const rows = records.map(function (record) {
       const merged = mergedRecord(record["Object name"]);
-      return exportHeaders.map(function (header) {
+      const row = exportHeaders.map(function (header) {
         return csvEscape(merged[header] || "");
-      }).join(",");
+      });
+      const thumbnailUrl = thumbnailUrlForRecord(merged);
+      row.push(csvEscape(thumbnailUrl));
+      row.push(csvEscape(thumbnailUrl ? '=IMAGE("' + thumbnailUrl + '")' : ""));
+      row.push(csvEscape(recordUrlForRecord(merged)));
+      return row.join(",");
     });
 
-    const csv = exportHeaders.map(csvEscape).join(",") + "\n" + rows.join("\n") + "\n";
+    const csvHeaders = exportHeaders.concat(extraExportHeaders);
+    const csv = csvHeaders.map(csvEscape).join(",") + "\n" + rows.join("\n") + "\n";
     const stamp = new Date().toISOString().slice(0, 10);
-    downloadTextFile("africanart_mdl_export_" + stamp + ".csv", csv, "text/csv;charset=utf-8");
-    setAlert("MDL CSV export is ready.", "info");
+    downloadTextFile("africanart_google_sheets_export_" + stamp + ".csv", csv, "text/csv;charset=utf-8");
+    setAlert("Spreadsheet-ready CSV export is ready, including thumbnail and record links.", "info");
   }
 
   async function saveRecordToService() {
@@ -545,7 +535,7 @@
     try {
       const row = collectFormData();
       const commitMessage = (els.commitMessage.value || "").trim() || ("Save " + activeId + " metadata");
-      await postJson(catalogServiceEndpoint, {
+      await postJson(saveEndpoint, {
         editor_email: getEditorEmail(),
         editor_session_hash: getEditorSessionHash(),
         commit_message: commitMessage,
@@ -555,7 +545,7 @@
 
       storeLocalRecordSave(row);
       els.lastSaved.textContent = "Record saved " + new Date().toLocaleString();
-      setAlert("Record saved to the working catalog.", "info");
+      setAlert("Record saved. The public site should refresh with the update shortly.", "info");
       openRecord(activeId);
     } catch (error) {
       setAlert(error.message || "Record could not be saved.", "error");
@@ -582,25 +572,11 @@
       });
 
       applyRuntimeSettings(payload);
-      setSettingsAlert("Site settings saved to the working catalog.", "info");
+      setSettingsAlert("Site settings saved to the connected service.", "info");
     } catch (error) {
       setSettingsAlert(error.message || "Site settings could not be saved.", "error");
     } finally {
       setBusy(els.settingsSaveButton, false);
-    }
-  }
-
-  async function loadRemoteCatalogData() {
-    if (!hasSaveService()) return;
-    const data = await fetchJson(catalogServiceEndpoint, "bootstrap");
-    if (Array.isArray(data.records) && data.records.length) {
-      records = data.records;
-      filteredRecords = records.slice();
-    }
-    if (data.settings && typeof data.settings === "object") {
-      siteSettings = Object.assign({}, siteSettingsDefaults, data.settings);
-      fillSettingsForm(siteSettings);
-      applyRuntimeSettings(siteSettings);
     }
   }
 
@@ -619,22 +595,13 @@
     return;
   }
 
-  async function initializeEditor() {
-    loadSiteSettings();
-    updateSaveUi();
-    try {
-      await loadRemoteCatalogData();
-    } catch (error) {
-      setAlert(error.message || "The working catalog could not be loaded, so this page is showing the embedded site data instead.", "error");
-    }
-    if (els.list) {
-      renderList();
-      if (requested && records.some((record) => record["Object name"] === requested)) {
-        openRecord(requested);
-      }
+  loadSiteSettings();
+  updateSaveUi();
+  if (els.list) {
+    renderList();
+    if (requested && records.some((record) => record["Object name"] === requested)) {
+      openRecord(requested);
     }
   }
-
-  initializeEditor();
 })();
 </script>

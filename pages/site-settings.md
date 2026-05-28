@@ -33,7 +33,7 @@ search_exclude: true
       <div>
         <p class="section-kicker">Site Settings</p>
         <h3 class="editor-settings-title">Collection-wide display settings</h3>
-        <p class="small-note mb-0">Changes saved here are stored with the working catalog settings so they can be reviewed and applied intentionally.</p>
+        <p class="small-note mb-0">Use this page to review collection-wide display settings. Direct save can be reconnected separately from the Google Sheets catalog workflow.</p>
       </div>
     </div>
     <div id="editor-settings-alert" class="access-alert d-none"></div>
