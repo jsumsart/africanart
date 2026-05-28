@@ -21,7 +21,7 @@ search_exclude: true
       <div>
         <p class="section-kicker">Edit Records</p>
         <h2 class="record-section-title">Record editing workspace</h2>
-        <p class="section-lead">Select a record, confirm the image and identifying details, then move through the metadata sections from top to bottom before saving your changes.</p>
+        <p class="section-lead">Select a record, confirm the image and identifying details, then move through the metadata sections from top to bottom before saving your changes to the working catalog.</p>
       </div>
       <div class="editor-page-actions">
         <a class="btn btn-outline-dark" href="{{ '/site-settings.html' | relative_url }}">Site settings</a>
@@ -84,7 +84,7 @@ search_exclude: true
         <div class="editor-save-bar">
           <div class="editor-save-copy">
             <span class="editor-field-label">Final Save</span>
-            <p class="small-note mb-0">When you are finished reviewing the record, save your changes here. The public site usually updates a minute or two after the save is accepted.</p>
+            <p class="small-note mb-0">When you are finished reviewing the record, save your changes here. Records saved in this workspace can later be exported as an updated MDL CSV.</p>
           </div>
           <div class="editor-save-actions">
             <input id="editor-commit-message" class="form-control" type="text" value="" placeholder="Optional note about this revision">

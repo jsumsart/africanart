@@ -22,8 +22,8 @@ editor-gate-password-sha256: "d728dd7ac61e7b2926968fab2b3d928f0c7110d86ea680154d
 editor-gate-session-key: "jsu-african-art-editor"
 editor-gate-label: "Catalog Room"
 editor-email-storage-key: "jsu-african-art-editor-email"
-editor-save-endpoint: "https://jsuafricanart.netlify.app/.netlify/functions/catalog-room-save"
-editor-site-settings-endpoint: "https://jsuafricanart.netlify.app/.netlify/functions/catalog-room-save"
+editor-save-endpoint: ""
+editor-site-settings-endpoint: ""
 
 ##########
 # ITEM PAGE

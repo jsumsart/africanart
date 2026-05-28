@@ -33,7 +33,7 @@ search_exclude: true
       <div>
         <p class="section-kicker">Site Settings</p>
         <h3 class="editor-settings-title">Collection-wide display settings</h3>
-        <p class="small-note mb-0">Changes saved here affect the public-facing site after the next GitHub Pages rebuild.</p>
+        <p class="small-note mb-0">Changes saved here are stored with the working catalog settings so they can be reviewed and applied intentionally.</p>
       </div>
     </div>
     <div id="editor-settings-alert" class="access-alert d-none"></div>

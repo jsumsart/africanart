@@ -7,8 +7,8 @@
   const editorEmailKey = {{ site.data.theme.editor-email-storage-key | default: 'jsu-african-art-editor-email' | jsonify }};
   const editorProofKey = editorSessionKey + "-proof";
   const config = window.JSUCatalogEditorConfig || {};
-  const saveEndpoint = config.saveEndpoint || "";
-  const siteSettingsEndpoint = config.siteSettingsEndpoint || saveEndpoint;
+  const catalogServiceEndpoint = config.saveEndpoint || "";
+  const siteSettingsEndpoint = config.siteSettingsEndpoint || catalogServiceEndpoint;
   const siteSettingsDefaults = Object.assign({}, config.siteSettingsDefaults || {}, (window.JSUSiteSettingsConfig && window.JSUSiteSettingsConfig.defaults) || {});
   const exportHeaders = [{% assign header_source = editor_items | first %}{% for pair in header_source %}{{ pair[0] | jsonify }}{% unless forloop.last %}, {% endunless %}{% endfor %}];
   const embeddedRecords = [
@@ -117,7 +117,7 @@
   }
 
   function hasSaveService() {
-    return Boolean(saveEndpoint);
+    return Boolean(catalogServiceEndpoint);
   }
 
   function hasSiteSettingsService() {
@@ -275,7 +275,7 @@
   }
 
   function serviceUnavailableMessage(subject) {
-    return subject + " is temporarily unavailable. Please try again after the save service is reconnected.";
+    return subject + " is temporarily unavailable. Add the Google Sheets service URL to reconnect this workspace.";
   }
 
   async function postJson(endpoint, payload) {
@@ -292,8 +292,22 @@
       data = await response.json();
     } catch (_error) {}
 
-    if (!response.ok) {
+    if (!response.ok || (data && data.ok === false)) {
       throw new Error((data && data.message) || "The save service did not accept the request.");
+    }
+    return data;
+  }
+
+  async function fetchJson(endpoint, action) {
+    const response = await fetch(endpoint + (endpoint.indexOf("?") > -1 ? "&" : "?") + "action=" + encodeURIComponent(action), {
+      method: "GET"
+    });
+    let data = {};
+    try {
+      data = await response.json();
+    } catch (_error) {}
+    if (!response.ok || (data && data.ok === false)) {
+      throw new Error((data && data.message) || "The catalog service could not be reached.");
     }
     return data;
   }
@@ -488,6 +502,24 @@
   }
 
   async function handleExportCsv() {
+    if (hasSaveService()) {
+      try {
+        const response = await fetch(catalogServiceEndpoint + (catalogServiceEndpoint.indexOf("?") > -1 ? "&" : "?") + "action=export_csv", {
+          method: "GET"
+        });
+        if (!response.ok) {
+          throw new Error("The working catalog export could not be prepared.");
+        }
+        const csv = await response.text();
+        const stamp = new Date().toISOString().slice(0, 10);
+        downloadTextFile("africanart_mdl_export_" + stamp + ".csv", csv, "text/csv;charset=utf-8");
+        setAlert("MDL CSV export is ready.", "info");
+        return;
+      } catch (error) {
+        setAlert(error.message || "The working catalog export could not be prepared.", "error");
+        return;
+      }
+    }
     const rows = records.map(function (record) {
       const merged = mergedRecord(record["Object name"]);
       return exportHeaders.map(function (header) {
@@ -513,7 +545,7 @@
     try {
       const row = collectFormData();
       const commitMessage = (els.commitMessage.value || "").trim() || ("Save " + activeId + " metadata");
-      await postJson(saveEndpoint, {
+      await postJson(catalogServiceEndpoint, {
         editor_email: getEditorEmail(),
         editor_session_hash: getEditorSessionHash(),
         commit_message: commitMessage,
@@ -523,7 +555,7 @@
 
       storeLocalRecordSave(row);
       els.lastSaved.textContent = "Record saved " + new Date().toLocaleString();
-      setAlert("Record saved. The public site should refresh with the update shortly.", "info");
+      setAlert("Record saved to the working catalog.", "info");
       openRecord(activeId);
     } catch (error) {
       setAlert(error.message || "Record could not be saved.", "error");
@@ -550,11 +582,25 @@
       });
 
       applyRuntimeSettings(payload);
-      setSettingsAlert("Site settings saved. The public site should refresh with the update shortly.", "info");
+      setSettingsAlert("Site settings saved to the working catalog.", "info");
     } catch (error) {
       setSettingsAlert(error.message || "Site settings could not be saved.", "error");
     } finally {
       setBusy(els.settingsSaveButton, false);
+    }
+  }
+
+  async function loadRemoteCatalogData() {
+    if (!hasSaveService()) return;
+    const data = await fetchJson(catalogServiceEndpoint, "bootstrap");
+    if (Array.isArray(data.records) && data.records.length) {
+      records = data.records;
+      filteredRecords = records.slice();
+    }
+    if (data.settings && typeof data.settings === "object") {
+      siteSettings = Object.assign({}, siteSettingsDefaults, data.settings);
+      fillSettingsForm(siteSettings);
+      applyRuntimeSettings(siteSettings);
     }
   }
 
@@ -573,13 +619,22 @@
     return;
   }
 
-  loadSiteSettings();
-  updateSaveUi();
-  if (els.list) {
-    renderList();
-    if (requested && records.some((record) => record["Object name"] === requested)) {
-      openRecord(requested);
+  async function initializeEditor() {
+    loadSiteSettings();
+    updateSaveUi();
+    try {
+      await loadRemoteCatalogData();
+    } catch (error) {
+      setAlert(error.message || "The working catalog could not be loaded, so this page is showing the embedded site data instead.", "error");
+    }
+    if (els.list) {
+      renderList();
+      if (requested && records.some((record) => record["Object name"] === requested)) {
+        openRecord(requested);
+      }
     }
   }
+
+  initializeEditor();
 })();
 </script>

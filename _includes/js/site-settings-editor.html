@@ -6,7 +6,8 @@
   const editorEmailKey = {{ site.data.theme.editor-email-storage-key | default: 'jsu-african-art-editor-email' | jsonify }};
   const editorProofKey = editorSessionKey + "-proof";
   const config = window.JSUCatalogEditorConfig || {};
-  const siteSettingsEndpoint = config.siteSettingsEndpoint || config.saveEndpoint || "";
+  const catalogServiceEndpoint = config.saveEndpoint || "";
+  const siteSettingsEndpoint = config.siteSettingsEndpoint || catalogServiceEndpoint || "";
   const defaults = Object.assign({}, config.siteSettingsDefaults || {}, (window.JSUSiteSettingsConfig && window.JSUSiteSettingsConfig.defaults) || {});
 
   if (window.location.pathname !== settingsPath && !window.location.pathname.endsWith("/site-settings.html")) return;
@@ -106,8 +107,24 @@
       data = await response.json();
     } catch (_error) {}
 
-    if (!response.ok) {
+    if (!response.ok || (data && data.ok === false)) {
       throw new Error((data && data.message) || "The save service did not accept the request.");
+    }
+    return data;
+  }
+
+  async function fetchJson(endpoint, action) {
+    const response = await fetch(endpoint + (endpoint.indexOf("?") > -1 ? "&" : "?") + "action=" + encodeURIComponent(action), {
+      method: "GET"
+    });
+
+    let data = {};
+    try {
+      data = await response.json();
+    } catch (_error) {}
+
+    if (!response.ok || (data && data.ok === false)) {
+      throw new Error((data && data.message) || "The catalog service could not be reached.");
     }
     return data;
   }
@@ -129,7 +146,7 @@
       });
       applyRuntimeSettings(payload);
       if (els.lastSaved) els.lastSaved.textContent = "Site settings saved " + new Date().toLocaleString();
-      setAlert("Site settings saved. The public site should refresh with the update shortly.", "info");
+      setAlert("Site settings saved to the working catalog.", "info");
     } catch (error) {
       setAlert(error.message || "Site settings could not be saved.", "error");
     } finally {
@@ -142,9 +159,24 @@
     return;
   }
 
-  fillForm(defaults);
-  applyRuntimeSettings(defaults);
-  if (els.lastSaved) els.lastSaved.textContent = "No site settings changes saved in this browser yet.";
-  if (els.saveButton) els.saveButton.addEventListener("click", handleSave);
+  async function initializeSettingsPage() {
+    fillForm(defaults);
+    applyRuntimeSettings(defaults);
+    if (catalogServiceEndpoint) {
+      try {
+        const data = await fetchJson(catalogServiceEndpoint, "bootstrap");
+        if (data.settings && typeof data.settings === "object") {
+          fillForm(Object.assign({}, defaults, data.settings));
+          applyRuntimeSettings(Object.assign({}, defaults, data.settings));
+        }
+      } catch (error) {
+        setAlert(error.message || "The working settings could not be loaded. Showing the site defaults instead.", "error");
+      }
+    }
+    if (els.lastSaved) els.lastSaved.textContent = "No site settings changes saved in this browser yet.";
+    if (els.saveButton) els.saveButton.addEventListener("click", handleSave);
+  }
+
+  initializeSettingsPage();
 })();
 </script>
