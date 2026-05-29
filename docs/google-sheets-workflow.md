@@ -10,8 +10,7 @@ This project now treats Google Sheets as the collaborative editing workspace for
 4. Let students edit titles, identifiers, descriptions, and other metadata in the sheet.
 5. Use the included image columns while visually matching digital records to physical objects.
 6. Download the updated sheet as CSV when review is complete.
-7. Replace the master catalog CSV in the repository:
-   - `/Users/Birittany/Documents/African Art/_data/africanart_mdl_medata.csv`
+7. Open `Site Settings` and use the `Import updated MDL CSV` tool to publish that file back to the repository.
 8. Let GitHub Pages rebuild from the updated master CSV.
 
 ### Image columns included in the export
@@ -27,4 +26,4 @@ This project now treats Google Sheets as the collaborative editing workspace for
 
 - The exported CSV is intended for spreadsheet work, not as the final published site file.
 - The repository CSV remains the published source that the public Jekyll site reads from.
-- Direct in-browser record save is intentionally disabled until a replacement write service is set up.
+- Students should not use the import tool. It is intended for final admin publishing only.

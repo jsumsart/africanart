@@ -5,10 +5,14 @@
   const editorSessionKey = {{ site.data.theme.editor-gate-session-key | default: 'jsu-african-art-editor' | jsonify }};
   const editorEmailKey = {{ site.data.theme.editor-email-storage-key | default: 'jsu-african-art-editor-email' | jsonify }};
   const editorProofKey = editorSessionKey + "-proof";
+  const importTokenKey = "jsu-african-art-import-token";
   const config = window.JSUCatalogEditorConfig || {};
-  const catalogServiceEndpoint = config.saveEndpoint || "";
-  const siteSettingsEndpoint = config.siteSettingsEndpoint || catalogServiceEndpoint || "";
+  const siteSettingsEndpoint = config.siteSettingsEndpoint || config.saveEndpoint || "";
   const defaults = Object.assign({}, config.siteSettingsDefaults || {}, (window.JSUSiteSettingsConfig && window.JSUSiteSettingsConfig.defaults) || {});
+  const catalogHeaders = [{% assign header_source = site.data[site.metadata] | first %}{% for pair in header_source %}{{ pair[0] | jsonify }}{% unless forloop.last %}, {% endunless %}{% endfor %}];
+  const repoOwner = "jsumsart";
+  const repoName = "africanart";
+  const catalogPath = "_data/africanart_mdl_medata.csv";
 
   if (window.location.pathname !== settingsPath && !window.location.pathname.endsWith("/site-settings.html")) return;
 
@@ -24,8 +28,17 @@
     headingFont: document.getElementById("settings-heading-font-family"),
     featuredImage: document.getElementById("settings-featured-image"),
     bannerPosition: document.getElementById("settings-banner-position"),
-    saveButton: document.getElementById("settings-save-button")
+    saveButton: document.getElementById("settings-save-button"),
+    importAlert: document.getElementById("csv-import-alert"),
+    importFile: document.getElementById("csv-import-file"),
+    importToken: document.getElementById("csv-import-token"),
+    importMessage: document.getElementById("csv-import-message"),
+    importSummary: document.getElementById("csv-import-summary"),
+    importValidate: document.getElementById("csv-import-validate"),
+    importPublish: document.getElementById("csv-import-publish")
   };
+
+  let importedCsvState = null;
 
   function isEditorUnlocked() {
     return window.localStorage.getItem(editorSessionKey) === "granted";
@@ -61,6 +74,18 @@
     }
     button.textContent = button.dataset.originalText || button.textContent;
     button.disabled = false;
+  }
+
+  function setImportAlert(message, tone) {
+    if (!els.importAlert) return;
+    if (!message) {
+      els.importAlert.textContent = "";
+      els.importAlert.className = "access-alert d-none";
+      return;
+    }
+    els.importAlert.textContent = message;
+    els.importAlert.className = "access-alert";
+    if (tone) els.importAlert.classList.add("access-alert-" + tone);
   }
 
   function fillForm(values) {
@@ -107,26 +132,183 @@
       data = await response.json();
     } catch (_error) {}
 
-    if (!response.ok || (data && data.ok === false)) {
+    if (!response.ok) {
       throw new Error((data && data.message) || "The save service did not accept the request.");
     }
     return data;
   }
 
-  async function fetchJson(endpoint, action) {
-    const response = await fetch(endpoint + (endpoint.indexOf("?") > -1 ? "&" : "?") + "action=" + encodeURIComponent(action), {
-      method: "GET"
-    });
-
+  async function githubJson(url, options) {
+    const response = await fetch(url, options);
     let data = {};
     try {
       data = await response.json();
     } catch (_error) {}
-
-    if (!response.ok || (data && data.ok === false)) {
-      throw new Error((data && data.message) || "The catalog service could not be reached.");
+    if (!response.ok) {
+      throw new Error((data && data.message) || "GitHub did not accept the request.");
     }
     return data;
+  }
+
+  function setImportSummary(message) {
+    if (!els.importSummary) return;
+    els.importSummary.textContent = message;
+  }
+
+  function parseCsv(text) {
+    const rows = [];
+    let row = [];
+    let cell = "";
+    let inQuotes = false;
+
+    for (let i = 0; i < text.length; i += 1) {
+      const char = text[i];
+      const next = text[i + 1];
+
+      if (inQuotes) {
+        if (char === '"' && next === '"') {
+          cell += '"';
+          i += 1;
+        } else if (char === '"') {
+          inQuotes = false;
+        } else {
+          cell += char;
+        }
+        continue;
+      }
+
+      if (char === '"') {
+        inQuotes = true;
+      } else if (char === ",") {
+        row.push(cell);
+        cell = "";
+      } else if (char === "\n") {
+        row.push(cell);
+        rows.push(row);
+        row = [];
+        cell = "";
+      } else if (char === "\r") {
+        continue;
+      } else {
+        cell += char;
+      }
+    }
+
+    if (cell !== "" || row.length) {
+      row.push(cell);
+      rows.push(row);
+    }
+
+    return rows.filter(function (entry) {
+      return entry.some(function (value) {
+        return value !== "";
+      });
+    });
+  }
+
+  function validateImportedCsv(text) {
+    const rows = parseCsv(text);
+    if (!rows.length) {
+      throw new Error("The uploaded CSV is empty.");
+    }
+    const headers = rows[0];
+    const missingHeaders = catalogHeaders.filter(function (header) {
+      return headers.indexOf(header) === -1;
+    });
+    if (missingHeaders.length) {
+      throw new Error("The CSV is missing required columns: " + missingHeaders.join(", "));
+    }
+    const objectNameIndex = headers.indexOf("Object name");
+    const titleIndex = headers.indexOf("Title");
+    const rowsWithIds = rows.slice(1).filter(function (row) {
+      return row[objectNameIndex];
+    });
+
+    return {
+      text: text,
+      rowCount: rowsWithIds.length,
+      headers: headers,
+      sampleTitle: titleIndex > -1 && rowsWithIds[0] ? rowsWithIds[0][titleIndex] || "" : "",
+      sampleId: rowsWithIds[0] ? rowsWithIds[0][objectNameIndex] || "" : ""
+    };
+  }
+
+  async function readSelectedCsv() {
+    const file = els.importFile && els.importFile.files ? els.importFile.files[0] : null;
+    if (!file) {
+      throw new Error("Choose a CSV file first.");
+    }
+    return await file.text();
+  }
+
+  async function handleValidateCsv() {
+    setImportAlert("", "");
+    try {
+      const text = await readSelectedCsv();
+      importedCsvState = validateImportedCsv(text);
+      setImportSummary(
+        importedCsvState.rowCount +
+        " records detected. First record: " +
+        (importedCsvState.sampleId || "unknown ID") +
+        (importedCsvState.sampleTitle ? " — " + importedCsvState.sampleTitle : "") +
+        "."
+      );
+      setImportAlert("CSV structure looks valid for the master catalog.", "info");
+    } catch (error) {
+      importedCsvState = null;
+      setImportSummary("Choose a CSV export from Google Sheets to validate its headers and row count before publishing.");
+      setImportAlert(error.message || "The CSV could not be validated.", "error");
+    }
+  }
+
+  async function handlePublishCsv() {
+    setImportAlert("", "");
+    try {
+      const token = (els.importToken.value || "").trim();
+      if (!token) {
+        throw new Error("Enter a GitHub publish token first.");
+      }
+      if (!importedCsvState) {
+        const text = await readSelectedCsv();
+        importedCsvState = validateImportedCsv(text);
+      }
+
+      window.localStorage.setItem(importTokenKey, token);
+      setImportAlert("Publishing updated catalog CSV to GitHub...", "info");
+      setBusy(els.importPublish, true, "Publishing...");
+
+      const apiUrl = "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/contents/" + catalogPath;
+      const currentFile = await githubJson(apiUrl, {
+        headers: {
+          "Authorization": "Bearer " + token,
+          "Accept": "application/vnd.github+json"
+        }
+      });
+
+      const message = (els.importMessage.value || "").trim() || "Update master catalog from Google Sheets review";
+      const encoded = btoa(unescape(encodeURIComponent(importedCsvState.text)));
+
+      await githubJson(apiUrl, {
+        method: "PUT",
+        headers: {
+          "Authorization": "Bearer " + token,
+          "Accept": "application/vnd.github+json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message: message,
+          content: encoded,
+          sha: currentFile.sha
+        })
+      });
+
+      setImportAlert("Catalog CSV published to GitHub. GitHub Pages should rebuild shortly.", "info");
+      setImportSummary(importedCsvState.rowCount + " records were published to the master catalog file.");
+    } catch (error) {
+      setImportAlert(error.message || "The CSV could not be published.", "error");
+    } finally {
+      setBusy(els.importPublish, false);
+    }
   }
 
   async function handleSave() {
@@ -146,7 +328,7 @@
       });
       applyRuntimeSettings(payload);
       if (els.lastSaved) els.lastSaved.textContent = "Site settings saved " + new Date().toLocaleString();
-      setAlert("Site settings saved to the working catalog.", "info");
+      setAlert("Site settings saved. The public site should refresh with the update shortly.", "info");
     } catch (error) {
       setAlert(error.message || "Site settings could not be saved.", "error");
     } finally {
@@ -159,24 +341,14 @@
     return;
   }
 
-  async function initializeSettingsPage() {
-    fillForm(defaults);
-    applyRuntimeSettings(defaults);
-    if (catalogServiceEndpoint) {
-      try {
-        const data = await fetchJson(catalogServiceEndpoint, "bootstrap");
-        if (data.settings && typeof data.settings === "object") {
-          fillForm(Object.assign({}, defaults, data.settings));
-          applyRuntimeSettings(Object.assign({}, defaults, data.settings));
-        }
-      } catch (error) {
-        setAlert(error.message || "The working settings could not be loaded. Showing the site defaults instead.", "error");
-      }
-    }
-    if (els.lastSaved) els.lastSaved.textContent = "No site settings changes saved in this browser yet.";
-    if (els.saveButton) els.saveButton.addEventListener("click", handleSave);
+  if (els.importToken) {
+    els.importToken.value = window.localStorage.getItem(importTokenKey) || "";
   }
-
-  initializeSettingsPage();
+  fillForm(defaults);
+  applyRuntimeSettings(defaults);
+  if (els.lastSaved) els.lastSaved.textContent = "No site settings changes saved in this browser yet.";
+  if (els.saveButton) els.saveButton.addEventListener("click", handleSave);
+  if (els.importValidate) els.importValidate.addEventListener("click", handleValidateCsv);
+  if (els.importPublish) els.importPublish.addEventListener("click", handlePublishCsv);
 })();
 </script>

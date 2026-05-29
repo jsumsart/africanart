@@ -19,6 +19,49 @@ search_exclude: true
 <section class="research-panel editor-shell">
   <div class="research-panel-header">
     <div>
+      <p class="section-kicker">Catalog Publish</p>
+      <h2 class="record-section-title">Import updated MDL CSV</h2>
+      <p class="section-lead">Use this admin-only tool after student work in Google Sheets is complete. Upload the revised CSV, confirm the header structure, then publish it back to the master catalog file in GitHub.</p>
+    </div>
+  </div>
+
+  <div class="editor-settings-panel editor-settings-panel-page">
+    <div class="editor-settings-header">
+      <div>
+        <p class="section-kicker">CSV Import</p>
+        <h3 class="editor-settings-title">Replace the master catalog file</h3>
+        <p class="small-note mb-0">This tool is for final publishing only. Students should still work in Google Sheets, not in this import view.</p>
+      </div>
+    </div>
+    <div id="csv-import-alert" class="access-alert d-none"></div>
+    <div class="csv-import-grid">
+      <label class="editor-field">
+        <span class="editor-field-label">Updated MDL CSV</span>
+        <input id="csv-import-file" class="form-control" type="file" accept=".csv,text/csv">
+      </label>
+      <label class="editor-field">
+        <span class="editor-field-label">GitHub publish token</span>
+        <input id="csv-import-token" class="form-control" type="password" placeholder="github_pat_...">
+      </label>
+      <label class="editor-field csv-import-wide">
+        <span class="editor-field-label">Publish note</span>
+        <input id="csv-import-message" class="form-control" type="text" placeholder="Update master catalog from Google Sheets review">
+      </label>
+    </div>
+    <p class="small-note mb-3">The GitHub publish token is only for final admin import. It is stored in this browser for convenience and can be replaced at any time.</p>
+    <div id="csv-import-summary" class="editor-sidebar-tip editor-workflow-tip">
+      Choose a CSV export from Google Sheets to validate its headers and row count before publishing.
+    </div>
+    <div class="editor-settings-actions">
+      <button type="button" class="btn btn-outline-dark" id="csv-import-validate">Validate CSV</button>
+      <button type="button" class="btn btn-primary" id="csv-import-publish">Publish CSV to GitHub</button>
+    </div>
+  </div>
+</section>
+
+<section class="research-panel editor-shell">
+  <div class="research-panel-header">
+    <div>
       <p class="section-kicker">Presentation Settings</p>
       <h2 class="record-section-title">Site appearance</h2>
       <p class="section-lead">Use this page for collection-wide visual settings such as colors, typography, and featured content. Record editing remains in Catalog Room.</p>

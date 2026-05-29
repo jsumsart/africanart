@@ -1607,6 +1607,17 @@ body.collection-unlocked [data-auth-trigger] {
   min-width: 12rem;
 }
 
+.csv-import-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 1.15rem;
+  margin-bottom: 1rem;
+}
+
+.csv-import-wide {
+  grid-column: 1 / -1;
+}
+
 .editor-grid {
   display: grid;
   grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
