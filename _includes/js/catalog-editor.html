@@ -11,7 +11,7 @@
   const siteSettingsEndpoint = config.siteSettingsEndpoint || saveEndpoint;
   const siteSettingsDefaults = Object.assign({}, config.siteSettingsDefaults || {}, (window.JSUSiteSettingsConfig && window.JSUSiteSettingsConfig.defaults) || {});
   const exportHeaders = [{% assign header_source = editor_items | first %}{% for pair in header_source %}{{ pair[0] | jsonify }}{% unless forloop.last %}, {% endunless %}{% endfor %}];
-  const extraExportHeaders = ["Thumbnail URL", "Google Sheets Image", "Record URL"];
+  const extraExportHeaders = ["Thumbnail", "Record URL"];
   const embeddedRecords = [
     {% for item in editor_items %}
     {
@@ -510,7 +510,6 @@
         return csvEscape(merged[header] || "");
       });
       const thumbnailUrl = thumbnailUrlForRecord(merged);
-      row.push(csvEscape(thumbnailUrl));
       row.push(csvEscape(thumbnailUrl ? '=IMAGE("' + thumbnailUrl + '")' : ""));
       row.push(csvEscape(recordUrlForRecord(merged)));
       return row.join(",");
@@ -520,7 +519,7 @@
     const csv = csvHeaders.map(csvEscape).join(",") + "\n" + rows.join("\n") + "\n";
     const stamp = new Date().toISOString().slice(0, 10);
     downloadTextFile("africanart_google_sheets_export_" + stamp + ".csv", csv, "text/csv;charset=utf-8");
-    setAlert("Spreadsheet-ready CSV export is ready, including thumbnail and record links.", "info");
+    setAlert("Spreadsheet-ready CSV export is ready, including rendered thumbnail and record links.", "info");
   }
 
   async function saveRecordToService() {
