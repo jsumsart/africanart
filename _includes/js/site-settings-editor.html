@@ -206,6 +206,14 @@
     });
   }
 
+  function csvEscape(value) {
+    const text = String(value == null ? "" : value);
+    if (text.indexOf(",") > -1 || text.indexOf("\"") > -1 || text.indexOf("\n") > -1) {
+      return "\"" + text.replace(/"/g, "\"\"") + "\"";
+    }
+    return text;
+  }
+
   function validateImportedCsv(text) {
     const rows = parseCsv(text);
     if (!rows.length) {
@@ -224,8 +232,22 @@
       return row[objectNameIndex];
     });
 
+    const normalizedRows = rowsWithIds.map(function (row) {
+      return catalogHeaders.map(function (header) {
+        const index = headers.indexOf(header);
+        return index > -1 ? (row[index] || "") : "";
+      });
+    });
+
+    const normalizedCsv = [catalogHeaders.map(csvEscape).join(",")]
+      .concat(normalizedRows.map(function (row) {
+        return row.map(csvEscape).join(",");
+      }))
+      .join("\n") + "\n";
+
     return {
       text: text,
+      normalizedCsv: normalizedCsv,
       rowCount: rowsWithIds.length,
       headers: headers,
       sampleTitle: titleIndex > -1 && rowsWithIds[0] ? rowsWithIds[0][titleIndex] || "" : "",
@@ -286,7 +308,7 @@
       });
 
       const message = (els.importMessage.value || "").trim() || "Update master catalog from Google Sheets review";
-      const encoded = btoa(unescape(encodeURIComponent(importedCsvState.text)));
+      const encoded = btoa(unescape(encodeURIComponent(importedCsvState.normalizedCsv)));
 
       await githubJson(apiUrl, {
         method: "PUT",

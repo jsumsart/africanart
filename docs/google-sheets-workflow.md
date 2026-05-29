@@ -24,4 +24,5 @@ This project now treats Google Sheets as the collaborative editing workspace for
 
 - The exported CSV is intended for spreadsheet work, not as the final published site file.
 - The repository CSV remains the published source that the public Jekyll site reads from.
+- The import tool keeps only the true master catalog columns when publishing, so spreadsheet helper columns such as thumbnail formulas or record links will not be written back into the production catalog file.
 - Students should not use the import tool. It is intended for final admin publishing only.
