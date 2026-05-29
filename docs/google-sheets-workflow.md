@@ -16,7 +16,7 @@ This project now treats Google Sheets as the collaborative editing workspace for
 ### Image columns included in the export
 
 - `Thumbnail`
-  A ready-made `=IMAGE("...")` formula so the thumbnail renders directly in Google Sheets.
+  The first column in the export. It contains a ready-made `=IMAGE("...")` formula so the thumbnail can render directly in Google Sheets.
 - `Record URL`
   A direct link to the live public record page.
 

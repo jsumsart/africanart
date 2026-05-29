@@ -506,16 +506,17 @@
   async function handleExportCsv() {
     const rows = records.map(function (record) {
       const merged = mergedRecord(record["Object name"]);
-      const row = exportHeaders.map(function (header) {
-        return csvEscape(merged[header] || "");
-      });
       const thumbnailUrl = thumbnailUrlForRecord(merged);
-      row.push(csvEscape(thumbnailUrl ? '=IMAGE("' + thumbnailUrl + '")' : ""));
+      const row = [];
+      row.push(thumbnailUrl ? '=IMAGE("' + thumbnailUrl + '")' : "");
       row.push(csvEscape(recordUrlForRecord(merged)));
+      exportHeaders.forEach(function (header) {
+        row.push(csvEscape(merged[header] || ""));
+      });
       return row.join(",");
     });
 
-    const csvHeaders = exportHeaders.concat(extraExportHeaders);
+    const csvHeaders = extraExportHeaders.concat(exportHeaders);
     const csv = csvHeaders.map(csvEscape).join(",") + "\n" + rows.join("\n") + "\n";
     const stamp = new Date().toISOString().slice(0, 10);
     downloadTextFile("africanart_google_sheets_export_" + stamp + ".csv", csv, "text/csv;charset=utf-8");
