@@ -1085,6 +1085,9 @@ a:focus {
   max-width: 250px !important;
   max-height: 250px !important;
   object-fit: contain;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+  user-select: none;
 }
 
 .record-summary-panel {
