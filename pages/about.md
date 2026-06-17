@@ -10,7 +10,7 @@ permalink: /about.html
       <p class="section-kicker">About the Collection</p>
       <h1 class="page-title">About the Jackson State University African Art Collection</h1>
       <p class="page-intro">The Jackson State University African Art Collection supports teaching, research, and collections stewardship through works that invite close study of artistic traditions, materials, and cultural histories from across the African continent.</p>
-      <p class="page-intro mb-0">This digital site brings those records together in a format designed for students, faculty, and researchers, while also making the collection more accessible to broader public audiences.</p>
+      <p class="page-intro mb-0">This digital site brings those records together in a format designed for sustained study while also making the collection more accessible to broader public audiences.</p>
     </div>
     <aside class="about-hero-panel">
       <p class="section-kicker">In Brief</p>
@@ -24,8 +24,8 @@ permalink: /about.html
           <p>The collection contributes to cataloging, provenance research, and sustained study of African art within the university setting.</p>
         </article>
         <article class="about-pillar-card">
-          <h3>Ongoing stewardship</h3>
-          <p>Records and presentation continue to develop in order to strengthen historical context, descriptive care, and responsible interpretation.</p>
+          <h3>Collections stewardship</h3>
+          <p>Records and presentation are maintained with attention to historical context, descriptive care, and responsible interpretation.</p>
         </article>
       </div>
     </aside>
@@ -43,27 +43,27 @@ permalink: /about.html
   <article class="about-richtext">
     <p class="section-kicker">Digital Access</p>
     <h2 class="record-section-title">What this site is for</h2>
-    <p>This website is intended to make the collection easier to explore, understand, and teach from. Rather than presenting only short labels, the catalog is being expanded to include fuller records that foreground culture and community, geography, materials, use, and subject matter wherever evidence supports those descriptions.</p>
-    <p>The goal is a site that can serve both public visitors and university users, with a tone and structure that support careful learning rather than quick scanning alone.</p>
+    <p>This website is intended to make the collection easier to explore, understand, and teach from. Rather than presenting only short labels, the catalog offers fuller records that foreground culture and community, geography, materials, use, and subject matter wherever evidence supports those descriptions.</p>
+    <p>The site is designed to serve both public visitors and university users, with a tone and structure that encourage careful looking and sustained learning.</p>
   </article>
 </section>
 
 <section class="about-grid about-grid-balanced">
   <article class="about-side-panel">
-    <p class="section-kicker">Current Priorities</p>
-    <h3>Work in progress</h3>
+    <p class="section-kicker">Catalog Commitments</p>
+    <h3>Guiding principles</h3>
     <div class="about-side-list">
       <article class="landing-note-card">
-        <h4>Improving records</h4>
-        <p>Catalog entries are being revised to strengthen description, context, and clarity across the collection.</p>
+        <h4>Clarity of description</h4>
+        <p>Catalog entries are written to strengthen description, context, and legibility across the collection.</p>
       </article>
       <article class="landing-note-card">
-        <h4>Supporting teaching and research</h4>
-        <p>The digital catalog is being shaped to support classroom use, object study, and longer-term research.</p>
+        <h4>Support for teaching and study</h4>
+        <p>The digital catalog is intended to support classroom use, object study, and longer-term research.</p>
       </article>
       <article class="landing-note-card">
-        <h4>Refining presentation</h4>
-        <p>The public site continues to evolve so the collection can be presented with greater consistency and care.</p>
+        <h4>Consistency of presentation</h4>
+        <p>The public site presents the collection through a unified visual language that emphasizes care, continuity, and access.</p>
       </article>
     </div>
   </article>
@@ -72,6 +72,6 @@ permalink: /about.html
     <p class="section-kicker">Contact</p>
     <h3>Questions about the collection</h3>
     <p>For additional information about the collection, teaching use, or collections stewardship, please contact the Department of Art, College of Liberal Arts.</p>
-    <p class="small-note mb-0">This site is an evolving digital resource and will continue to grow as records are reviewed and expanded.</p>
+    <p class="small-note mb-0">The catalog is reviewed and expanded as additional research and documentation become available.</p>
   </article>
 </section>
