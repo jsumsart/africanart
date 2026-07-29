@@ -15,7 +15,7 @@ SITE_CSV = DATA_DIR / "africanart_metadata.csv"
 SOURCE_CSV = Path(
     "/Users/Birittany/Downloads/Data  Jackson State University African Art Collection - Data  Jackson State University African Art Collection (1).csv"
 )
-MAX_OBJECT_ID = 148
+MAX_OBJECT_ID = 161
 IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".gif", ".tif", ".tiff"}
 
 MASTER_HEADERS = [
@@ -380,11 +380,21 @@ def default_master_row(filename: str, index: int, legacy_row):
 def load_or_seed_master():
     legacy = legacy_index_by_filename()
     source = source_index_by_objectid()
-    files = sorted(
-        [path.name for path in OBJECTS_DIR.iterdir() if path.is_file()],
-        key=natural_key,
-    )
     existing_rows = read_csv_rows(MASTER_CSV)
+    if OBJECTS_DIR.is_dir():
+        files = sorted(
+            [path.name for path in OBJECTS_DIR.iterdir() if path.is_file()],
+            key=natural_key,
+        )
+    else:
+        files = sorted(
+            [
+                row.get("File name", "").strip()
+                for row in existing_rows
+                if row.get("File name", "").strip()
+            ],
+            key=natural_key,
+        )
     rows_by_file = {
         row.get("File name", "").strip(): row
         for row in existing_rows
