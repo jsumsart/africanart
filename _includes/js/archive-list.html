@@ -1,0 +1,30 @@
+<script>
+(function () {
+  const searchInput = document.getElementById("archive-search");
+  const archiveList = document.getElementById("archive-list");
+  const archiveCount = document.getElementById("archive-count");
+  const archiveEmpty = document.getElementById("archive-empty");
+
+  if (!searchInput || !archiveList) return;
+
+  const records = Array.from(archiveList.querySelectorAll("[data-archive-record]"));
+
+  function renderArchive() {
+    const query = (searchInput.value || "").trim().toLowerCase();
+    let visible = 0;
+
+    records.forEach(function (record) {
+      const haystack = (record.getAttribute("data-search") || "").toLowerCase();
+      const matches = !query || haystack.indexOf(query) > -1;
+      record.classList.toggle("d-none", !matches);
+      if (matches) visible += 1;
+    });
+
+    archiveCount.textContent = visible + (visible === 1 ? " record" : " records");
+    archiveEmpty.classList.toggle("d-none", visible !== 0);
+  }
+
+  searchInput.addEventListener("input", renderArchive);
+  renderArchive();
+})();
+</script>

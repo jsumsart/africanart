@@ -16,8 +16,16 @@
                 {%- assign navItems = site.data.config-nav | where_exp: 'item', 'item.dropdown_parent == nil' -%} 
                 {% for nav in navItems %}
                 {% if nav.stub %}
+                {% assign is_public_nav = false %}
+                {% if nav.stub == "/" or nav.stub == "/about.html" or nav.stub == "/archive.html" %}
+                {% assign is_public_nav = true %}
+                {% endif %}
                 <li class="nav-item">
+                    {% if is_public_nav %}
                     <a class="nav-link{% if page.url == nav.stub %} active{% endif %}" href="{{ nav.stub | relative_url }}">{{ nav.display_name }}</a>
+                    {% else %}
+                    <a class="nav-link d-none{% if page.url == nav.stub %} active{% endif %}" href="{{ nav.stub | relative_url }}" data-protected-nav="true">{{ nav.display_name }}</a>
+                    {% endif %}
                 </li>
                 {%- else -%}
                 <li class="nav-item dropdown">
@@ -33,7 +41,7 @@
                 {% endif %}
                 {%- endfor -%}
             </ul>
-            <div class="site-search-shell">
+            <div class="site-search-shell" data-protected-nav="true">
                 {% include nav-search-lunr.html %}
             </div>
         </div>

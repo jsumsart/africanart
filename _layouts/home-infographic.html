@@ -10,44 +10,43 @@ layout: page
 <section class="landing-shell">
   <div class="landing-grid">
     <div class="landing-copy">
-      <p class="landing-kicker">Collection Overview</p>
-      <h2 class="landing-title">Explore the collection through objects, histories, and catalog records.</h2>
-      <p class="landing-lead">This site introduces the Jackson State University African Art Collection through a digital catalog designed to support teaching, research, and responsible interpretation.</p>
+      <p class="landing-kicker">Public Introduction</p>
+      <h2 class="landing-title">The Jackson State University African Art Collection</h2>
+      <p class="landing-lead">This public homepage introduces the collection as a teaching and research resource while keeping image-rich portal access behind a password layer shaped by cultural sensitivity and collections stewardship.</p>
       <div class="landing-actions">
-        <a class="btn btn-primary btn-lg" href="{{ '/browse.html' | relative_url }}">Browse the catalog</a>
+        <a class="btn btn-primary btn-lg" href="{{ '/archive.html' | relative_url }}">Access archive</a>
         <a class="btn btn-outline-dark btn-lg" href="{{ '/about.html' | relative_url }}">About the collection</a>
       </div>
-      <p class="landing-supporting-note">Begin with the collection overview, then move into the catalog to follow cultures, places, materials, and subjects across related records.</p>
+      <p class="landing-supporting-note">The public archive lists records and collection scope. The full research portal opens with a password for authorized users who need image-bearing catalog access.</p>
     </div>
 
     <aside class="landing-overview-panel">
       <div class="landing-panel-header">
-        <p class="landing-kicker">At a Glance</p>
-        <h3>Collection snapshot</h3>
-        <p class="section-lead">A quick view of the people, places, and date references currently represented in the online records.</p>
+        <p class="landing-kicker">Portal Access</p>
+        <h3>Research access options</h3>
+        <p class="section-lead">Use the public archive for collection discovery, or open the protected portal if you have the password for fuller catalog access.</p>
       </div>
-      <div class="landing-stats">
-        <article class="landing-stat-card">
-          <span class="landing-stat-value">{{ items | size }}</span>
-          <span class="landing-stat-label">Objects currently described online</span>
-        </article>
-        <article class="landing-stat-card">
-          <span class="landing-stat-value">{{ communities | size }}</span>
-          <span class="landing-stat-label">Culture and community references included in the records</span>
-        </article>
-        <article class="landing-stat-card">
-          <span class="landing-stat-value">{{ places | size }}</span>
-          <span class="landing-stat-label">Geographic references included in the records</span>
-        </article>
-        <article class="landing-stat-card">
-          <span class="landing-stat-value">{{ dates | size }}</span>
-          <span class="landing-stat-label">Date references currently represented online</span>
-        </article>
+      <div class="access-panel-stack" data-home-locked>
+        <div class="landing-stat-card landing-stat-card-text">
+          <strong>Public archive</strong>
+          <p class="mb-0">Review object identifiers, titles, cultures or communities, places, and dates without opening the protected image portal.</p>
+          <a class="landing-overview-link" href="{{ '/archive.html' | relative_url }}">Open the archive</a>
+        </div>
+        <div class="landing-stat-card landing-stat-card-text">
+          <strong>Protected portal</strong>
+          <p class="mb-0">Enter the portal password in the header to view image-bearing records, maps, timelines, and fuller browsing tools.</p>
+        </div>
+        <div class="access-alert d-none" data-auth-alert></div>
       </div>
-      <div class="landing-overview-links">
-        <a class="landing-overview-link" href="{{ '/browse.html' | relative_url }}">Browse all records</a>
-        <a class="landing-overview-link" href="{{ '/subjects.html' | relative_url }}">Browse by subject</a>
-        <a class="landing-overview-link" href="{{ '/locations.html' | relative_url }}">Browse by place</a>
+      <div class="access-panel-stack d-none" data-home-unlocked>
+        <div class="landing-stat-card landing-stat-card-text">
+          <strong>Portal unlocked</strong>
+          <p class="mb-0">The protected portal is open in this browser. Continue into the fuller research interface or return to the public archive.</p>
+          <div class="landing-actions mt-3">
+            <a class="btn btn-primary" href="{{ '/browse.html' | relative_url }}" data-auth-open>Open full portal</a>
+            <a class="btn btn-outline-dark" href="{{ '/archive.html' | relative_url }}">View archive</a>
+          </div>
+        </div>
       </div>
     </aside>
   </div>
@@ -55,52 +54,75 @@ layout: page
   <div class="landing-content-grid landing-content-grid-balanced">
     <section class="landing-feature-panel">
       <div class="landing-panel-header">
-        <p class="landing-kicker">Featured Objects</p>
-        <h3>Selected works from the digital catalog</h3>
-        <p class="section-lead">A rotating selection of collection records that offers one path into the broader catalog.</p>
+        <p class="landing-kicker">About the Collection</p>
+        <h3>A teaching collection and evolving digital resource</h3>
+        <p class="section-lead">The collection supports classroom learning, object study, cataloging practice, and broader public understanding through careful description and responsible presentation.</p>
       </div>
-      {% include index/carousel.html title="Collection Highlights" height="420" btn-color="light" btn-text="Open Record" %}
+      <div class="landing-note-grid">
+        <article class="landing-note-card">
+          <h4>Collection scope</h4>
+          <p>The digital archive currently reflects {{ items | size }} cataloged records, with references spanning {{ communities | size }} culture and community terms, {{ places | size }} geographic entries, and {{ dates | size }} dated groupings.</p>
+        </article>
+        <article class="landing-note-card">
+          <h4>Public-facing approach</h4>
+          <p>Public pages emphasize object identity, place, chronology, and professional catalog language while limiting image access in support of cultural sensitivity and rights stewardship.</p>
+        </article>
+        <article class="landing-note-card">
+          <h4>Research use</h4>
+          <p>Authorized users can open the fuller portal for record review, image comparison, and research navigation across the catalog’s richer descriptive fields.</p>
+        </article>
+      </div>
     </section>
 
     <section class="landing-feature-panel">
       <div class="landing-panel-header">
-        <p class="landing-kicker">Collection Profile</p>
-        <h3>Chronology and media at a glance</h3>
+        <p class="landing-kicker">Digitization Credits</p>
+        <h3>Project support and stewardship</h3>
       </div>
-      {% include index/time.html %}
-      {% include index/objects.html %}
+      <div class="landing-note-grid">
+        <article class="landing-note-card">
+          <h4>Collection stewardship</h4>
+          <p>Department of Art, College of Liberal Arts, Jackson State University.</p>
+        </article>
+        <article class="landing-note-card">
+          <h4>Digital project leadership</h4>
+          <p>Africana Digital Humanities Lab, supporting catalog development, digital presentation, and public interpretation.</p>
+        </article>
+        <article class="landing-note-card">
+          <h4>Project support</h4>
+          <p>Supported by a subaward from the University of Southern Mississippi Mississippi Digital Humanities Hub.</p>
+        </article>
+      </div>
     </section>
   </div>
 
   <div class="landing-secondary-grid">
     <section class="landing-feature-panel">
       <div class="landing-panel-header">
-        <p class="landing-kicker">Catalog Approach</p>
-        <h3>The catalog emphasizes context, specificity, and descriptive care.</h3>
+        <p class="landing-kicker">Archive Entry Points</p>
+        <h3>Begin with the public archive</h3>
       </div>
-      <div class="landing-note-grid">
-        <article class="landing-note-card">
-          <h4>Contextual description</h4>
-          <p>Records are written to foreground culture and community, function, materials, and provenance wherever the available evidence supports those descriptions.</p>
-        </article>
-        <article class="landing-note-card">
-          <h4>Teaching and research access</h4>
-          <p>The collection supports teaching, close looking, and scholarly inquiry through fuller records and more legible paths of discovery.</p>
-        </article>
-        <article class="landing-note-card">
-          <h4>Responsible interpretation</h4>
-          <p>The public catalog is shaped to present works with historical care while remaining open to future research, refinement, and expanded interpretation.</p>
-        </article>
+      <div class="landing-overview-links">
+        <a class="landing-overview-link" href="{{ '/archive.html' | relative_url }}">Browse the public archive list</a>
+        <a class="landing-overview-link" href="{{ '/about.html' | relative_url }}">Read more about the collection</a>
       </div>
     </section>
     <section class="landing-feature-panel">
       <div class="landing-panel-header">
-        <p class="landing-kicker">Discovery Paths</p>
-        <h3>Subjects and places reflected in the catalog</h3>
-        <p class="section-lead">Use shared terms to move through the collection by theme, geography, and related histories rather than by title alone.</p>
+        <p class="landing-kicker">Catalog Values</p>
+        <h3>Description shaped with historical care</h3>
+        <p class="section-lead">The public-facing record set is written to support teaching and research while remaining attentive to context, rights, and the ethical presentation of the collection.</p>
       </div>
-      {% include index/featured-terms.html field="Subject" title="Subject Threads" btn-color="primary" max=8 %}
-      {% include index/featured-terms.html field="Geographic location" title="Places in the Collection" btn-color="outline-secondary" max=8 %}
+      <div class="landing-note-grid">
+        <article class="landing-note-card">
+          <h4>Professional catalog language</h4>
+          <p>Records prioritize clear titles, geographic and cultural context, and restrained descriptive claims suitable for a public museum-style setting.</p>
+        </article>
+        <article class="landing-note-card">
+          <h4>Future refinement</h4>
+          <p>The archive remains open to continued catalog development as new research, identifications, and contextual documentation become available.</p>
+        </article>
+      </div>
     </section>
   </div>
 </section>

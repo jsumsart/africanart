@@ -8,7 +8,7 @@
                     {%- assign navItems = site.data.config-nav | where_exp: 'item', 'item.dropdown_parent == nil' -%}
                     {% for nav in navItems %}
                     {% assign is_public_nav = false %}
-                    {% if nav.stub == "/" or nav.stub == "/about.html" %}
+                    {% if nav.stub == "/" or nav.stub == "/about.html" or nav.stub == "/archive.html" %}
                     {% assign is_public_nav = true %}
                     {% endif %}
                     {% if is_public_nav %}
