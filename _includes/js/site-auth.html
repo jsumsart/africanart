@@ -1,5 +1,6 @@
 <script>
 (function () {
+    const baseUrl = {{ site.baseurl | default: "" | jsonify }};
     const homeUrl = {{ '/' | relative_url | jsonify }};
     const archiveUrl = {{ '/archive.html' | relative_url | jsonify }};
     const settingsUrl = {{ '/site-settings.html' | relative_url | jsonify }};
@@ -19,9 +20,40 @@
     function normalizePath(path) {
         if (!path) return "/";
         let normalized = path;
+        if (/^https?:\/\//i.test(normalized)) {
+            try {
+                normalized = new URL(normalized, window.location.origin).pathname;
+            } catch (error) {
+                normalized = "/";
+            }
+        }
+        if (baseUrl && normalized.indexOf(baseUrl) === 0) {
+            normalized = normalized.slice(baseUrl.length) || "/";
+        }
         if (normalized.endsWith("/index.html")) normalized = normalized.slice(0, -10) || "/";
         if (normalized.length > 1 && normalized.endsWith("/")) normalized = normalized.slice(0, -1);
         return normalized || "/";
+    }
+
+    function getSanitizedNextTarget(rawTarget) {
+        if (!rawTarget) return browseUrl;
+        let target = rawTarget;
+        try {
+            const absolute = new URL(rawTarget, window.location.origin);
+            const normalizedTarget = normalizePath(absolute.pathname);
+            if (normalizedTarget === normalizePath(homeUrl) && absolute.searchParams.get("portal") === "required") {
+                return browseUrl;
+            }
+            absolute.searchParams.delete("portal");
+            const nestedNext = absolute.searchParams.get("next");
+            if (nestedNext && nestedNext === rawTarget) {
+                absolute.searchParams.delete("next");
+            }
+            target = absolute.pathname + absolute.search + absolute.hash;
+        } catch (error) {
+            target = rawTarget;
+        }
+        return target || browseUrl;
     }
 
     async function sha256(value) {
@@ -82,7 +114,7 @@
 
     function getRequestedTarget() {
         const params = new URLSearchParams(window.location.search);
-        return params.get("next") || browseUrl;
+        return getSanitizedNextTarget(params.get("next"));
     }
 
     function setUnlockedState() {
@@ -233,6 +265,8 @@
         if (!staffEnabled) return;
         if (isPortalUnlocked()) return;
         if (!isProtectedPath(window.location.pathname)) return;
+        const currentParams = new URLSearchParams(window.location.search);
+        if (normalizePath(window.location.pathname) === normalizePath(homeUrl) && currentParams.get("portal") === "required") return;
         const next = encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
         window.location.replace(homeUrl + "?portal=required&next=" + next);
     }
