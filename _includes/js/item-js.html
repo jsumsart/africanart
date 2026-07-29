@@ -61,9 +61,11 @@
             itemFormat = record.format.replace("_", " ").toUpperCase();
         }
         document.getElementById("item-format").textContent = itemFormat;
+        document.getElementById("item-identifier").textContent = record.Identifier ? ("Institutional identifier: " + record.Identifier) : "";
         document.getElementById("item-title").textContent = objectTitle;
         document.getElementById("item-summary").textContent = record.Description || "This record is in progress and does not yet have a full object summary.";
         var quickFacts = [];
+        if (record.Identifier) quickFacts.push({ label: "Identifier", value: record.Identifier });
         if (record.Date) quickFacts.push({ label: "Date", value: record.Date });
         if (record.Creator) quickFacts.push({ label: "Creator", value: record.Creator });
         if (record.culture_community) quickFacts.push({ label: "Culture / Community", value: record.culture_community });
