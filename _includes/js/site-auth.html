@@ -3,19 +3,12 @@
     const baseUrl = {{ site.baseurl | default: "" | jsonify }};
     const homeUrl = {{ '/' | relative_url | jsonify }};
     const archiveUrl = {{ '/archive.html' | relative_url | jsonify }};
-    const settingsUrl = {{ '/site-settings.html' | relative_url | jsonify }};
-    const editorUrl = {{ '/catalog-room.html' | relative_url | jsonify }};
     const browseUrl = {{ '/browse.html' | relative_url | jsonify }};
     const staffEnabled = {{ site.data.theme.staff-gate-enabled | default: false | jsonify }};
     const staffSessionKey = {{ site.data.theme.staff-gate-session-key | default: 'jsu-african-art-access' | jsonify }};
     const staffPasswordSha = {{ site.data.theme.staff-gate-password-sha256 | default: "" | jsonify }};
     const staffPublicPaths = {{ site.data.theme.staff-gate-public-paths | default: '/;/about.html;/archive.html' | jsonify }}.split(";").map(normalizePath);
     const staffLabel = {{ site.data.theme.staff-gate-label | default: 'Full Portal' | jsonify }};
-    const editorSessionKey = {{ site.data.theme.editor-gate-session-key | default: 'jsu-african-art-editor' | jsonify }};
-    const editorEmailKey = {{ site.data.theme.editor-email-storage-key | default: 'jsu-african-art-editor-email' | jsonify }};
-    const editorProofKey = editorSessionKey + "-proof";
-    const editorPasswordSha = {{ site.data.theme.editor-gate-password-sha256 | default: "" | jsonify }};
-    const editorLabel = {{ site.data.theme.editor-gate-label | default: 'Catalog Room' | jsonify }};
 
     function normalizePath(path) {
         if (!path) return "/";
@@ -66,14 +59,6 @@
         return !staffEnabled || window.localStorage.getItem(staffSessionKey) === "granted";
     }
 
-    function isEditorUnlocked() {
-        return window.localStorage.getItem(editorSessionKey) === "granted";
-    }
-
-    function getEditorEmail() {
-        return window.localStorage.getItem(editorEmailKey) || "";
-    }
-
     function setPortalSession(granted) {
         if (granted) {
             window.localStorage.setItem(staffSessionKey, "granted");
@@ -83,32 +68,14 @@
         setUnlockedState();
     }
 
-    function setEditorSession(granted, email, passwordHash) {
-        if (granted) {
-            window.localStorage.setItem(editorSessionKey, "granted");
-            if (email) window.localStorage.setItem(editorEmailKey, email);
-            if (passwordHash) window.localStorage.setItem(editorProofKey, passwordHash);
-        } else {
-            window.localStorage.removeItem(editorSessionKey);
-            window.localStorage.removeItem(editorEmailKey);
-            window.localStorage.removeItem(editorProofKey);
-        }
-        setUnlockedState();
-    }
-
     function isPublicPath(path) {
         return staffPublicPaths.indexOf(normalizePath(path)) > -1;
-    }
-
-    function isEditorPath(path) {
-        const normalized = normalizePath(path);
-        return normalized === normalizePath(editorUrl) || normalized === normalizePath(settingsUrl);
     }
 
     function isProtectedPath(path) {
         if (!staffEnabled) return false;
         const normalized = normalizePath(path);
-        if (isPublicPath(normalized) || isEditorPath(normalized)) return false;
+        if (isPublicPath(normalized)) return false;
         return true;
     }
 
@@ -119,8 +86,6 @@
 
     function setUnlockedState() {
         const portalUnlocked = isPortalUnlocked();
-        const editorUnlocked = isEditorUnlocked();
-        const editorEmail = getEditorEmail();
 
         document.body.classList.remove("collection-locked", "collection-unlocked");
         document.body.classList.add(portalUnlocked ? "collection-unlocked" : "collection-locked", "auth-ready");
@@ -133,19 +98,6 @@
         });
         document.querySelectorAll("[data-auth-logout]").forEach((el) => {
             el.classList.toggle("d-none", !portalUnlocked);
-        });
-        document.querySelectorAll("[data-auth-editor-link]").forEach((el) => {
-            el.classList.toggle("d-none", !editorUnlocked);
-        });
-        document.querySelectorAll("[data-editor-auth-form]").forEach((el) => {
-            el.classList.toggle("d-none", editorUnlocked);
-        });
-        document.querySelectorAll("[data-editor-logout]").forEach((el) => {
-            el.classList.toggle("d-none", !editorUnlocked);
-        });
-        document.querySelectorAll("[data-editor-session-label]").forEach((el) => {
-            el.textContent = editorUnlocked && editorEmail ? editorEmail : "";
-            el.classList.toggle("d-none", !(editorUnlocked && editorEmail));
         });
     }
 
@@ -204,60 +156,11 @@
         }
     }
 
-    async function handleEditorSubmit(event) {
-        event.preventDefault();
-        clearAlert();
-
-        const form = event.currentTarget;
-        const emailInput = form.querySelector('input[type="email"]');
-        const passwordInput = form.querySelector('input[type="password"]');
-        const submitButton = form.querySelector('button[type="submit"]');
-        const email = (emailInput.value || "").trim();
-        const password = passwordInput.value || "";
-
-        if (!email || !password) {
-            showAlert("Enter your email and the catalog room password to continue.", "error");
-            return;
-        }
-        if (!editorPasswordSha) {
-            showAlert("Editor access is not configured yet.", "error");
-            return;
-        }
-
-        const originalText = submitButton.textContent;
-        submitButton.disabled = true;
-        submitButton.textContent = "Opening...";
-        try {
-            const digest = await sha256(password);
-            if (digest !== editorPasswordSha) {
-                throw new Error("That editor password was not recognized.");
-            }
-            passwordInput.value = "";
-            setEditorSession(true, email, digest);
-            window.location.assign(editorUrl);
-        } catch (error) {
-            showAlert(error.message || "Editor access could not be opened.", "error");
-            passwordInput.value = "";
-            passwordInput.focus();
-        } finally {
-            submitButton.disabled = false;
-            submitButton.textContent = originalText;
-        }
-    }
-
     function handleStaffLogout(event) {
         if (event) event.preventDefault();
         setPortalSession(false);
         if (isProtectedPath(window.location.pathname)) {
             window.location.assign(homeUrl);
-        }
-    }
-
-    function handleEditorLogout(event) {
-        if (event) event.preventDefault();
-        setEditorSession(false);
-        if (normalizePath(window.location.pathname) === normalizePath(editorUrl) || normalizePath(window.location.pathname) === normalizePath(settingsUrl)) {
-            window.location.assign(archiveUrl);
         }
     }
 
@@ -295,34 +198,6 @@
             if (portalInput) portalInput.focus();
             showAlert("Enter the " + staffLabel.toLowerCase() + " password to continue.", "info");
         });
-    });
-    document.querySelectorAll("[data-editor-auth-form]").forEach((el) => {
-        el.addEventListener("submit", handleEditorSubmit);
-    });
-    document.querySelectorAll("[data-editor-logout]").forEach((el) => {
-        el.addEventListener("click", handleEditorLogout);
-    });
-    document.querySelectorAll("[data-auth-editor], [data-auth-editor-link]").forEach((el) => {
-        el.addEventListener("click", function (event) {
-            event.preventDefault();
-            const targetUrl = el.getAttribute("href") || editorUrl;
-            if (!isEditorUnlocked()) {
-                const editorInput = document.querySelector(".nav-editor-form input[type='password']");
-                if (editorInput) editorInput.focus();
-                showAlert("Enter the " + editorLabel.toLowerCase() + " password to open editing access.", "info");
-                return;
-            }
-            window.location.assign(targetUrl);
-        });
-    });
-
-    document.addEventListener("keydown", function (event) {
-        if (!isEditorUnlocked()) return;
-        if (!(event.shiftKey && event.key.toLowerCase() === "e")) return;
-        const tag = (event.target && event.target.tagName) ? event.target.tagName.toLowerCase() : "";
-        if (tag === "input" || tag === "textarea" || event.target.isContentEditable) return;
-        event.preventDefault();
-        window.location.assign(editorUrl);
     });
 })();
 </script>
