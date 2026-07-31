@@ -90,6 +90,10 @@
         document.body.classList.remove("collection-locked", "collection-unlocked");
         document.body.classList.add(portalUnlocked ? "collection-unlocked" : "collection-locked", "auth-ready");
 
+        document.querySelectorAll("[data-protected-nav]").forEach((el) => {
+            el.classList.toggle("d-none", !portalUnlocked);
+        });
+
         document.querySelectorAll("[data-staff-auth-form]").forEach((el) => {
             el.classList.toggle("d-none", portalUnlocked);
         });
